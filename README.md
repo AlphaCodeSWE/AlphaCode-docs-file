@@ -5,7 +5,7 @@
 - I documenti in formato **.pdf** si trovano all'interno di [documents](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/documents), mentre i file **.typ** sono all'intero di [sources](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/sources)
 - La versione aggioranta di ogni documento è anche disponibile sul sito web: [AlphCode](https://alphacodeswe.github.io/AlphaCode-sito/)
 - Le varie fasi prima del documento finale, vengono archiviate nella release e sempre raggiungibile tramite il sito web, nella sezione contatti.
-# Gruppo
+# Gruppo 19
 | Nome e Cognome | Matricola  | Mail   |
 |-----------|-------------|-------------|
 | Nicolò Bovo    | 2042885 | nicolo.bovo.1@studenti.unipd.it      |
