@@ -3,7 +3,7 @@
 - In questa reposity sono presenti tutti i documenti: verbali e documentazione sia interna che esterna
 - Tutti i documenti sono prodotti utilizzando [Typst](https://typst.app/)
 - I documenti in formato **.pdf** si trovano all'interno di [documents](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/documents), mentre i file **.typ** sono all'intero di [sources](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/sources)
-- La versione aggioranta di ogni documento è anche disponibile sul sito web: [AlphCode](https://alphacodeswe.github.io/AlphaCode-sito/)
+- La versione aggioranta di ogni documento è anche disponibile sul sito web: [AlphaCode](https://alphacodeswe.github.io/AlphaCode-sito/)
 - Le varie fasi prima del documento finale, vengono archiviate nella release e sempre raggiungibile tramite il sito web, nella sezione contatti.
 # Gruppo 19
 | Nome e Cognome | Matricola  | Mail   |
