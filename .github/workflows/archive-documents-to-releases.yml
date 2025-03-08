@@ -1,5 +1,8 @@
 name: archive documents to releases
 on:
+  workflow_run:
+    workflows: ["Publish Build to Pages"]
+    types: [completed]
   push:
     tags:
       - '*'
@@ -13,13 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: restore timestamps
+      - name: Restore timestamps
         uses: chetan/git-restore-mtime-action@v2
-      - name: create release if it is a tag
+      - name: Create release if tag exists
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           pushd "documents/${GITHUB_REF_NAME}" 
