@@ -1,7 +1,8 @@
-name: archive documents to releases
+name: Archive Documents to Release
+
 on:
   workflow_run:
-    workflows: ["Publish Build to Pages"]
+    workflows: ["publish latest build to pages"]
     types: [completed]
   push:
     tags:
@@ -25,7 +26,7 @@ jobs:
       - name: Create release if tag exists
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          pushd "documents/${GITHUB_REF_NAME}" 
+          pushd "documents/${GITHUB_REF_NAME}"
           zip -r "${GITHUB_REF_NAME}.zip" .
           popd
           mv "documents/${GITHUB_REF_NAME}/${GITHUB_REF_NAME}.zip" .
