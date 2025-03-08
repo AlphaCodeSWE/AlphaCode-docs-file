@@ -4,7 +4,7 @@ name: Run workflows in sequence
 on:
   push:
     branches:
-      - master  # O la branch che preferisci
+      - main
   workflow_dispatch:
 
 jobs:
