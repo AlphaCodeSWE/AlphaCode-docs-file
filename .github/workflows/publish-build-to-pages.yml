@@ -1,10 +1,9 @@
-name: Publish Build to Pages
+name: publish latest build to pages
 
 on:
   workflow_run:
     workflows: ["Build Typst Documentation"]
-    types:
-      - completed
+    types: [completed]
 
 permissions:
   contents: read
@@ -12,37 +11,37 @@ permissions:
   pages: write
 
 jobs:
-  publish:
+  pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
-      - id: checkout
-        name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - id: restore
-        name: Restore timestamps
+      - name: Restore Timestamps
         uses: chetan/git-restore-mtime-action@v2
 
-      - id: generate
-        name: Generate directory listings
+      - name: Generate Directory Listings
         uses: jayanta525/github-pages-directory-listing@main
         with:
           FOLDER: documents
         env:
           TZ: Europe/Rome
 
-      - id: upload
-        name: Upload artifact for Pages
+      - name: Upload Artifact for Pages
         uses: actions/upload-pages-artifact@v3
         with:
           name: pages
           path: documents/
 
-      - id: deployment
-        name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
         with:
           artifact_name: pages
-          branch: gh-pages
+          
