@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-    
     paths-ignore:
       - 'documents/candidatura/*.pdf'
 
@@ -14,46 +13,38 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
+      - name: Pull
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Typst via Cargo
+      - name: Install Typst
         run: |
           cargo install --locked typst-cli
           typst --version
 
-      - name: Create PDF output folder
+      - name: Create PDF folder
         run: mkdir -p documents/candidatura
 
-      - name: Compile Typst Document
+      - name: Compile
         run: typst compile sources/candidatura/release.typ documents/candidatura/release.pdf
 
-      - name: Stash local changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git stash --include-untracked
-
-      - name: Pull latest changes
-        run: git pull --rebase origin main
-
-      - name: Apply stash
-        run: git stash pop
-
-      - name: Commit and push PDF
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/candidatura/release.pdf
           if git diff --cached --quiet; then
-            echo "Nessuna modifica da committare."
             exit 0
           fi
           git commit -m "Aggiorna PDF [skip ci]"
