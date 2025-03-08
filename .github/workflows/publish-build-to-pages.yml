@@ -19,15 +19,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: restore timestamps
+      - name: Restore timestamps
         uses: chetan/git-restore-mtime-action@v2
 
-      - name: generate directory listings
+      - name: Generate directory listings
         uses: jayanta525/github-pages-directory-listing@main
         with:
           FOLDER: documents
@@ -40,8 +40,9 @@ jobs:
           name: pages
           path: documents/
 
-      - name: Deploy to Github pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
         with:
           artifact_name: pages
+          branch: gh-pages
