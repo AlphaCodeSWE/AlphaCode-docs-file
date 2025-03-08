@@ -1,0 +1,57 @@
+name: Build Typst Documentation
+
+on:
+  push:
+    branches:
+      - main
+    # Importante: ignora i push che riguardano SOLO il PDF generato
+    # in modo da non innescare un ciclo infinito di build.
+    paths-ignore:
+      - 'documents/candidatura/*.pdf'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true  # Mantiene credenziali per poter pushare
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Typst via Cargo
+        run: |
+          cargo install --locked typst-cli
+          typst --version
+
+      - name: Create PDF output folder
+        run: mkdir -p documents/candidatura
+
+      - name: Compile Typst Document
+        run: typst compile sources/candidatura/release.typ documents/candidatura//release.pdf
+
+      - name: Commit and push PDF
+        run: |
+          # Configura nome ed email per il commit
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Aggiunge il PDF al commit
+          git add documents/candidatura/release.pdf
+
+          # Se non ci sono modifiche, esci (evita errori se il PDF è invariato)
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da committare."
+            exit 0
+          fi
+
+          git commit -m "Aggiorna PDF [skip ci]"
+          
+          # Push su main
+          git push origin HEAD:main
