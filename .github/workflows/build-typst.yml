@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # Ignora i push che riguardano SOLO il PDF generato (per evitare loop)
+    
     paths-ignore:
       - 'documents/candidatura/*.pdf'
 
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true  # Mantiene credenziali per poter pushare
+          persist-credentials: true
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
@@ -39,33 +39,22 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Mette da parte tutte le modifiche (inclusi file non tracciati)
           git stash --include-untracked
 
       - name: Pull latest changes
-        run: |
-          git pull --rebase origin main
+        run: git pull --rebase origin main
 
       - name: Apply stash
-        run: |
-          git stash pop
+        run: git stash pop
 
       - name: Commit and push PDF
         run: |
-          # Configura nome ed email per il commit
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Aggiunge il PDF al commit
           git add documents/candidatura/release.pdf
-
-          # Se non ci sono modifiche, esci (evita errori se il PDF è invariato)
           if git diff --cached --quiet; then
             echo "Nessuna modifica da committare."
             exit 0
           fi
-
           git commit -m "Aggiorna PDF [skip ci]"
-          
-          # Push su main
           git push origin HEAD:main
