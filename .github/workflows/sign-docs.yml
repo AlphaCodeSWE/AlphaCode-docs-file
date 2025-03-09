@@ -1,0 +1,55 @@
+name: Sign Documents
+
+on:
+  workflow_run:
+    workflows: ["publish latest build to pages"]
+    types:
+      - completed
+
+jobs:
+  sign-documents:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up GPG
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg
+
+      - name: Import GPG private key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --yes --import
+
+      - name: Trust imported key
+        run: |
+          # Imposta la trust per la chiave importata (passo facoltativo)
+          KEYID=$(gpg --list-keys --with-colons | grep pub | cut -d: -f5)
+          echo -e "5\ny\n" | gpg --command-fd 0 --batch --yes --edit-key $KEYID trust
+
+      - name: Sign all PDF documents if not already signed
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          for pdf in $(find . -type f -name "*.pdf"); do
+            # Verifica se esiste già un file di firma con "AlphaCode" per questo PDF
+            if ls "${pdf%.pdf}".AlphaCode_*.sig 1> /dev/null 2>&1; then
+              echo "$pdf is already signed. Skipping..."
+            else
+              # Crea un timestamp con solo la data e definisce il nome del file di output
+              date_stamp=$(date +'%Y%m%d')
+              output="${pdf%.pdf}.AlphaCode_${date_stamp}.sig"
+              echo "Signing $pdf as $output"
+              gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --output "$output" --sign "$pdf"
+            fi
+          done
+
+      - name: Upload signed files
+        uses: actions/upload-artifact@v3
+        with:
+          name: signed-documents
+          path: '**/*.AlphaCode_*.sig'
