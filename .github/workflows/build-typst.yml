@@ -14,28 +14,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. Clona il repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Aggiorna il branch locale
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 3. Imposta la toolchain Rust (necessaria per Typst)
       - name: Set up Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      # 4. Installa Typst CLI
       - name: Install Typst CLI
         run: |
           cargo install --locked typst-cli
           typst --version
 
-      # 5. Compila i file .typ in PDF
+      # Compila tutti i file .typ in PDF
       - name: Compile all Typst files to PDF
         run: |
           find sources -type f -name "*.typ" | while read -r file; do
@@ -44,14 +40,12 @@ jobs:
             typst compile "$file" "$output"
           done
 
-      # 6. Installa Java
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      # 7. Scarica jSignPdf 2.3.0 e estrai JSignPdf.jar
       - name: Download jSignPdf 2.3.0
         run: |
           sudo apt-get update
@@ -60,12 +54,10 @@ jobs:
           unzip -j jsignpdf-2.3.0.zip "jsignpdf-2.3.0/JSignPdf.jar" -d .
           mv JSignPdf.jar jsignpdf.jar
 
-      # 8. Decodifica il certificato dal secret
       - name: Decode and set up signing certificate
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
-      # 9. Firma digitalmente i PDF (non ancora firmati)
       - name: Digitally sign new PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
@@ -74,32 +66,36 @@ jobs:
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
 
+            # Saltiamo i PDF già firmati (con _signed.pdf)
             if [[ "$filename" == *_signed.pdf ]]; then
               echo "Skipping already signed file: $filename"
+              continue
+            fi
+
+            echo "Signing $filename"
+
+            # Chiamiamo jSignPdf con i parametri vecchi
+            java -jar jsignpdf.jar \
+              "$pdf" \
+              -kst PKCS12 \
+              -ksf cert.p12 \
+              -ksp "$SIGN_CERT_PASSWORD" \
+              -ts http://timestamp.digicert.com \
+              -os _signed
+
+            # Esempio: LetteraPresentazione.pdf -> LetteraPresentazione_signed.pdf
+            # Verifichiamo se il PDF firmato esiste
+            signed_pdf="${pdf%.pdf}_signed.pdf"
+            if [ -f "$signed_pdf" ]; then
+              echo "Signed PDF created: $signed_pdf"
+              # Rimuoviamo l'originale
+              rm "$pdf"
             else
-              base="${filename%.pdf}"
-              newfile="${base}_signed.pdf"
-              echo "Signing $filename -> $newfile"
-
-              # Eseguiamo jSignPdf 2.3.0 con il subcomando signpdf
-              java -jar jsignpdf.jar signpdf \
-                --ksType=pkcs12 \
-                --ksFile=cert.p12 \
-                --ksPass="$SIGN_CERT_PASSWORD" \
-                --tsa=http://timestamp.digicert.com \
-                "$pdf" "$pdf.signed"
-
-              if [ -f "$pdf.signed" ]; then
-                mv "$pdf.signed" "$dir/$newfile"
-                rm "$pdf"
-              else
-                echo "Error signing $pdf"
-                exit 1
-              fi
+              echo "Error signing $pdf"
+              exit 1
             fi
           done
 
-      # 10. Commit e push dei PDF firmati
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
