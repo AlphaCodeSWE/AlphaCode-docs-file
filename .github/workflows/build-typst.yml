@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # Ignora i PDF già generati, così non ritrigghiamo inutilmente la pipeline
+    # Ignora i PDF già generati, così evitiamo loop
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Esegue un pull per assicurarsi di avere l'ultima versione del branch main
+      # 2. Pull per sincronizzare con main
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
@@ -39,9 +39,9 @@ jobs:
       # 5. Compila tutti i file .typ in PDF
       - name: Compile all Typst files to PDF
         run: |
-          # Trova tutti i file .typ in 'sources' e sottocartelle
+          # Cerca i file .typ in 'sources/' (sottocartelle incluse)
           find sources -type f -name "*.typ" | while read -r file; do
-            # Converte il path da sources/... a documents/... e l'estensione .typ in .pdf
+            # Sostituisce 'sources/... .typ' con 'documents/... .pdf'
             output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
             mkdir -p "$(dirname "$output")"
             typst compile "$file" "$output"
@@ -54,29 +54,32 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      # 7. Scarica jSignPdf
+      # 7. Scarica jSignPdf 2.2.0 da SourceForge
       - name: Download jSignPdf
         run: |
-          # Link aggiornato alla release v2.2 con dipendenze
-          wget -q https://github.com/jespersmuts/jsignpdf/releases/download/v2.2/jsignpdf-2.2-jar-with-dependencies.jar -O jsignpdf.jar
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          wget -q https://downloads.sourceforge.net/project/jsignpdf/jsignpdf/2.2.0/jsignpdf-2.2.0.zip -O jsignpdf-2.2.0.zip
+          unzip -j jsignpdf-2.2.0.zip "jsignpdf-2.2.0/jsignpdf-2.2.0-jar-with-dependencies.jar" -d .
+          mv jsignpdf-2.2.0-jar-with-dependencies.jar jsignpdf.jar
 
       # 8. Decodifica il certificato dal secret
       - name: Decode and set up signing certificate
         run: |
-          # Il certificato in Base64 (SIGN_CERT) viene decodificato e salvato in cert.p12
+          # Il certificato (SIGN_CERT) è in Base64, lo decodifichiamo in cert.p12
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
-      # 9. Firma digitalmente i nuovi PDF
+      # 9. Firma digitalmente i PDF
       - name: Digitally sign new PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: |
-          # Cerca tutti i PDF in documents/ e firma quelli che non finiscono con "_signed.pdf"
+          # Firma i PDF in 'documents/' non ancora firmati (quelli che non finiscono con "_signed.pdf")
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
 
-            # Se il PDF è già firmato, lo saltiamo
+            # Se il file è già firmato, salta
             if [[ "$filename" == *_signed.pdf ]]; then
               echo "Skipping already signed file: $filename"
             else
@@ -84,7 +87,7 @@ jobs:
               newfile="${base}_signed.pdf"
               echo "Signing $filename -> $newfile"
 
-              # Firma con jSignPdf, usando il TSA (Time Stamping Authority) di DigiCert
+              # Firma con jSignPdf, usando la TSA di DigiCert
               java -jar jsignpdf.jar \
                 -storetype pkcs12 \
                 -keystore cert.p12 \
@@ -92,7 +95,7 @@ jobs:
                 -tsaUrl http://timestamp.digicert.com \
                 "$pdf" "$pdf.signed"
 
-              # Se il file firmato è stato creato, rinominiamo e rimuoviamo l'originale
+              # Se il file firmato è stato creato, rinominalo e rimuovi l'originale
               if [ -f "$pdf.signed" ]; then
                 mv "$pdf.signed" "$dir/$newfile"
                 rm "$pdf"
@@ -109,7 +112,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/
-          # Se non ci sono modifiche, non facciamo il commit
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
