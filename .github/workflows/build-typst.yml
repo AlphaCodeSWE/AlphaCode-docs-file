@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # Evita loop ignorando PDF già generati
+    # Ignoriamo i PDF per evitare loop continui quando facciamo push dei PDF stessi
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -12,14 +12,14 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-sign:
     runs-on: ubuntu-latest
     steps:
       # 1. Checkout del repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Pull per sincronizzare con main
+      # 2. Pull per sincronizzare con main (evitiamo conflitti)
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
@@ -45,14 +45,34 @@ jobs:
             typst compile "$file" "$output"
           done
 
-      # 6. Installa Java
+      # 6. Commit e push dei PDF NON firmati
+      - name: Commit and push unsigned PDFs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add documents/
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica da commitare (PDF invariati)"
+          else
+            git commit -m "Aggiungi PDF non firmati"
+            git push origin HEAD:main
+          fi
+
+      # 7. Pull di nuovo per avere lo stato aggiornato (compreso il commit appena fatto)
+      - name: Pull again
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
+      # 8. Installa Java (richiesto da jSignPdf)
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      # 7. Scarica e scompatta jSignPdf 2.3.0 (con tutte le librerie)
+      # 9. Scarica e scompatta jSignPdf 2.3.0 (con tutte le librerie)
       - name: Download jSignPdf 2.3.0
         run: |
           sudo apt-get update
@@ -60,32 +80,27 @@ jobs:
           wget -q "https://sourceforge.net/projects/jsignpdf/files/stable/JSignPdf-2.3.0/jsignpdf-2.3.0.zip/download" -O jsignpdf-2.3.0.zip
           unzip jsignpdf-2.3.0.zip -d jsignpdf-2.3.0
 
-      # 8. Decodifica il certificato dal secret (PKCS#12 in Base64)
+      # 10. Decodifica il certificato dal secret (PKCS#12 in Base64)
       - name: Decode and set up signing certificate
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
-      # 9. Firma i PDF (modalità silenziosa) usando tutta la classpath jSignPdf
-      - name: Digitally sign new PDFs
+      # 11. Firma i PDF e rimuove quelli non firmati
+      - name: Digitally sign and remove unsigned PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
-          # Aggiungiamo un'opzione per sopprimere i warning di riflessione
           JAVA_TOOL_OPTIONS: "--add-opens=java.base/sun.security.pkcs12=ALL-UNNAMED"
         run: |
-          # (Eventuale rimozione/commento di righe in .gitignore se ignorano *.pdf)
-          # sed -i 's/^\(\*\.\?pdf\|documents\/\)/#\1/g' .gitignore || true
-
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
 
-            # Salta se già firmato
+            # Se è già firmato, salta
             if [[ "$filename" == *_signed.pdf ]]; then
               continue
             fi
 
-            echo "Firmo $filename in modalità silenziosa..."
+            echo "Firmo $filename..."
 
-            # Esegui jSignPdf con classpath estesa (JSignPdf.jar + lib/*)
             pushd jsignpdf-2.3.0 > /dev/null
             java -cp "JSignPdf.jar:lib/*" net.sf.jsignpdf.JSignPdf \
               -q \
@@ -97,11 +112,11 @@ jobs:
               ../"$pdf"
             popd > /dev/null
 
-            # Controlla se è stato creato il PDF firmato
+            # Verifica se è stato creato il PDF firmato
             signed_pdf="${pdf%.pdf}_signed.pdf"
             if [ -f "$signed_pdf" ]; then
               echo "PDF firmato creato: $signed_pdf"
-              # Rimuove l'originale non firmato
+              # Rimuove l'originale
               rm "$pdf"
             else
               echo "Errore nella firma di $pdf"
@@ -109,15 +124,15 @@ jobs:
             fi
           done
 
-      # 10. Commit e push dei PDF firmati
+      # 12. Commit e push dei PDF firmati (rimuovendo quelli non firmati)
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/
           if git diff --cached --quiet; then
-            echo "Nessuna modifica da commitare"
+            echo "Nessuna modifica da commitare (probabilmente nessun PDF da firmare)"
             exit 0
           fi
-          git commit -m "Aggiorna PDF con firma digitale (modalità silenziosa)"
+          git commit -m "Sostituisci PDF non firmati con PDF firmati"
           git push origin HEAD:main
