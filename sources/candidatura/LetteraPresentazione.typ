@@ -1,5 +1,6 @@
 #set page(width: 210mm, height: 297mm, margin: 2.5cm)
-#set text(font: "DejaVu Serif", size: 12pt, leading: 1.2)
+#set text(font: "DejaVu Serif",size: 12pt,line-height: 14pt)
+
 
 #set page-numbering(off)
 
