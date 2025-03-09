@@ -37,7 +37,7 @@ jobs:
         run: mkdir -p documents/candidatura
 
       - name: Compile
-        run: typst compile sources/candidatura/release.typ documents/candidatura/release.pdf
+        run: typst compile sources/candidatura/LetteraPresentazione.typ documents/candidatura/LetteraPresentazione.pdf
 
       - name: Commit and push
         run: |
@@ -47,5 +47,5 @@ jobs:
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "Aggiorna PDF [skip ci]"
+          git commit -m "Aggiorna PDF "
           git push origin HEAD:main
