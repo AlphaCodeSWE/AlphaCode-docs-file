@@ -65,7 +65,6 @@ jobs:
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
 
-            # Salta i PDF già firmati
             if [[ "$filename" == *_signed.pdf ]]; then
               echo "Skipping already signed file: $filename"
             else
@@ -73,11 +72,10 @@ jobs:
               newfile="${base}_signed.pdf"
               echo "Signing $filename -> $newfile"
 
-              # Usa i parametri corretti per jSignPdf 2.3.0
               java -jar jsignpdf.jar \
-                -ksType PKCS12 \
-                -ksFile cert.p12 \
-                -ksPass "$SIGN_CERT_PASSWORD" \
+                -kstype pkcs12 \
+                -ksfile cert.p12 \
+                -kspass "$SIGN_CERT_PASSWORD" \
                 -tsa http://timestamp.digicert.com \
                 "$pdf" "$pdf.signed"
 
