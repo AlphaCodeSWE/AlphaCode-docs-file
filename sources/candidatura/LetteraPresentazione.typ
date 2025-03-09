@@ -3,7 +3,7 @@
 #import "@preview/cetz:0.2.0": *
 
 #set page(width: 210mm, height: 297mm, margin: 2.5cm)
-#set text(size: 12pt, leading: 1.2)
+#set text(size: 12pt)
 
 #set page-numbering(off)
 
