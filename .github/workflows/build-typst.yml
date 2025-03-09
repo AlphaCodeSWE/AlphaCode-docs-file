@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
+    # Ignora i PDF già generati per evitare loop
     paths-ignore:
-      - 'documents/candidatura/*.pdf'
+      - 'documents/**/*.pdf'
 
 permissions:
   contents: write
@@ -33,19 +34,27 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      - name: Create PDF folder
-        run: mkdir -p documents/candidatura
-
-      - name: Compile
-        run: typst compile sources/candidatura/LetteraPresentazione.typ documents/candidatura/LetteraPresentazione.pdf
+      - name: Compile all Typst files
+        run: |
+          # Trova tutti i file con estensione .typ nella cartella sources
+          find sources -type f -name "*.typ" | while read -r file; do
+            # Sostituisce 'sources/' con 'documents/' e '.typ' con '.pdf'
+            output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
+            # Crea la cartella di destinazione se non esiste
+            mkdir -p "$(dirname "$output")"
+            # Compila il file .typ in PDF
+            typst compile "$file" "$output"
+          done
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add documents/candidatura/LetteraPresentazione.pdf
+          git add documents/
+          # Se non ci sono cambiamenti, esci senza committare
           if git diff --cached --quiet; then
+            echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Aggiorna PDF "
+          git commit -m "Aggiorna PDF"
           git push origin HEAD:main
