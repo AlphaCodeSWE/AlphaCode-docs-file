@@ -1,6 +1,9 @@
-#set page(width: 210mm, height: 297mm, margin: 2.5cm)
-#set text(font: "DejaVu Serif",size: 12pt,line-height: 14pt)
+#import "@preview/tablex:0.0.8": tablex, gridx, hlinex, vlinex, colspanx, rowspanx
+#import "@preview/codelst:2.0.1": sourcecode
+#import "@preview/cetz:0.2.0": *
 
+#set page(width: 210mm, height: 297mm, margin: 2.5cm)
+#set text(size: 12pt, leading: 1.2)
 
 #set page-numbering(off)
 
