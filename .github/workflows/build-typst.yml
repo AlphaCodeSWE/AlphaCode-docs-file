@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-    # Ignora i PDF già generati per evitare loop
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -46,6 +45,26 @@ jobs:
             typst compile "$file" "$output"
           done
 
+      - name: Sign new PDFs
+        run: |
+          # Formato data: YYYYMMDD
+          date=$(date +'%Y%m%d')
+          # Cerchiamo tutti i PDF generati
+          find documents -type f -name "*.pdf" | while read -r pdf; do
+            filename=$(basename "$pdf")
+            dir=$(dirname "$pdf")
+
+            # Se il file è già "firmato" (inizia con AlphaCode_), saltiamo
+            if [[ "$filename" == AlphaCode_* ]]; then
+              echo "Skipping already signed file: $filename"
+            else
+              # Costruiamo il nuovo nome: AlphaCode_nomeFile_data.pdf
+              base="${filename%.pdf}"
+              newfile="AlphaCode_${base}_${date}.pdf"
+              mv "$pdf" "$dir/$newfile"
+            fi
+          done
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
@@ -56,5 +75,5 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Aggiorna PDF"
+          git commit -m "Aggiorna e firma PDF"
           git push origin HEAD:main
