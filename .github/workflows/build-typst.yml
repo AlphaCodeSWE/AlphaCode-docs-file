@@ -15,8 +15,8 @@ jobs:
   build-and-sign:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout del repository
-      - name: Checkout repository
+      # 1. Checkout del TUO repository principale (dove hai i .typ)
+      - name: Checkout main repo
         uses: actions/checkout@v3
 
       # 2. Pull per sincronizzare con main
@@ -39,54 +39,56 @@ jobs:
       # 5. Compila i file .typ in PDF
       - name: Compile all Typst files to PDF
         run: |
-          # Adatta "sources" alla cartella dove hai i tuoi .typ
           find sources -type f -name "*.typ" | while read -r file; do
             output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
             mkdir -p "$(dirname "$output")"
             typst compile "$file" "$output"
           done
 
-      # 6. Installa Java (necessario per jSignPdf)
+      # 6. Installa Java (necessario per Maven e jSignPdf)
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
-      # 7. Scarica e scompatta jSignPdf 2.3.0 (con tutte le librerie in lib/)
-      - name: Download jSignPdf 2.3.0
+      # 7. Clona la repository di jSignPdf (fork intoolswetrust) e compila con Maven
+      - name: Clone & build jSignPdf from source
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip
-          wget -q "https://sourceforge.net/projects/jsignpdf/files/stable/JSignPdf-2.3.0/jsignpdf-2.3.0.zip/download" -O jsignpdf-2.3.0.zip
-          unzip jsignpdf-2.3.0.zip -d jsignpdf-2.3.0
-          # Controllo del contenuto per debug (opzionale)
-          ls -R jsignpdf-2.3.0
+          sudo apt-get install -y maven
+          git clone https://github.com/intoolswetrust/jsignpdf.git jsignpdf-src
+          cd jsignpdf-src
+          mvn clean package
+          # Controlla che abbia generato correttamente i .jar in target/
+          ls -l target
 
       # 8. Decodifica il certificato dal secret (PKCS#12 in Base64)
       - name: Decode and set up signing certificate
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
-      # 9. Firma i PDF (modalità silenziosa) e rimuove gli originali
+      # 9. Firma i PDF usando il jar appena compilato
       - name: Digitally sign and remove unsigned PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
-          # Sopprime i warning di riflessione su Java 11
           JAVA_TOOL_OPTIONS: "--add-opens=java.base/sun.security.pkcs12=ALL-UNNAMED"
         run: |
+          # jSignPdf di solito produce un jar principale in "target/JSignPdf-2.3.0.jar" o simile
+          # e una cartella "target/lib" con le dipendenze. Adatta se il nome jar è diverso.
+          JSIGNPDF_JAR="jsignpdf-src/target/JSignPdf-2.3.0.jar"
+          LIB_DIR="jsignpdf-src/target/lib"
+
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
-
-            # Se è già firmato, salta
             if [[ "$filename" == *_signed.pdf ]]; then
               continue
             fi
 
-            echo "Firmo $pdf..."
+            echo "Firmo $pdf con jSignPdf compilato da sorgente..."
 
-            # Usa la classpath con JSignPdf.jar + lib/*:
-            java -cp "jsignpdf-2.3.0/JSignPdf.jar:jsignpdf-2.3.0/lib/*" net.sf.jsignpdf.JSignPdf \
+            # Includiamo JSignPdf-2.3.0.jar e tutti i .jar in target/lib nella classpath
+            java -cp "$JSIGNPDF_JAR:$LIB_DIR/*" net.sf.jsignpdf.JSignPdf \
               -q \
               -kst PKCS12 \
               -ksf cert.p12 \
@@ -95,14 +97,12 @@ jobs:
               -os _signed \
               "$pdf"
 
-            # Verifica se è stato creato il PDF firmato
             signed_pdf="${pdf%.pdf}_signed.pdf"
             if [ -f "$signed_pdf" ]; then
               echo "PDF firmato creato: $signed_pdf"
-              # Rimuove il PDF originale non firmato
               rm "$pdf"
             else
-              echo "Errore nella firma di $pdf"
+              echo "ERRORE: Non trovato $signed_pdf, firma fallita?"
               exit 1
             fi
           done
@@ -117,5 +117,5 @@ jobs:
             echo "Nessuna modifica da commitare"
             exit 0
           fi
-          git commit -m "Aggiorna PDF con firma digitale"
+          git commit -m "Aggiorna PDF con firma digitale (jSignPdf compilato da sorgente)"
           git push origin HEAD:main
