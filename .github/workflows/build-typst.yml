@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # Evitiamo loop ignorando i PDF già generati
+    # Evita loop ignorando PDF già generati
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -52,58 +52,59 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      # 7. Scarica jSignPdf 2.3.0
+      # 7. Scarica e scompatta jSignPdf 2.3.0 (con tutte le librerie)
       - name: Download jSignPdf 2.3.0
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip
           wget -q "https://sourceforge.net/projects/jsignpdf/files/stable/JSignPdf-2.3.0/jsignpdf-2.3.0.zip/download" -O jsignpdf-2.3.0.zip
-          unzip -j jsignpdf-2.3.0.zip "jsignpdf-2.3.0/JSignPdf.jar" -d .
-          mv JSignPdf.jar jsignpdf.jar
+          unzip jsignpdf-2.3.0.zip -d jsignpdf-2.3.0
 
       # 8. Decodifica il certificato dal secret (PKCS#12 in Base64)
       - name: Decode and set up signing certificate
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
-      # 9. Firma i PDF (modalità silenziosa, parametri "vecchi" di jSignPdf)
+      # 9. Firma i PDF (modalità silenziosa) usando tutta la classpath jSignPdf
       - name: Digitally sign new PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
           # Aggiungiamo un'opzione per sopprimere i warning di riflessione
           JAVA_TOOL_OPTIONS: "--add-opens=java.base/sun.security.pkcs12=ALL-UNNAMED"
         run: |
-          # Rimuoviamo (o commentiamo) eventuali linee in .gitignore che ignorano *.pdf
-          # Se necessario:
+          # (Eventuale rimozione/commento di righe in .gitignore se ignorano *.pdf)
           # sed -i 's/^\(\*\.\?pdf\|documents\/\)/#\1/g' .gitignore || true
 
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
-            dir=$(dirname "$pdf")
 
-            # Se è già firmato (contiene _signed.pdf), saltiamo
+            # Salta se già firmato
             if [[ "$filename" == *_signed.pdf ]]; then
               continue
             fi
 
-            echo "Signing $filename in quiet mode..."
-            # Aggiungiamo -q per ridurre i messaggi a schermo
-            java -jar jsignpdf.jar -q \
-              "$pdf" \
+            echo "Firmo $filename in modalità silenziosa..."
+
+            # Esegui jSignPdf con classpath estesa (JSignPdf.jar + lib/*)
+            pushd jsignpdf-2.3.0 > /dev/null
+            java -cp "JSignPdf.jar:lib/*" net.sf.jsignpdf.JSignPdf \
+              -q \
               -kst PKCS12 \
-              -ksf cert.p12 \
+              -ksf ../cert.p12 \
               -ksp "$SIGN_CERT_PASSWORD" \
               -ts http://timestamp.digicert.com \
-              -os _signed
+              -os _signed \
+              ../"$pdf"
+            popd > /dev/null
 
-            # Verifichiamo se è stato creato il PDF firmato
+            # Controlla se è stato creato il PDF firmato
             signed_pdf="${pdf%.pdf}_signed.pdf"
             if [ -f "$signed_pdf" ]; then
-              echo "Signed PDF created: $signed_pdf"
-              # Eliminiamo il PDF originale
+              echo "PDF firmato creato: $signed_pdf"
+              # Rimuove l'originale non firmato
               rm "$pdf"
             else
-              echo "Error signing $pdf"
+              echo "Errore nella firma di $pdf"
               exit 1
             fi
           done
@@ -113,11 +114,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Aggiungiamo tutti i PDF generati/firmati
           git add documents/
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "Nessuna modifica da commitare"
             exit 0
           fi
-          git commit -m "Update PDFs with digital signature (quiet mode)"
+          git commit -m "Aggiorna PDF con firma digitale (modalità silenziosa)"
           git push origin HEAD:main
