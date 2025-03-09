@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+    # Ignora i PDF già generati per evitare loop
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -14,66 +15,80 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: true
 
-      - name: Pull
+      - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      - name: Set up Rust
+      - name: Set up Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Typst
+      - name: Install Typst CLI
         run: |
           cargo install --locked typst-cli
           typst --version
 
-      - name: Compile all Typst files
+      - name: Compile all Typst files to PDF
         run: |
-          # Trova tutti i file con estensione .typ nella cartella sources
           find sources -type f -name "*.typ" | while read -r file; do
-            # Sostituisce 'sources/' con 'documents/' e '.typ' con '.pdf'
+            # Converte il percorso da sources/… a documents/… e l'estensione .typ in .pdf
             output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
-            # Crea la cartella di destinazione se non esiste
             mkdir -p "$(dirname "$output")"
-            # Compila il file .typ in PDF
             typst compile "$file" "$output"
           done
 
-      - name: Sign new PDFs
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Download jSignPdf
         run: |
-          # Formato data: YYYYMMDD
-          date=$(date +'%Y%m%d')
-          # Cerchiamo tutti i PDF generati
+          wget -q https://github.com/jespersmuts/jsignpdf/releases/download/2.2/jsignpdf.jar -O jsignpdf.jar
+
+      - name: Decode and set up signing certificate
+        run: |
+          # Decodifica il certificato dal secret SIGN_CERT e lo salva come cert.p12
+          echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
+
+      - name: Digitally sign new PDFs
+        env:
+          SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
+        run: |
+          # Per ogni PDF in documents che non risulta già firmato (non termina con _signed.pdf)
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
-
-            # Se il file è già "firmato" (inizia con AlphaCode_), saltiamo
-            if [[ "$filename" == AlphaCode_* ]]; then
+            if [[ "$filename" == *_signed.pdf ]]; then
               echo "Skipping already signed file: $filename"
             else
-              # Costruiamo il nuovo nome: AlphaCode_nomeFile_data.pdf
               base="${filename%.pdf}"
-              newfile="AlphaCode_${base}_${date}.pdf"
-              mv "$pdf" "$dir/$newfile"
+              newfile="${base}_signed.pdf"
+              echo "Signing $filename -> $newfile"
+              java -jar jsignpdf.jar -storetype pkcs12 -keystore cert.p12 -storepass "$SIGN_CERT_PASSWORD" -tsaUrl http://timestamp.digicert.com "$pdf" "$pdf.signed"
+              if [ -f "$pdf.signed" ]; then
+                mv "$pdf.signed" "$dir/$newfile"
+                rm "$pdf"
+              else
+                echo "Error signing $pdf"
+                exit 1
+              fi
             fi
           done
 
-      - name: Commit and push
+      - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/
-          # Se non ci sono cambiamenti, esci senza committare
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Aggiorna e firma PDF"
+          git commit -m "Update PDFs with digital signature"
           git push origin HEAD:main
