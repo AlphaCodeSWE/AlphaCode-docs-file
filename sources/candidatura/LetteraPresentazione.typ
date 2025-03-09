@@ -7,7 +7,7 @@
 
 #header(
   
-  image("../candidatura/logo.png", width: 2cm, keep-aspect-ratio: true)
+  image("logo.png", width: 2cm, keep-aspect-ratio: true)
   
   align(right, text("alphacodeswe@gmail.com"))
 )
