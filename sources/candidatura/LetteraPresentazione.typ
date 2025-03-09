@@ -7,7 +7,7 @@
 
 #header(
   
-  image("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/edit/main/sources/logo.png", width: 2cm, keep-aspect-ratio: true)
+  image("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/blob/main/sources/logo.png", width: 2cm, keep-aspect-ratio: true)
   
   align(right, text("alphacodeswe@gmail.com"))
 )
