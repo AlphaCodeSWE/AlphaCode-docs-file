@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # Ignora i PDF già generati per evitare loop
+    # Ignora i PDF già generati, così non ritrigghiamo inutilmente la pipeline
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -15,62 +15,84 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Clona il repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2. Esegue un pull per assicurarsi di avere l'ultima versione del branch main
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
+      # 3. Installa la toolchain Rust
       - name: Set up Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      # 4. Installa Typst CLI
       - name: Install Typst CLI
         run: |
           cargo install --locked typst-cli
           typst --version
 
+      # 5. Compila tutti i file .typ in PDF
       - name: Compile all Typst files to PDF
         run: |
+          # Trova tutti i file .typ in 'sources' e sottocartelle
           find sources -type f -name "*.typ" | while read -r file; do
-            # Converte il percorso da sources/… a documents/… e l'estensione .typ in .pdf
+            # Converte il path da sources/... a documents/... e l'estensione .typ in .pdf
             output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
             mkdir -p "$(dirname "$output")"
             typst compile "$file" "$output"
           done
 
+      # 6. Imposta Java
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
+      # 7. Scarica jSignPdf
       - name: Download jSignPdf
         run: |
-          wget -q https://github.com/jespersmuts/jsignpdf/releases/download/2.2/jsignpdf.jar -O jsignpdf.jar
+          # Link aggiornato alla release v2.2 con dipendenze
+          wget -q https://github.com/jespersmuts/jsignpdf/releases/download/v2.2/jsignpdf-2.2-jar-with-dependencies.jar -O jsignpdf.jar
 
+      # 8. Decodifica il certificato dal secret
       - name: Decode and set up signing certificate
         run: |
-          # Decodifica il certificato dal secret SIGN_CERT e lo salva come cert.p12
+          # Il certificato in Base64 (SIGN_CERT) viene decodificato e salvato in cert.p12
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
+      # 9. Firma digitalmente i nuovi PDF
       - name: Digitally sign new PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: |
-          # Per ogni PDF in documents che non risulta già firmato (non termina con _signed.pdf)
+          # Cerca tutti i PDF in documents/ e firma quelli che non finiscono con "_signed.pdf"
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
+
+            # Se il PDF è già firmato, lo saltiamo
             if [[ "$filename" == *_signed.pdf ]]; then
               echo "Skipping already signed file: $filename"
             else
               base="${filename%.pdf}"
               newfile="${base}_signed.pdf"
               echo "Signing $filename -> $newfile"
-              java -jar jsignpdf.jar -storetype pkcs12 -keystore cert.p12 -storepass "$SIGN_CERT_PASSWORD" -tsaUrl http://timestamp.digicert.com "$pdf" "$pdf.signed"
+
+              # Firma con jSignPdf, usando il TSA (Time Stamping Authority) di DigiCert
+              java -jar jsignpdf.jar \
+                -storetype pkcs12 \
+                -keystore cert.p12 \
+                -storepass "$SIGN_CERT_PASSWORD" \
+                -tsaUrl http://timestamp.digicert.com \
+                "$pdf" "$pdf.signed"
+
+              # Se il file firmato è stato creato, rinominiamo e rimuoviamo l'originale
               if [ -f "$pdf.signed" ]; then
                 mv "$pdf.signed" "$dir/$newfile"
                 rm "$pdf"
@@ -81,11 +103,13 @@ jobs:
             fi
           done
 
+      # 10. Commit e push dei PDF firmati
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/
+          # Se non ci sono modifiche, non facciamo il commit
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
