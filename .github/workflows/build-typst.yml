@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+    # Evitiamo loop ignorando i PDF già generati
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -14,24 +15,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout del repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2. Pull per sincronizzare con main
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
+      # 3. Installa la toolchain Rust (necessaria per Typst)
       - name: Set up Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      # 4. Installa Typst CLI
       - name: Install Typst CLI
         run: |
           cargo install --locked typst-cli
           typst --version
 
-      # Compila tutti i file .typ in PDF
+      # 5. Compila i file .typ in PDF
       - name: Compile all Typst files to PDF
         run: |
           find sources -type f -name "*.typ" | while read -r file; do
@@ -40,12 +45,14 @@ jobs:
             typst compile "$file" "$output"
           done
 
+      # 6. Installa Java
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
 
+      # 7. Scarica jSignPdf 2.3.0
       - name: Download jSignPdf 2.3.0
         run: |
           sudo apt-get update
@@ -54,28 +61,34 @@ jobs:
           unzip -j jsignpdf-2.3.0.zip "jsignpdf-2.3.0/JSignPdf.jar" -d .
           mv JSignPdf.jar jsignpdf.jar
 
+      # 8. Decodifica il certificato dal secret (PKCS#12 in Base64)
       - name: Decode and set up signing certificate
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > cert.p12
 
+      # 9. Firma i PDF (modalità silenziosa, parametri "vecchi" di jSignPdf)
       - name: Digitally sign new PDFs
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
+          # Aggiungiamo un'opzione per sopprimere i warning di riflessione
+          JAVA_TOOL_OPTIONS: "--add-opens=java.base/sun.security.pkcs12=ALL-UNNAMED"
         run: |
+          # Rimuoviamo (o commentiamo) eventuali linee in .gitignore che ignorano *.pdf
+          # Se necessario:
+          # sed -i 's/^\(\*\.\?pdf\|documents\/\)/#\1/g' .gitignore || true
+
           find documents -type f -name "*.pdf" | while read -r pdf; do
             filename=$(basename "$pdf")
             dir=$(dirname "$pdf")
 
-            # Saltiamo i PDF già firmati (con _signed.pdf)
+            # Se è già firmato (contiene _signed.pdf), saltiamo
             if [[ "$filename" == *_signed.pdf ]]; then
-              echo "Skipping already signed file: $filename"
               continue
             fi
 
-            echo "Signing $filename"
-
-            # Chiamiamo jSignPdf con i parametri vecchi
-            java -jar jsignpdf.jar \
+            echo "Signing $filename in quiet mode..."
+            # Aggiungiamo -q per ridurre i messaggi a schermo
+            java -jar jsignpdf.jar -q \
               "$pdf" \
               -kst PKCS12 \
               -ksf cert.p12 \
@@ -83,12 +96,11 @@ jobs:
               -ts http://timestamp.digicert.com \
               -os _signed
 
-            # Esempio: LetteraPresentazione.pdf -> LetteraPresentazione_signed.pdf
-            # Verifichiamo se il PDF firmato esiste
+            # Verifichiamo se è stato creato il PDF firmato
             signed_pdf="${pdf%.pdf}_signed.pdf"
             if [ -f "$signed_pdf" ]; then
               echo "Signed PDF created: $signed_pdf"
-              # Rimuoviamo l'originale
+              # Eliminiamo il PDF originale
               rm "$pdf"
             else
               echo "Error signing $pdf"
@@ -96,14 +108,16 @@ jobs:
             fi
           done
 
+      # 10. Commit e push dei PDF firmati
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Aggiungiamo tutti i PDF generati/firmati
           git add documents/
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
           fi
-          git commit -m "Update PDFs with digital signature"
+          git commit -m "Update PDFs with digital signature (quiet mode)"
           git push origin HEAD:main
