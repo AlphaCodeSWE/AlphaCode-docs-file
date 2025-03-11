@@ -1,4 +1,4 @@
-#import "../template/template.typ": *
+#import "../../template/template.typ": *
 
 #set outline(title: "Table of contents")
 
