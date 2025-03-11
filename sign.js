@@ -19,18 +19,17 @@ function getAllPDFs(dir) {
   return results;
 }
 
-// Funzione per aggiungere firma visibile con logo, data e ora
+// Funzione per aggiungere firma visibile con logo, data e ora sull'ultima pagina
 async function addVisibleSignature(signedFilePath, signerName, logoPath) {
   const pdfBytes = fs.readFileSync(signedFilePath);
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const pages = pdfDoc.getPages();
-  const firstPage = pages[0];
+  const lastPage = pages[pages.length - 1]; // Usa l'ultima pagina
 
   // Carica il logo se esiste
   let logoImage;
   if (fs.existsSync(logoPath)) {
     const logoBytes = fs.readFileSync(logoPath);
-    // Determina se il logo è PNG (usa embedPng) o JPG (embedJpg)
     try {
       logoImage = await pdfDoc.embedPng(logoBytes);
     } catch {
@@ -38,38 +37,37 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
     }
   }
 
-  // Calcola il posizionamento in basso a destra
-  const pageWidth = firstPage.getWidth();
-  const width = 150;
-  const height = 60;
-  const x = pageWidth - width - 20;
-  const y = 20;
+  // Calcola il posizionamento in basso a sinistra
+  const x = 20;       // margine sinistro
+  const y = 20;       // margine inferiore
+  const width = 250;  // larghezza del blocco firma
+  const height = 80;  // altezza del blocco firma
 
   // Testo della firma con data e ora
   const text = `Firmato da: ${signerName}\nData: ${new Date().toLocaleString()}`;
 
-  // Aggiungi un rettangolo bianco di sfondo (opzionale)
-  firstPage.drawRectangle({
+  // Aggiungi un rettangolo bianco di sfondo per la firma
+  lastPage.drawRectangle({
     x, y,
     width, height,
     color: rgb(1, 1, 1),
     opacity: 0.8,
   });
 
-  // Se il logo è presente, aggiungilo
+  // Se il logo è presente, aggiungilo ingrandito
   if (logoImage) {
-    firstPage.drawImage(logoImage, {
+    lastPage.drawImage(logoImage, {
       x: x + 5,
       y: y + 5,
-      width: 50,
-      height: 50,
+      width: 80,   // logo ingrandito
+      height: 80,
     });
   }
 
-  // Aggiungi il testo della firma in basso a destra
-  firstPage.drawText(text, {
-    x: x + 60,
-    y: y + 30,
+  // Aggiungi il testo della firma, posizionato a destra del logo
+  lastPage.drawText(text, {
+    x: x + 90,
+    y: y + height - 20, // posizione verticale regolata
     size: 10,
     color: rgb(0, 0, 0),
   });
