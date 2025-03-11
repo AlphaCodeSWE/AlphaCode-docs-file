@@ -1,10 +1,9 @@
-name: Build Typst Documentation
+name: Build Typst Documentation, Sign PDFs and Commit
 
 on:
   push:
     branches:
       - main
-    # Ignora i PDF già generati per evitare loop
     paths-ignore:
       - 'documents/**/*.pdf'
 
@@ -12,46 +11,93 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-sign:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      #  Checkout del repository
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
-      - name: Pull
+      #  Pull delle ultime modifiche
+      - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
-      - name: Set up Rust
+
+      #  Setup Rust e installazione Typst CLI
+      - name: Set up Rust and Install Typst CLI
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Typst
+      - name: Install Typst CLI
         run: |
           cargo install --locked typst-cli
           typst --version
-      - name: Compile all Typst files
+
+      #  Compilazione dei file .typ in PDF
+      - name: Compile Typst files to PDF
         run: |
-          # Trova tutti i file con estensione .typ nella cartella sources
           find sources -type f -name "*.typ" | while read -r file; do
-            # Sostituisce 'sources/' con 'documents/' e '.typ' con '.pdf'
             output="documents/$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')"
-            # Crea la cartella di destinazione se non esiste
             mkdir -p "$(dirname "$output")"
-            # Compila il file .typ in PDF
             typst compile "$file" "$output"
           done
-      - name: Commit and push
+
+      #  Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      #  Inizializza package.json e installa le dipendenze per la firma digitale
+      - name: Initialize package.json and install dependencies
+        run: |
+          echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
+          npm install jsignpdf node-forge pdf-lib node-signpdf
+          cat package.json
+          ls -la node_modules
+
+      #  Caricamento del logo per la firma visibile
+      - name: Upload logo for visible signature
+        run: |
+          cp logo/logo.png logo.png  
+          ls -la logo.png
+
+      #  Creazione del certificato .p12 a partire dal secret SIGN_CERT
+      - name: Create certificate.p12 from secret
+        run: |
+          echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
+          ls -la certificate.p12
+
+      #  Esegui lo script sign.js per firmare i PDF e aggiungere la firma visibile
+      - name: Run sign.js script
+        env:
+          SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
+        run: node sign.js
+
+      #  Verifica che almeno un PDF sia stato firmato
+      - name: Verify signed PDFs exist
+        run: |
+          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
+          if [ -z "$SIGNED_FILES" ]; then
+            echo "ERROR: Nessun PDF firmato trovato!"
+            exit 1
+          else
+            echo "DEBUG: PDF firmati trovati:"
+            echo "$SIGNED_FILES"
+          fi
+
+      # Commit e push dei PDF firmati
+      - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add documents/
-          # Se non ci sono cambiamenti, esci senza committare
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "DEBUG: No changes to commit"
             exit 0
           fi
-          git commit -m "Aggiorna PDF"
+          git commit -m "Aggiorna PDF con firma digitale"
           git push origin HEAD:main
