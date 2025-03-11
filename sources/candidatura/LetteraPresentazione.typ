@@ -1,26 +1,21 @@
-// sample/main.typ
+// File: sources/candidatura/LetteraPresentazione.typ
 
-#show: doc
+// Importa il template principale (assicurati che il percorso sia corretto rispetto alla posizione del file)
+#import "../main.typ": main
 
+// Definizione del contenuto della lettera di presentazione
+let lettera = "
+Gentile Responsabile,
 
-#set text(font: "Barlow")
-#set heading(font: "Source Sans Pro")
+mi chiamo Mario Rossi e sono entusiasta di candidarmi per il ruolo di Sviluppatore Software nella vostra azienda. 
+Nel corso della mia esperienza professionale ho maturato competenze nel campo della programmazione, 
+del problem solving e del lavoro in team, che ritengo possano contribuire al successo del vostro team.
 
+Ringraziandovi per l'attenzione, resto a disposizione per un colloquio conoscitivo.
 
-image("template/assets/AlphaCodeLogo.png", width: 5cm)
+Cordiali saluti,
+Mario Rossi
+"
 
-
-= Documento di Test
-
-Questo è un documento Typst di prova, generato automaticamente e poi firmato digitalmente.
-
-== Sezione 1
-
-Testo di esempio.
-
-== Sezione 2
-
-Altra sezione del documento.
-
----
-Data di generazione: #date(today())
+// Richiama il template principale, passando il contenuto della lettera come parametro
+main(lettera)
