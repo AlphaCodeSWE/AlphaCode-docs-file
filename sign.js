@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { PDFDocument, rgb } = require('pdf-lib');
 
-// Funzione per cercare ricorsivamente tutti i PDF non firmati nella cartella documents
+// Funzione per cercare ricorsivamente tutti i PDF (non firmati) nella cartella documents
 function getAllPDFs(dir) {
   let results = [];
   const list = fs.readdirSync(dir);
@@ -12,7 +12,10 @@ function getAllPDFs(dir) {
     const stat = fs.statSync(filePath);
     if (stat && stat.isDirectory()) {
       results = results.concat(getAllPDFs(filePath));
-    } else if (file.toLowerCase().endsWith('.pdf') && !file.toLowerCase().endsWith('_signed.pdf')) {
+    } else if (
+      file.toLowerCase().endsWith('.pdf') &&
+      !file.toLowerCase().endsWith('_signed.pdf')
+    ) {
       results.push(filePath);
     }
   });
@@ -26,16 +29,16 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
   const pages = pdfDoc.getPages();
   const lastPage = pages[pages.length - 1]; // Usa l'ultima pagina
 
-  // Dimensioni della pagina
+  // Determina dimensioni della pagina per ancorare il blocco in basso a destra
   const pageWidth = lastPage.getWidth();
   const pageHeight = lastPage.getHeight();
 
   // Dimensioni e posizione del riquadro firma
-  const width = 300;  // Larghezza del riquadro
-  const height = 60;  // Altezza del riquadro
-  const margin = 20;  // Margine dal bordo
-  const x = pageWidth - width - margin; // In basso a destra
-  const y = margin;                     // In basso
+  const boxWidth = 300; // Larghezza del riquadro
+  const boxHeight = 80; // Altezza del riquadro
+  const margin = 20;    // Margine dal bordo
+  const x = pageWidth - boxWidth - margin; // Posizionamento a destra
+  const y = margin;                        // Posizionamento in basso
 
   // Carica il logo (se esiste)
   let logoImage;
@@ -48,40 +51,49 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
     }
   }
 
-  // Rettangolo bianco semi-trasparente come sfondo
+  // Rettangolo bianco di sfondo
   lastPage.drawRectangle({
     x,
     y,
-    width,
-    height,
+    width: boxWidth,
+    height: boxHeight,
     color: rgb(1, 1, 1),
     opacity: 0.8,
   });
 
-  // Posiziona il logo a sx
+  // logo 60x60
+  const logoSize = 60;
   if (logoImage) {
     lastPage.drawImage(logoImage, {
-      x: x + 5,
-      y: y + 5,
-      width: 50,  // Logo ingrandito
-      height: 50,
+      x: x + 10,           // spostato un po' a destra all'interno del box
+      y: y + 10,           // spostato un po' in alto all'interno del box
+      width: logoSize,
+      height: logoSize,
     });
   }
 
+  
+  const fontSize = 10;
+
+  const firstLineX = x + 80;        // a destra del logo
+  const firstLineY = y + 70 - 5;    // 5 px sotto il top del logo
+  const secondLineX = x + 80;       
+  const secondLineY = y + 10 + 5;   // 5 px sopra il bottom del logo
+
   // riga firmato da
   lastPage.drawText(`Firmato da: ${signerName}`, {
-    x: x + 60,
-    y: y + 35,
-    size: 10,
+    x: firstLineX,
+    y: firstLineY,
+    size: fontSize,
     color: rgb(0, 0, 0),
   });
 
   // riga data
-  const currentDateTime = new Date().toLocaleString();
-  lastPage.drawText(`Data: ${currentDateTime}`, {
-    x: x + 60,
-    y: y + 20,
-    size: 10,
+  const dataString = new Date().toLocaleString();
+  lastPage.drawText(`Data: ${dataString}`, {
+    x: secondLineX,
+    y: secondLineY,
+    size: fontSize,
     color: rgb(0, 0, 0),
   });
 
