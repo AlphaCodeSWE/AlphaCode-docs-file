@@ -26,16 +26,16 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
   const pages = pdfDoc.getPages();
   const lastPage = pages[pages.length - 1]; // Usa l'ultima pagina
 
-  // Determina dimensioni della pagina per ancorare il blocco in basso a destra
+  // Dimensioni della pagina
   const pageWidth = lastPage.getWidth();
   const pageHeight = lastPage.getHeight();
 
   // Dimensioni e posizione del riquadro firma
-  const width = 350;  // Larghezza del riquadro
+  const width = 300;  // Larghezza del riquadro
   const height = 60;  // Altezza del riquadro
   const margin = 20;  // Margine dal bordo
-  const x = pageWidth - width - margin; // Posizionamento a destra
-  const y = margin;                     // Posizionamento in basso
+  const x = pageWidth - width - margin; // In basso a destra
+  const y = margin;                     // In basso
 
   // Carica il logo (se esiste)
   let logoImage;
@@ -48,10 +48,7 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
     }
   }
 
-  // Testo firma su un'unica riga
-  const text = `Firmato da: ${signerName}   Data: ${new Date().toLocaleString()}`;
-
-  // Rettangolo bianco di sfondo 
+  // Rettangolo bianco semi-trasparente come sfondo
   lastPage.drawRectangle({
     x,
     y,
@@ -61,20 +58,29 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
     opacity: 0.8,
   });
 
-  // insert logo
+  // Posiziona il logo a sx
   if (logoImage) {
     lastPage.drawImage(logoImage, {
       x: x + 5,
       y: y + 5,
-      width: 50,
+      width: 50,  // Logo ingrandito
       height: 50,
     });
   }
 
-  // Disegna il testo firma
-  lastPage.drawText(text, {
-    x: x + 60,           // 10px dopo il bordo del logo
-    y: y + (height / 2) - 5, // Centrato verticalmente nel riquadro
+  // riga firmato da
+  lastPage.drawText(`Firmato da: ${signerName}`, {
+    x: x + 60,
+    y: y + 35,
+    size: 10,
+    color: rgb(0, 0, 0),
+  });
+
+  // riga data
+  const currentDateTime = new Date().toLocaleString();
+  lastPage.drawText(`Data: ${currentDateTime}`, {
+    x: x + 60,
+    y: y + 20,
     size: 10,
     color: rgb(0, 0, 0),
   });
