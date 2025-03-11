@@ -36,7 +36,8 @@ jobs:
       - name: Compile main.typ to PDF
         run: |
           mkdir -p documents/
-          typst compile --root . sample/main.typ documents/main.pdf
+          # Imposta come root la cartella padre (repository root)
+          typst compile --root .. sample/main.typ documents/main.pdf
           echo "DEBUG: Compilato sample/main.typ in documents/main.pdf"
 
       - name: Setup Node.js
