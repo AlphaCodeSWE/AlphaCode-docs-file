@@ -88,7 +88,7 @@ async function signFiles() {
   }
 
   // Pcarico logo per firma
-  const logoPath = path.join(__dirname, 'logo.png'); 
+  const logoPath = path.join(__dirname, 'AlphaCodeLogo.png'); 
 
   // Carico il certificato PKCS#12 contenuto nelle variabili segrete di github
   const certBuffer = fs.readFileSync(path.join(__dirname, 'certificate.p12'));
