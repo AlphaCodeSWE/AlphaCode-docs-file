@@ -19,7 +19,7 @@ function getAllPDFs(dir) {
   return results;
 }
 
-// Funzione per aggiungere firma visibile con logo, data e ora sull'ultima pagina
+//faccio si che si firmi in ultima pagina
 async function addVisibleSignature(signedFilePath, signerName, logoPath) {
   const pdfBytes = fs.readFileSync(signedFilePath);
   const pdfDoc = await PDFDocument.load(pdfBytes);
@@ -37,37 +37,41 @@ async function addVisibleSignature(signedFilePath, signerName, logoPath) {
     }
   }
 
-  // Calcola il posizionamento in basso a sinistra
-  const x = 20;       // margine sinistro
-  const y = 20;       // margine inferiore
-  const width = 250;  // larghezza del blocco firma
-  const height = 80;  // altezza del blocco firma
+  // Calcolo delle dimensioni della firma e posizione a destra
+  const pageWidth = lastPage.getWidth();
+  const marginRight = 20;     // distanza dal margine destro
+  const x = pageWidth - 250 - marginRight; // 250 è la larghezza totale del blocco
+  const y = 20;               // distanza dal margine inferiore
+  const width = 250;          // larghezza del blocco firma
+  const height = 80;          // altezza del blocco firma
 
   // Testo della firma con data e ora
   const text = `Firmato da: ${signerName}\nData: ${new Date().toLocaleString()}`;
 
-  // Aggiungi un rettangolo bianco di sfondo per la firma
+   //rettangolo di firma
   lastPage.drawRectangle({
-    x, y,
-    width, height,
+    x, 
+    y,
+    width,
+    height,
     color: rgb(1, 1, 1),
     opacity: 0.8,
   });
 
-  // Se il logo è presente, aggiungilo ingrandito
+  // logo ingrandito 
   if (logoImage) {
     lastPage.drawImage(logoImage, {
       x: x + 5,
       y: y + 5,
-      width: 80,   // logo ingrandito
-      height: 80,
+      width: 50,   // dimensioni del logo
+      height: 50,
     });
   }
 
-  // Aggiungi il testo della firma, posizionato a destra del logo
+  // Aggiungo il testo della firma, posizionato a destra del logo
   lastPage.drawText(text, {
-    x: x + 90,
-    y: y + height - 20, // posizione verticale regolata
+    x: x + 60,
+    y: y + height - 20, 
     size: 10,
     color: rgb(0, 0, 0),
   });
@@ -97,6 +101,7 @@ async function signFiles() {
     console.error(`DEBUG: Errore nel leggere il file certificato ${certPath}:`, err);
     process.exit(1);
   }
+
   const passphrase = process.env.SIGN_CERT_PASSWORD;
   if (!passphrase) {
     console.error("DEBUG: La variabile SIGN_CERT_PASSWORD non è impostata.");
@@ -109,20 +114,24 @@ async function signFiles() {
       const pdfBuffer = fs.readFileSync(filePath);
       console.log(`DEBUG: Lettura completata, dimensione: ${pdfBuffer.length} bytes`);
       
+      // Firma digitale con TSA
       const options = { tsa: 'http://timestamp.digicert.com' };
       const signedBuffer = await signPDF(pdfBuffer, certBuffer, passphrase, options);
       console.log(`DEBUG: Firma completata, dimensione file firmato: ${signedBuffer.length} bytes`);
 
+      // Salvo il PDF firmato
       const signedFilePath = filePath.replace('.pdf', '_signed.pdf');
       fs.writeFileSync(signedFilePath, signedBuffer);
       console.log(`DEBUG: File firmato salvato: ${signedFilePath}`);
       
+      // Rimuovo il PDF originale
       fs.unlinkSync(filePath);
       console.log(`DEBUG: File originale rimosso: ${filePath}`);
 
-      // Aggiungi la firma visibile con logo, data e ora
+     
       const logoPath = path.join(__dirname, 'logo.png');
-      await addVisibleSignature(signedFilePath, "Tuo Nome", logoPath);
+      await addVisibleSignature(signedFilePath, "AlphaCode®", logoPath);
+
     } catch (err) {
       console.error(`DEBUG: Errore durante la firma del file ${filePath}:`, err);
       process.exit(1);
