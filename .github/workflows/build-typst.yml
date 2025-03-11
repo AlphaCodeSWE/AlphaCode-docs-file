@@ -33,12 +33,22 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      - name: Compile main.typ to PDF
+      - name: Compile Typst files to PDF recursively
         run: |
-          mkdir -p documents/
-          # Imposta come root la cartella padre (repository root)
-          typst compile --root .. sample/main.typ documents/main.pdf
-          echo "DEBUG: Compilato sample/main.typ in documents/main.pdf"
+          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
+          find sources -type f -name "*.typ" | while read -r file; do
+            # Calcola il percorso relativo sostituendo "sources/" con "" e ".typ" con ".pdf"
+            relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
+            output="documents/$relpath"
+            mkdir -p "$(dirname "$output")"
+            # Se il PDF firmato esiste già, salta la compilazione
+            if [ -f "${output%.pdf}_signed.pdf" ]; then
+              echo "Skipping $file, PDF già firmato."
+              continue
+            fi
+            echo "Compiling $file to $output..."
+            typst compile --root . "$file" "$output"
+          done
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
