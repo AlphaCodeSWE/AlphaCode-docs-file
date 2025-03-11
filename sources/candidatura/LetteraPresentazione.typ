@@ -1,7 +1,8 @@
 // File: sources/candidatura/LetteraPresentazione.typ
 
 
-#import "../sample/main.typ": main
+#import "../../sample/main.typ": main
+
 
 
 
