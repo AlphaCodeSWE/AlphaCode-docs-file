@@ -17,9 +17,8 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: datetime.today().display("[day]/[month]/[year]"),
-  version: "Versione 1.0.0",
-  // year: "2025",
-  // other: ("Made with Typst", "https://typst.com"),
+  version: "1.0.0",
+  version_history: ("1.0.0", "11/03/2025", "Stesura iniziale del documento", "Alessandro Di Pasquale, Massimo Chioru",  "Elia Leonetti"),
   main-color: "A72229FF", //set the main color
   group-logo: image("../template/assets/AlphaCodeLogo.png"),
   logo: image("../template/assets/UnipdLogo.png"), //set the logo

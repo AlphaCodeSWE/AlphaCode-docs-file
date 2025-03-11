@@ -6,7 +6,7 @@
   roles: none,
   affiliation: none,
   version: none,
-  // year: none,
+  version_history: none,
   other: none,
   date: datetime.today().display(),
   group-logo: none,
@@ -69,8 +69,6 @@ set heading(numbering: (..nums) => {
   // Left Align Text
   set table.cell(align: left)
 
-
-
   // display of outline entries
   show outline.entry: it => text(size: 12pt, weight: "regular",it)
 
@@ -85,12 +83,6 @@ set heading(numbering: (..nums) => {
     set image(width: 3cm)
     place(top + right, logo)
   }
-  // decorations at top left
-  // place(top + left, dx: -35%, dy: -28%, circle(radius: 150pt, fill: primary-color))
-  // place(top + left, dx: -10%, circle(radius: 75pt, fill: secondary-color))
-  
-  // decorations at bottom right
-  // place(bottom +right, dx: 40%, dy: 30%, circle(radius: 150pt, fill: secondary-color))
 
   
   v(2fr)
@@ -105,7 +97,6 @@ set heading(numbering: (..nums) => {
 
   v(1fr)
 
-  // grid(align: left, gutter: 8pt, ..roles.map())
 
   align(center)[
     #table(columns: (auto, auto), stroke: none, table.vline(start: 0, x: 1, stroke: 0.5pt), inset: 10pt, ..roles)
@@ -117,26 +108,45 @@ set heading(numbering: (..nums) => {
   align(center)[
       #if author != "" {strong(author); linebreak();}
       #if affiliation != none {affiliation; linebreak();}
-      #if version != none {emph(version); linebreak();}
-      // #if year != none {year; linebreak();}
-      // #if other != none {emph(other.join(linebreak())); linebreak();}
+      #if version != none {emph()[Versione #version]; linebreak();}
     ]
 
   pagebreak()
-
 
   // Table of contents.
   set page(
     numbering: "1 / 1", 
     number-align: center, 
-    )
-
-
-  // Main body.
-  set page(
-    header: [#emph()[#title #h(1fr) #author]]
   )
-  set par(justify: true)
+
+
+  // Main body
+  set page(
+    header: [#emph()[#title - v#version #h(1fr) #author]]
+  )
+
+  // Versioning Table
+  heading([Registro delle modifiche], numbering: none)
+  text(
+    size: 10pt,
+    table(
+      columns: (0.7fr, 1.2fr, 3fr, 2.5fr, 2.5fr),
+      fill: (x,y) => if (y== 0) { rgb(primary-color) } else { white },
+      align: center + horizon,
+      table.header(text(fill: white, [*Vers.*]), text(fill: white, [*Data*]), text(fill: white, [*Descrizione*]), text(fill: white, [*Autore*]), text(fill: white, [*Verificatore*]), ),
+      ..version_history
+    ),
+  )
+
+  pagebreak()
+
+  show outline.entry.where(level: 1): elem => {
+    v(1em, weak: true)
+    strong(elem)
+  }
+  outline(title: [Indice], indent: auto)
+
+  pagebreak()
 
   body
   
