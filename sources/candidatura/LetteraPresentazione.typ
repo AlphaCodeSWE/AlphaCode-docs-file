@@ -1,23 +1,15 @@
 // File: sources/candidatura/LetteraPresentazione.typ
 
-
+// Importa il file main per ereditare stili e impostazioni
 #import "../../sample/main.typ": *
-
-
-
 
 = Lettera di Presentazione
 
-// Definizione del contenuto della lettera di presentazione
-let lettera = "
 Gentile Responsabile,
 
-prova
+prova file
+
 Ringraziandovi per l'attenzione, resto a disposizione per un colloquio conoscitivo.
 
-Cordiali saluti,
-alphacode
-"
-
-// Mostra il contenuto della lettera
-#show: lettera
+Cordiali saluti,  
+AlphaCode
