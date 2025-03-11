@@ -1,7 +1,12 @@
 // File: sources/candidatura/LetteraPresentazione.typ
 
-// Importa il template principale (assicurati che il percorso sia corretto rispetto alla posizione del file)
-#import "../main.typ": main
+
+#import "../sample/main.typ": main
+
+// Qui puoi utilizzare i contenuti o le funzioni definite in main.typ
+// Ad esempio, se in main.typ hai definito una variabile o una funzione, puoi richiamarla qui.
+
+= Lettera di Presentazione
 
 // Definizione del contenuto della lettera di presentazione
 let lettera = "
@@ -17,5 +22,5 @@ Cordiali saluti,
 Mario Rossi
 "
 
-// Richiama il template principale, passando il contenuto della lettera come parametro
-main(lettera)
+// Mostra il contenuto della lettera
+#show: lettera
