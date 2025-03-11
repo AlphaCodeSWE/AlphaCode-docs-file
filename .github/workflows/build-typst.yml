@@ -26,7 +26,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
-
       #  Setup Rust e installazione Typst CLI
       - name: Set up Rust and Install Typst CLI
         uses: dtolnay/rust-toolchain@stable
@@ -35,7 +34,6 @@ jobs:
         run: |
           cargo install --locked typst-cli
           typst --version
-
       #  Compilazione dei file .typ in PDF
       - name: Compile Typst files to PDF
         run: |
@@ -44,7 +42,6 @@ jobs:
             mkdir -p "$(dirname "$output")"
             typst compile "$file" "$output"
           done
-
       #  Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -58,19 +55,16 @@ jobs:
           npm install jsignpdf node-forge pdf-lib node-signpdf
           cat package.json
           ls -la node_modules
-
       #  Caricamento del logo per la firma visibile
       - name: Upload logo for visible signature
         run: |
-          cp logo/logo.png logo.png  
-          ls -la logo.png
-
+          cp template/assets/AlphaCodeLogo.png AlphaCodeLogo.png 
+          ls -la AlphaCodeLogo.png
       #  Creazione del certificato .p12 a partire dal secret SIGN_CERT
       - name: Create certificate.p12 from secret
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
           ls -la certificate.p12
-
       #  Esegui lo script sign.js per firmare i PDF e aggiungere la firma visibile
       - name: Run sign.js script
         env:
@@ -88,7 +82,6 @@ jobs:
             echo "DEBUG: PDF firmati trovati:"
             echo "$SIGNED_FILES"
           fi
-
       # Commit e push dei PDF firmati
       - name: Commit and push signed PDFs
         run: |
