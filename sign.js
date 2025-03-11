@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { PDFDocument, rgb } = require('pdf-lib');
 
-// Funzione per cercare ricorsivamente tutti i PDF (non firmati) nella cartella documents
+// Funzione per cercare ricorsivamente tutti i PDF non firmati nella cartella documents
 function getAllPDFs(dir) {
   let results = [];
   const list = fs.readdirSync(dir);
