@@ -14,20 +14,17 @@ jobs:
   build-and-sign:
     runs-on: ubuntu-latest
     steps:
-      #  Checkout del repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
-      #  Pull delle ultime modifiche
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      #  Setup Rust e installazione Typst CLI
       - name: Set up Rust and Install Typst CLI
         uses: dtolnay/rust-toolchain@stable
 
@@ -36,20 +33,17 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      #  Compilazione dei file Typst partendo da "sample/main.typ"
       - name: Compile main.typ to PDF
         run: |
           mkdir -p documents/
-          typst compile sample/main.typ documents/main.pdf
+          typst compile --root . sample/main.typ documents/main.pdf
           echo "DEBUG: Compilato sample/main.typ in documents/main.pdf"
 
-      #  Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      #  Inizializza package.json e installa le dipendenze per la firma digitale
       - name: Initialize package.json and install dependencies
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
@@ -57,25 +51,21 @@ jobs:
           cat package.json
           ls -la node_modules
 
-      #  Caricamento del logo per la firma visibile
       - name: Upload logo for visible signature
         run: |
-          cp template/assets/AlphaCodeLogo.png logo.png  # Usa il logo dal template
+          cp template/assets/AlphaCodeLogo.png logo.png
           ls -la logo.png
 
-      #  Creazione del certificato .p12 a partire dal secret SIGN_CERT
       - name: Create certificate.p12 from secret
         run: |
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
           ls -la certificate.p12
 
-      #  Esegui lo script sign.js per firmare i PDF e aggiungere la firma visibile
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: node sign.js
 
-      #  Verifica che almeno un PDF sia stato firmato
       - name: Verify signed PDFs exist
         run: |
           SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
@@ -87,7 +77,6 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      #  Commit e push dei PDF firmati
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
