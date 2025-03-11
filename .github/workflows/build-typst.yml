@@ -1,4 +1,4 @@
-name: Build Typst Documentation, Sign PDFs and Commit
+name: Build Typst Documentation
 
 on:
   push:
