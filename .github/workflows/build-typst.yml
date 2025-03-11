@@ -1,4 +1,4 @@
-name: Build Typst Documentation
+name: Build Typst Documentation, Sign PDFs and Commit
 
 on:
   push:
@@ -33,10 +33,14 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      - name: Compile main.typ to PDF
+      - name: Prepare Typst project
         run: |
           mkdir -p documents/
-          typst compile --root . sample/main.typ documents/main.pdf
+          cp -r template sample/template  # Copia la cartella template dentro sample/
+
+      - name: Compile main.typ to PDF
+        run: |
+          typst compile --root sample sample/main.typ documents/main.pdf
           echo "DEBUG: Compilato sample/main.typ in documents/main.pdf"
 
       - name: Setup Node.js
