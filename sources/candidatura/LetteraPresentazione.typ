@@ -4,6 +4,7 @@
 
 #show: bubble.with(
   title: "Lettera di Presentazione",
+  hideOutline: true,  //true: nascondo; false: visualizzo
   roles: (
       "Nicolò Bovo","Responsabile",
       "Manuel Cinnirella","Redattore",
