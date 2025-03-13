@@ -14,6 +14,7 @@
   main-color: "E94845",
   alpha: 60%,
   color-words: (),
+  hideOutline: false,   // Mostra l'indice solo se hideOutline è false, da impostare nel file .typ
   body,
 ) = {
   set document(author: author, title: title)
@@ -147,9 +148,12 @@
     v(1em, weak: true)
     strong(elem)
   }
-  outline(title: [Indice], indent: auto)
 
-  pagebreak()
+  // Mostra l'indice solo se hideOutline è false.
+  if not hideOutline {
+    outline(title: [Indice], indent: auto)
+    pagebreak()
+  }
 
   body
   
