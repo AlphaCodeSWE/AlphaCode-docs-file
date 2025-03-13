@@ -14,13 +14,12 @@
   main-color: "E94845",
   alpha: 60%,
   color-words: (),
-  hideOutline: false,   // Mostra l'indice solo se hideOutline è false, da impostare nel file .typ
+  hideOutline: false, 
   body,
 ) = {
-  set document(author: author, title: title)
-  
   set text(lang:"IT")
-  
+  set document(author: author, title: title)
+
   // Save heading and body font families in variables.
   let body-font = "Source Sans Pro"
   let title-font = "Barlow"
@@ -130,38 +129,25 @@
   )
 
   // Versioning Table - Shows up only if there is more than one version
-   let total_rows = version_history.len() / 5
-
-text(
-  size: 10pt,
-  table(
-    columns: (0.7fr, 1.2fr, 3fr, 2.5fr, 2.5fr),
-    fill: (x, y) => 
-      if y == 0 {
-        rgb(primary-color) 
-      } else if y == total_rows -1 {
-        rgb("D2D2D2")  
-      } else {
-        white
-      },
-    align: left + horizon,
-    table.header(
-      text(fill: white, align(center)[*Vers.*]), 
-      text(fill: white, align(center)[*Data*]), 
-      text(fill: white, align(center)[*Descrizione*]), 
-      text(fill: white, align(center)[*Autore*]), 
-      text(fill: white, align(center)[*Verificatore*])
-    ),
-    ..version_history,
-  ),
-)
+  if version_history.len()/5 > 1 {
+    heading([Registro delle modifiche], numbering: none, outlined: false)
+    text(
+      size: 10pt,
+      table(
+        columns: (0.7fr, 1.2fr, 3fr, 2.5fr, 2.5fr),
+        fill: (x,y) => if (y== 0) { rgb(primary-color) } else { white },
+        align: left + horizon,
+        table.header(text(fill: white, align(center)[*Vers.*]), text(fill: white, align(center)[*Data*]), text(fill: white, align(center)[*Descrizione*]), text(fill: white, align(center)[*Autore*]), text(fill: white, align(center)[*Verificatore*]), ),
+        ..version_history,
+      ),
+    )
     pagebreak()
   }
   show outline.entry.where(level: 1): elem => {
     v(1em, weak: true)
     strong(elem)
   }
-
+  
   // Mostra l'indice solo se hideOutline è false.
   if not hideOutline {
     outline(title: [Indice], indent: auto)
