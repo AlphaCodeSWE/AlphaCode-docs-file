@@ -2,7 +2,7 @@ name: publish latest build to pages
 
 on:
   workflow_run:
-    workflows: ["Build Typst Documentation"]
+    workflows: ["insert file in releases"]
     types: [completed]
 
 permissions:
