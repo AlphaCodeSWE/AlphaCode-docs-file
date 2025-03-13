@@ -1,0 +1,24 @@
+name: archive
+on:
+  workflow_run:
+    workflows: ["Build Typst Documentation"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  build_and_process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Esegui build Typst
+        run: |
+          echo "Avvio della build Typst..."
+          typst build typst-build.yml
+          echo "Build Typst completata con successo."
+
+      - name: Esegui lo script Python per processare i file
+        run: |
+          echo "Avvio dello script di processamento..."
+          python process_files.py
