@@ -15,4 +15,4 @@ jobs:
       - name: Esegui lo script Python per processare i file
         run: |
           echo "Avvio dello script di processamento..."
-          python process_files.py archive
+          python process_files.py
