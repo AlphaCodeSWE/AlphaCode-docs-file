@@ -1,0 +1,15 @@
+directories:
+  - candidatura
+  - rtb
+  - pb
+
+archive_folder: documents/archive
+
+file_pattern: '.*_signed\.pdf$'
+
+file_regex: '^(?P<doc>.+?)[_.]v\.?(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)[_.]signed\.pdf$'
+
+group_map:
+  candidatura: Candidatura
+  rtb: RTB
+  pb: PB
