@@ -1,0 +1,49 @@
+name: Archive documents to releases after publish
+
+on:
+  workflow_run:
+    workflows: ["publish latest build to pages"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository at commit from workflow_run
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Restore file timestamps
+        uses: chetan/git-restore-mtime-action@v2
+
+      - name: Create and upload releases for expected tags
+        run: |
+          for tag in candidatura pb rtb; do
+            TARGET_DIR="documents/$tag"
+            if [ -d "$TARGET_DIR" ]; then
+              echo "Creating zip for tag: $tag"
+              # Entra nella cartella documents per creare lo zip che contiene l'intera cartella <tag>
+              pushd documents
+              zip -r "${tag}-release.zip" "$tag"
+              popd
+              mv "documents/${tag}-release.zip" .
+              echo "Checking if GitHub release exists for tag: $tag"
+              if gh release view "$tag" > /dev/null 2>&1; then
+                echo "Release exists, uploading asset to release $tag"
+                gh release upload "$tag" "${tag}-release.zip" --clobber
+              else
+                echo "Creating new GitHub release for tag: $tag"
+                gh release create "$tag" -t "$tag" "${tag}-release.zip"
+              fi
+            else
+              echo "Folder $TARGET_DIR does not exist, skipping release for tag: $tag"
+            fi
+          done
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

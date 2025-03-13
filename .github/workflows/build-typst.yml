@@ -1,0 +1,101 @@
+name: Build Typst Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'documents/**/*.pdf'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-sign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Pull latest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+
+      - name: Set up Rust and Install Typst CLI
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Typst CLI
+        run: |
+          cargo install --locked typst-cli
+          typst --version
+
+      - name: Compile Typst files to PDF recursively
+        run: |
+          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
+          find sources -type f -name "*.typ" | while read -r file; do
+            # Calcola il percorso relativo sostituendo "sources/" con "" e ".typ" con ".pdf"
+            relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
+            output="documents/$relpath"
+            mkdir -p "$(dirname "$output")"
+            # Se il PDF firmato esiste già, salta la compilazione
+            if [ -f "${output%.pdf}_signed.pdf" ]; then
+              echo "Skipping $file, PDF già firmato."
+              continue
+            fi
+            echo "Compiling $file to $output..."
+            typst compile --root . "$file" "$output"
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Initialize package.json and install dependencies
+        run: |
+          echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
+          npm install jsignpdf node-forge pdf-lib node-signpdf
+          cat package.json
+          ls -la node_modules
+
+      - name: Upload logo for visible signature
+        run: |
+          cp template/assets/AlphaCodeLogo.png logo.png
+          ls -la logo.png
+
+      - name: Create certificate.p12 from secret
+        run: |
+          echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
+          ls -la certificate.p12
+
+      - name: Run sign.js script
+        env:
+          SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
+        run: node sign.js
+
+      - name: Verify signed PDFs exist
+        run: |
+          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
+          if [ -z "$SIGNED_FILES" ]; then
+            echo "ERROR: Nessun PDF firmato trovato!"
+            exit 1
+          else
+            echo "DEBUG: PDF firmati trovati:"
+            echo "$SIGNED_FILES"
+          fi
+
+      - name: Commit and push signed PDFs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add documents/
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes to commit"
+            exit 0
+          fi
+          git commit -m "Aggiorna PDF con firma digitale"
+          git push origin HEAD:main
