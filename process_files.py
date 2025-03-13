@@ -11,7 +11,7 @@ import shutil
 import yaml
 from packaging.version import Version, InvalidVersion
 
-def load_config(config_file="config.yml"):
+def load_config(config_file=".github/workflows/config.yml"):
     """Carica config.yml."""
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
