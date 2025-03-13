@@ -1,29 +1,18 @@
 #!/usr/bin/env python3
 """
 Script per:
-1. Eseguire first_script.py.
-2. Caricare config.yml.
-3. Processare le directory (candidatura, rtb, pb) e spostare i file aggiornati.
+1. Caricare config.yml.
+2. Processare le directory (candidatura, rtb, pb) e spostare i file aggiornati.
 """
 
 import os
 import re
 import shutil
-import subprocess
 import yaml
 from packaging.version import Version, InvalidVersion
 
-def run_first_script():
-    """Esegue first_script.py; termina in caso di errore."""
-    print("Esecuzione di first_script.py...")
-    result = subprocess.run(["python", "first_script.py"])
-    if result.returncode != 0:
-        print("Errore in first_script.py. Terminazione.")
-        exit(1)
-    print("first_script.py completato.\n")
-
 def load_config(config_file="config.yml"):
-    """Carica il file di configurazione YAML."""
+    """Carica config.yml."""
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
@@ -46,7 +35,7 @@ def get_existing_files(dest_folder, file_regex):
     return existing
 
 def scan_source_directory(source_dir, file_regex, file_pattern):
-    """Ritorna {doc: (file_path, version)} con la versione più alta dalla sorgente."""
+    """Ritorna {doc: (file_path, version)} dalla directory sorgente."""
     grouped = {}
     regex = re.compile(file_regex)
     for root, _, files in os.walk(source_dir):
@@ -74,16 +63,16 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
     return grouped
 
 def process_category(category, config):
-    """Processa la categoria e sposta i file aggiornati."""
+    """Processa la categoria e sposta file aggiornati."""
     dest_folder_name = config["group_map"].get(category, category.capitalize())
-    archive_folder = config.get("archive_folder", "archive")
+    archive_folder = config.get("archive_folder", "documents/archive")
     dest_folder = os.path.join(archive_folder, dest_folder_name)
     os.makedirs(dest_folder, exist_ok=True)
     print(f"Categoria '{category}' -> '{dest_folder}'")
-
+    
     existing_files = get_existing_files(dest_folder, config["file_regex"])
     source_files = scan_source_directory(category, config["file_regex"], config["file_pattern"])
-
+    
     for doc, (src_file, src_ver) in source_files.items():
         update = False
         if doc in existing_files:
@@ -97,7 +86,7 @@ def process_category(category, config):
                 continue
         else:
             update = True
-
+        
         if update:
             dest_file_path = os.path.join(dest_folder, os.path.basename(src_file))
             print(f"Spostamento: '{src_file}' -> '{dest_file_path}'")
@@ -105,9 +94,8 @@ def process_category(category, config):
     print()
 
 def main():
-    run_first_script()
     config = load_config("config.yml")
-    os.makedirs(config.get("archive_folder", "archive"), exist_ok=True)
+    os.makedirs(config.get("archive_folder", "documents/archive"), exist_ok=True)
     for category in config.get("directories", []):
         if not os.path.isdir(category):
             print(f"Directory non trovata: '{category}'")
