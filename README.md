@@ -5,7 +5,7 @@
 - I documenti in formato **.pdf** si trovano all'interno di [documents](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/documents), mentre i file **.typ** sono all'intero di [sources](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/tree/main/sources)
 - I template dei file sono presenti nella cartella **template** e **sample**
 - I documenti sono tutti firmati digitalmente. Il codice è basato su [nodo-jsignpdf](https://github.com/deltazero-cz/node-jsignpdf), che utilizza a sua volta [JSignPDF](https://github.com/intoolswetrust/jsignpdf) di [@kwart](https://github.com/kwart/). Nella reposity sono state configurate delle variabili segrete : SIGN_CERT:certificate.p12 e SIGN_CERT_PASSWORD . Per la firma vera e propria sono usati i file sign.js e build-typst.yml . 
-- La versione aggioranta di ogni documento è anche disponibile sul sito web: [AlphaCode](https://alphacodeswe.github.io/AlphaCode-sito/pages/contatti.html), mentre le versioni passate sempre nel sito web o nella [Releases](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/releases)
+- La versione aggioranta di ogni documento è anche raggiungibile dal sito web: [AlphaCode](https://alphacodeswe.github.io/AlphaCode-sito/pages/contatti.html), mentre le versioni passate sempre nel sito web, stessa sezione, o nell' [Archivio](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/releases)
 - Le varie fasi prima del documento finale, vengono archiviate nella [release](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/releases) e sempre raggiungibile tramite il sito web, nella sezione contatti.
 # Gruppo 19
 | Nome e Cognome | Matricola  | Mail   |
