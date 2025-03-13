@@ -1,8 +1,8 @@
-name: Archive documents to releases after publish
+name: insert file in releases
 
 on:
   workflow_run:
-    workflows: ["publish latest build to pages"]
+    workflows: ["archive"]
     types: [completed]
   workflow_dispatch:
 
