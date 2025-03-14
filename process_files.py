@@ -5,8 +5,8 @@ Script "BOT" per:
 2. Processare le directory (candidatura, rtb, pb) contenute in "documents".
 3. Per ogni documento, individua la versione minore (esempio) e:
    - Copia il file in "documents/archive/<categoria>/v<version>"
-   - Rimuove il file originale dalla cartella sorgente.
-4. Genera (opzionale) un file di report (report.yml).
+   - Elimina il file originale dalla cartella sorgente.
+4. Genera un file di report (report.yml) con i dettagli delle operazioni.
 """
 
 import os
@@ -55,17 +55,19 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
 def process_category(category, config, report):
     """
     Per la categoria (es. "candidatura"), cerca i file in "documents/<category>".
-    Per ogni documento, sposta (copia+elimina) il file con la versione minore in
-    "documents/archive/<mappatura>/v<version>".
+    Per ogni documento, copia il file con la versione minore in
+    "documents/archive/<mappatura>/v<version>", poi elimina l'originale.
+    Registra l'operazione nel report.
     """
     source_dir = os.path.join("documents", category)
     group_name = config["group_map"].get(category, category.capitalize())
     archive_folder = config.get("archive_folder", "documents/archive")
     dest_base = os.path.join(archive_folder, group_name)
     os.makedirs(dest_base, exist_ok=True)
-    print(f"Processo categoria '{category}' -> '{dest_base}'")
     
+    print(f"Processo categoria '{category}' -> '{dest_base}'")
     source_files = scan_source_directory(source_dir, config["file_regex"], config["file_pattern"])
+    
     report[category] = {}
 
     for doc, (src_file, src_ver) in source_files.items():
@@ -75,13 +77,21 @@ def process_category(category, config, report):
         
         print(f"Copia di '{src_file}' -> '{dest_file_path}'")
         shutil.copy2(src_file, dest_file_path)   # Copia il file nella destinazione
-        os.remove(src_file)                      # Rimuove il file originale
 
+        removed_original = False
+        try:
+            os.remove(src_file)                  # Elimina il file sorgente
+            removed_original = True
+            print(f"File originale rimosso: {src_file}")
+        except Exception as e:
+            print(f"Impossibile rimuovere il file originale '{src_file}': {e}")
+        
         # Registra l'operazione nel report
         report[category][doc] = {
             "version": str(src_ver),
             "source": src_file,
-            "destination": dest_file_path
+            "destination": dest_file_path,
+            "removed_original": removed_original
         }
 
     print()
@@ -102,7 +112,7 @@ def main():
 
     print("Elaborazione completata.")
     
-    # Salva il report come YAML (facoltativo)
+    # Salva il report come YAML
     report_file = "report.yml"
     with open(report_file, "w") as f:
         yaml.dump(report, f, default_flow_style=False, sort_keys=False)
@@ -110,3 +120,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+   
