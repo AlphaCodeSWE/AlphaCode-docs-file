@@ -1,9 +1,2 @@
-kept_in_documents:
-- doc: Candidatura
-  version: 1.2.0
-  file: documents/candidatura/LetteraPresentazione_v1.2.0_signed.pdf
-archived:
-- doc: Candidatura
-  version: 1.1.0
-  source: documents/candidatura/LetteraPresentazione_v1.1.0_signed.pdf
-  destination: documents/archive/Candidatura_v1.1.0/LetteraPresentazione_v1.1.0_signed.pdf
+kept_in_documents: []
+archived: []
