@@ -1,3 +1,4 @@
+
 name: Build Typst Documentation
 
 on:
@@ -25,7 +26,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 1) Installa Rust e Typst
       - name: Set up Rust and Install Typst CLI
         uses: dtolnay/rust-toolchain@stable
 
@@ -34,7 +34,6 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      # 2) Compila i file .typ in PDF
       - name: Compile Typst files to PDF recursively
         run: |
           # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
@@ -52,7 +51,6 @@ jobs:
             typst compile --root . "$file" "$output"
           done
 
-      # 3) Setup Node.js e install librerie per la firma
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -65,7 +63,6 @@ jobs:
           cat package.json
           ls -la node_modules
 
-      # 4) Upload logo e crea certificato da secret
       - name: Upload logo for visible signature
         run: |
           cp template/assets/AlphaCodeLogo.png logo.png
@@ -76,13 +73,11 @@ jobs:
           echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
           ls -la certificate.p12
 
-      # 5) Firma i PDF
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: node sign.js
 
-      # 6) Verifica che i PDF siano effettivamente firmati
       - name: Verify signed PDFs exist
         run: |
           SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
@@ -94,7 +89,6 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      # 7) Commit e push dei PDF firmati, se ci sono modifiche
       - name: Commit and push signed PDFs
         run: |
           git config user.name "github-actions[bot]"
@@ -105,28 +99,4 @@ jobs:
             exit 0
           fi
           git commit -m "Aggiorna PDF con firma digitale"
-          git push origin HEAD:main
-
-      # 8)  Genera il file sign_report.yml e committa
-      - name: Generate and commit sign_report.yml
-        run: |
-          echo "signed_files:" > sign_report.yml
-          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
-          for pdf in $SIGNED_FILES; do
-            echo "- $pdf" >> sign_report.yml
-          done
-
-          echo "DEBUG: Creato sign_report.yml:"
-          cat sign_report.yml
-
-          # Commit e push di sign_report.yml
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sign_report.yml
-
-          if git diff --cached --quiet; then
-            echo "DEBUG: No changes to commit (sign_report.yml non modifica nulla)"
-            exit 0
-          fi
-          git commit -m "Aggiunge o aggiorna sign_report.yml con elenco PDF firmati"
           git push origin HEAD:main
