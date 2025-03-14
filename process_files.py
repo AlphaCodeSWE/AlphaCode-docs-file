@@ -1,75 +1,122 @@
 #!/usr/bin/env python3
 """
-Script "BOT" che:
-1) Legge un report 'sign_report.yml' con i PDF firmati.
-2) Per ciascun file, decide se spostarlo/eliminarlo dalla cartella di origine (logica custom).
-3) Usa config.yml per sapere dove archiviarli e come gestire le versioni.
-4) Genera un 'final_report.yml' con l'esito dell'operazione.
+Processa i file firmati (elencati in sign_report.yml).
+Per ogni documento, mantiene la versione più recente nella cartella originale
+e sposta le versioni più vecchie in documents/archive/.
+
+- Legge sign_report.yml: 
+    signed_files:
+      - documents/candidatura/LetteraPresentazione_v1.0.0_signed.pdf
+      - documents/candidatura/LetteraPresentazione_v1.1.0_signed.pdf
+      - documents/rtb/Altro_v2.0.0_signed.pdf
+      ...
+- Usa una regex per estrarre doc e versione.
+- Raggruppa i file per doc e individua la versione massima.
+- Sposta le versioni minori in "documents/archive/<doc>_v<version>/"
+- Crea final_report.yml con il riepilogo.
 """
 
 import os
-import sys
 import re
+import sys
 import shutil
 import yaml
 from packaging.version import Version, InvalidVersion
 
+# Regex d'esempio per estrarre doc e version
+# Esempio nome: LetteraPresentazione_v1.0.0_signed.pdf
+FILE_REGEX = re.compile(r'^(?P<doc>.+)_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_signed\.pdf$')
+
 def load_sign_report(report_file="sign_report.yml"):
-    """Carica l'elenco dei PDF firmati dal file report YAML."""
-    with open(report_file, "r") as f:
-        return yaml.safe_load(f)
-
-def load_config(config_file=".github/workflows/config.yml"):
-    """Carica eventuale configurazione aggiuntiva (directory, regex, ecc.)."""
-    if os.path.exists(config_file):
-        with open(config_file, "r") as f:
-            return yaml.safe_load(f)
-    return {}
-
-def main():
-    if len(sys.argv) > 1:
-        sign_report_file = sys.argv[1]
-    else:
-        sign_report_file = "sign_report.yml"
-
-    # Carica il report dei file firmati
-    if not os.path.exists(sign_report_file):
-        print(f"ERRORE: File di report '{sign_report_file}' non trovato.")
+    """Carica la lista dei file firmati dal report."""
+    if not os.path.exists(report_file):
+        print(f"ERRORE: Il file di report '{report_file}' non esiste.")
         sys.exit(1)
 
-    signed_pdfs = load_sign_report(sign_report_file)  # Ad es. { "signed_files": [ "...", "..." ] }
+    with open(report_file, "r") as f:
+        data = yaml.safe_load(f)
 
-    # Carica eventuale config (se ti serve)
-    config = load_config("config.yml")
+    if not data or "signed_files" not in data:
+        print(f"ERRORE: Formato non valido in '{report_file}'. Manca 'signed_files'.")
+        sys.exit(1)
 
-    # Esempio di final_report
+    return data["signed_files"]  # lista di percorsi
+
+def main():
+    # 1) Legge il nome del report da argv o default
+    if len(sys.argv) > 1:
+        report_file = sys.argv[1]
+    else:
+        report_file = "sign_report.yml"
+
+    signed_files = load_sign_report(report_file)
+
+    # 2) Raggruppa i file per (doc) e tiene traccia di (version, filepath)
+    grouped = {}
+    for file_path in signed_files:
+        filename = os.path.basename(file_path)
+        match = FILE_REGEX.match(filename)
+        if not match:
+            print(f"ERRORE: Il file '{filename}' non rispetta il formato doc_vx.y.z_signed.pdf")
+            continue
+
+        doc = match.group("doc")  # es. "LetteraPresentazione"
+        version_str = match.group("version")  # es. "1.0.0" o "1.1.0"
+        try:
+            ver = Version(version_str)
+        except InvalidVersion:
+            print(f"ERRORE: Versione non valida in '{filename}': {version_str}")
+            continue
+
+        if doc not in grouped:
+            grouped[doc] = []
+        grouped[doc].append((ver, file_path))
+
+    # 3) Per ogni doc, trova la versione max e sposta le altre
     final_report = {
-        "archived": [],
-        "errors": []
+        "kept_in_documents": [],
+        "archived": []
     }
 
-    # Logica di spostamento personalizzata
-    for pdf in signed_pdfs.get("signed_files", []):
-        # sposto in documents/archive/ la "versione minore"
-        # Qui puoi inserire la logica esatta che ti serve:
-        # 1. Leggere la versione dal nome
-        # 2. Confrontare con altre versioni, ecc.
-        # Per semplicità, facciamo un "copia + remove".
-        dest_folder = "documents/archive"  # personalizza come vuoi
-        os.makedirs(dest_folder, exist_ok=True)
-        dest_file = os.path.join(dest_folder, os.path.basename(pdf))
-        try:
-            print(f"COPIA '{pdf}' -> '{dest_file}'")
-            shutil.copy2(pdf, dest_file)
-            os.remove(pdf)
-            final_report["archived"].append(pdf)
-        except Exception as e:
-            print(f"ERRORE spostando '{pdf}': {e}")
-            final_report["errors"].append({pdf: str(e)})
+    archive_root = "documents/archive"
 
-    # Salva un final_report.yml
+    for doc, versions in grouped.items():
+        # Trova la versione massima
+        max_ver = max(v[0] for v in versions)
+        # Per ogni (ver, file_path), se ver < max_ver => sposta in archive
+        for (ver, file_path) in versions:
+            if ver < max_ver:
+                # Sposta in archivio
+                # Esempio: documents/archive/<doc>_v<ver>/
+                dest_folder = os.path.join(archive_root, f"{doc}_v{ver}")
+                os.makedirs(dest_folder, exist_ok=True)
+
+                src_name = os.path.basename(file_path)
+                dest_file = os.path.join(dest_folder, src_name)
+
+                print(f"Sposto la versione più vecchia: '{file_path}' -> '{dest_file}'")
+                shutil.copy2(file_path, dest_file)
+                os.remove(file_path)
+
+                final_report["archived"].append({
+                    "doc": doc,
+                    "version": str(ver),
+                    "source": file_path,
+                    "destination": dest_file
+                })
+            else:
+                # ver == max_ver => la teniamo in documents
+                final_report["kept_in_documents"].append({
+                    "doc": doc,
+                    "version": str(ver),
+                    "file": file_path
+                })
+                print(f"Mantengo la versione più recente: '{file_path}' (v{ver})")
+
+    # 4) Salva final_report.yml
     with open("final_report.yml", "w") as f:
         yaml.dump(final_report, f, default_flow_style=False, sort_keys=False)
+
     print("Operazione completata. Salvato 'final_report.yml'.")
 
 if __name__ == "__main__":
