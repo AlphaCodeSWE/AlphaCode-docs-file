@@ -27,7 +27,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 2) Installazione Typst (tramite Rust)
+      # 2) Setup Rust e Typst CLI
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -51,7 +51,7 @@ jobs:
             typst compile --root . "$file" "$output"
           done
 
-      # 4) Setup Node.js per la firma
+      # 4) Setup Node.js e dipendenze per la firma
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -96,23 +96,20 @@ jobs:
           echo "DEBUG: Creato sign_report.yml:"
           cat sign_report.yml
 
-      # 7) Esecuzione del bot Python, passandogli sign_report.yml
-      #
-      # Il tuo bot deve generare un file final_report.yml con i risultati
-      # (es. spostamenti, eliminazioni, versioni minori, ecc.).
+      # 7) Esegui process_files.py con sign_report.yml (sposta versione più vecchia in archive)
       - name: Run archiving bot
         run: |
           echo "Eseguo bot (process_files.py) con report sign_report.yml..."
           python process_files.py sign_report.yml
           echo "Bot completato."
 
-      # 8) Commit locale, pull --rebase, commit e push finale
+      # 8) Commit locale, pull --rebase, e push finale
       - name: Commit, rebase e push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # A) Commit delle modifiche locali (PDF firmati + archivio)
+          # A) Commit delle modifiche locali
           git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No local changes to commit"
@@ -123,7 +120,7 @@ jobs:
           # B) Pull con rebase
           git pull --rebase origin main
 
-          # C) Commit e push finale (se ci sono altri cambi)
+          # C) Commit e push finale
           git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No changes after rebase"
@@ -132,11 +129,11 @@ jobs:
           git commit -m "Firma e archivia PDF (post-rebase)"
           git push origin HEAD:main
 
-      # 9) (Opzionale) Elenca i contenuti archiviati
+      # (Opzionale) Elenca i contenuti di documents/archive
       - name: List documents/archive
         run: ls -R documents/archive || true
 
-      # 10) (Opzionale) Carica final_report.yml come artifact
+      # (Opzionale) Carica final_report.yml come artifact
       - name: Upload final report
         uses: actions/upload-artifact@v4
         with:
