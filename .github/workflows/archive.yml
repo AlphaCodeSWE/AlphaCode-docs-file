@@ -16,3 +16,7 @@ jobs:
         run: |
           echo "Avvio dello script di processamento..."
           python process_files.py
+      - name: Lista contenuti di documents/archive
+        run: |
+          echo "Contenuto di documents/archive:"
+          ls -R documents/archive
