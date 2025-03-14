@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Script per:
+Script "BOT" per:
 1. Caricare config.yml.
-2. Processare le directory (candidatura, rtb, pb) contenute in "documents" e spostare il file
-   con la versione minore in una sottocartella in "documents/archive/<categoria>/v<version>".
-3. Generare un report in formato YAML delle operazioni effettuate.
+2. Processare le directory (candidatura, rtb, pb) contenute in "documents".
+3. Per ogni documento, individua la versione minore (esempio) e:
+   - Copia il file in "documents/archive/<categoria>/v<version>"
+   - Rimuove il file originale dalla cartella sorgente.
+4. Genera (opzionale) un file di report (report.yml).
 """
 
 import os
@@ -53,8 +55,8 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
 def process_category(category, config, report):
     """
     Per la categoria (es. "candidatura"), cerca i file in "documents/<category>".
-    Per ogni documento, sposta il file con la versione minore in
-    "documents/archive/<mappatura>/v<version>" e registra l'operazione nel report.
+    Per ogni documento, sposta (copia+elimina) il file con la versione minore in
+    "documents/archive/<mappatura>/v<version>".
     """
     source_dir = os.path.join("documents", category)
     group_name = config["group_map"].get(category, category.capitalize())
@@ -64,38 +66,43 @@ def process_category(category, config, report):
     print(f"Processo categoria '{category}' -> '{dest_base}'")
     
     source_files = scan_source_directory(source_dir, config["file_regex"], config["file_pattern"])
-    
     report[category] = {}
+
     for doc, (src_file, src_ver) in source_files.items():
-        # Cartella di destinazione per la versione
         version_folder = os.path.join(dest_base, f"v{src_ver}")
         os.makedirs(version_folder, exist_ok=True)
         dest_file_path = os.path.join(version_folder, os.path.basename(src_file))
-        print(f"Spostamento: '{src_file}' -> '{dest_file_path}'")
-        shutil.move(src_file, dest_file_path)
+        
+        print(f"Copia di '{src_file}' -> '{dest_file_path}'")
+        shutil.copy2(src_file, dest_file_path)   # Copia il file nella destinazione
+        os.remove(src_file)                      # Rimuove il file originale
+
         # Registra l'operazione nel report
         report[category][doc] = {
             "version": str(src_ver),
             "source": src_file,
             "destination": dest_file_path
         }
+
     print()
 
 def main():
     config = load_config()  # Carica il file di configurazione
-    # Assicura che la cartella archive esista
+    report = {}
+    
+    # Assicuriamoci che la cartella archive esista
     os.makedirs(config.get("archive_folder", "documents/archive"), exist_ok=True)
     
-    report = {}  # Dizionario per il report
     for category in config.get("directories", []):
         source_dir = os.path.join("documents", category)
         if not os.path.isdir(source_dir):
             print(f"Directory non trovata: '{source_dir}'")
             continue
         process_category(category, config, report)
+
     print("Elaborazione completata.")
     
-    # Scrive il report in formato YAML su report.yml
+    # Salva il report come YAML (facoltativo)
     report_file = "report.yml"
     with open(report_file, "w") as f:
         yaml.dump(report, f, default_flow_style=False, sort_keys=False)
