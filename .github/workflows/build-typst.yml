@@ -15,7 +15,7 @@ jobs:
   build-sign-archive:
     runs-on: ubuntu-latest
     steps:
-      # 1) Checkout e pull
+      # 1) Checkout e pull iniziale
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -27,7 +27,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 2) Set up Rust + Typst
+      # 2) Setup Rust + Typst
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -51,13 +51,13 @@ jobs:
             typst compile --root . "$file" "$output"
           done
 
-      # 4) Setup Node.js
+      # 4) Setup Node.js per firmare
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install sign dependencies
+      - name: Install Node dependencies for signing
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
           npm install jsignpdf node-forge pdf-lib node-signpdf
@@ -68,7 +68,7 @@ jobs:
       - name: Create certificate.p12 from secret
         run: echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
 
-      # 5) Firma i PDF
+      # 5) Firma PDF
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
@@ -85,45 +85,47 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      # 6) Genera sign_report.yml con l'elenco dei PDF firmati
-      - name: Generate sign report
-        run: |
-          echo "signed_files:" > sign_report.yml
-          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
-          for f in $SIGNED_FILES; do
-            echo "- $f" >> sign_report.yml
-          done
-          echo "Creato sign_report.yml:"
-          cat sign_report.yml
-
-      # 7) Eseguo il bot process_files.py in fondo, passandogli 'sign_report.yml'
+      # 6) Esegui il BOT Python (sposta i file, rimuovi, archivia, crea eventuale report)
       - name: Run archiving bot
         run: |
-          echo "Eseguo bot con sign_report.yml..."
-          python process_files.py sign_report.yml
+          echo "Eseguo bot (process_files.py)..."
+          python process_files.py
           echo "Bot completato."
 
-      # 8) Commit e push finale
-      - name: Commit and push changes
+      # 7) Commit locale + Pull rebase + Commit e Push finale
+      - name: Commit, rebase e push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Esegui di nuovo un pull con rebase, per assicurarti di essere allineato
-          git pull --rebase origin main
-
+          
+          # A) Committa i cambi locali
           git add documents/ *.yml
           if git diff --cached --quiet; then
-            echo "DEBUG: No changes to commit"
+            echo "DEBUG: No local changes to commit"
+          else
+            git commit -m "Commit locale prima del rebase (firma & archivia)"
+          fi
+          
+          # B) Pull con rebase per allinearsi ad eventuali modifiche remote
+          git pull --rebase origin main
+          
+          # C) Controlla se ci sono ulteriori cambi (es. risoluzione conflitti)
+          git add documents/ *.yml
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes after rebase"
             exit 0
           fi
+          
+          # D) Commit e push finale
           git commit -m "Compilazione, firma e archiviazione PDF"
           git push origin HEAD:main
 
-      #  Lista contenuti e upload report finale
+      # 8) Elenco contenuto di documents/archive
       - name: List documents/archive
         run: ls -R documents/archive || true
 
-      - name: Upload final report
+      # 9) Upload report
+      - name: Upload artifact (final report)
         uses: actions/upload-artifact@v4
         with:
           name: final-report
