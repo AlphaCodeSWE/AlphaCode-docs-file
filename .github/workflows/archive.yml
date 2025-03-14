@@ -1,138 +1,54 @@
 name: archive
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - 'documents/**/*.pdf'
+  workflow_run:
+    workflows: ["Build Typst Documentation"]
+    types: [completed]
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  build-sign-archive:
+  archive_job:
     runs-on: ubuntu-latest
     steps:
-      # 1) Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
-      # Pull con rebase per allinearsi a eventuali modifiche
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 2) Installa Typst (tramite Rust)
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install Typst CLI
-        run: |
-          cargo install --locked typst-cli
-          typst --version
-
-      # 3) Compila i file .typ in PDF
-      - name: Compile Typst files
-        run: |
-          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
-          find sources -type f -name "*.typ" | while read -r file; do
-            relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
-            output="documents/$relpath"
-            mkdir -p "$(dirname "$output")"
-            # Se il PDF firmato esiste già, lo skip
-            if [ -f "${output%.pdf}_signed.pdf" ]; then
-              echo "Skipping $file (PDF già firmato)."
-              continue
-            fi
-            echo "Compiling $file -> $output"
-            typst compile --root . "$file" "$output"
-          done
-
-      # 4) Setup Node.js & dipendenze per la firma
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # 1) Scarica l'artifact sign-report (che contiene sign_report.yml)
+      - name: Download sign_report artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: '16'
+          name: sign-report  # Lo stesso nome usato in "build_typst.yml"
 
-      - name: Install sign dependencies
-        run: |
-          echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
-          npm install jsignpdf node-forge pdf-lib node-signpdf
-
-      - name: Upload logo for visible signature
-        run: cp template/assets/AlphaCodeLogo.png logo.png
-
-      - name: Create certificate.p12 from secret
-        run: echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
-
-      # 5) Firma i PDF
-      - name: Run sign.js script
-        env:
-          SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
-        run: node sign.js
-
-      # Verifica PDF firmati
-      - name: Verify signed PDFs exist
-        run: |
-          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
-          if [ -z "$SIGNED_FILES" ]; then
-            echo "ERROR: Nessun PDF firmato trovato!"
-            exit 1
-          else
-            echo "PDF firmati trovati:"
-            echo "$SIGNED_FILES"
-          fi
-
-      # 6) Genera sign_report.yml
-      - name: Generate sign report
-        run: |
-          echo "signed_files:" > sign_report.yml
-          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
-          for pdf in $SIGNED_FILES; do
-            echo "- $pdf" >> sign_report.yml
-          done
-          echo "Creato sign_report.yml:"
-          cat sign_report.yml
-
-      # 7) Esegue process_files.py, che sposta le versioni vecchie in archive
+      # 2) Esegui lo script di archiviazione
+      #    Se process_files.py è nella root, e prende "sign_report.yml" come argomento
       - name: Run archiving bot
         run: |
-          echo "Eseguo bot (process_files.py) con report sign_report.yml..."
+          echo "Avvio del bot di archiviazione..."
           python process_files.py sign_report.yml
           echo "Bot completato."
 
-      # 8) Commit e push finale
-      - name: Commit, rebase e push
+      # 3) Commit & push
+      - name: Commit and push archivio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # A) Commit locale (PDF firmati, sign_report.yml, archivio)
-          git add documents/ sign_report.yml final_report.yml || true
+          git add documents/archive final_report.yml || true
           if git diff --cached --quiet; then
-            echo "DEBUG: No changes to commit"
-          else
-            git commit -m "Compila, firma e archivia PDF"
-          fi
-
-          # B) Pull con rebase di nuovo
-          git pull --rebase origin main
-
-          # C) Commit e push se ci sono altri cambi
-          git add documents/ sign_report.yml final_report.yml || true
-          if git diff --cached --quiet; then
-            echo "DEBUG: No changes after rebase"
+            echo "DEBUG: No changes to commit for archivio"
             exit 0
           fi
-          git commit -m "Compila, firma e archivia PDF (rebase)"
+          git commit -m "Sposta file in archivio (bot)"
           git push origin HEAD:main
 
-      # 9) (Opzionale) Lista contenuti archivio e carica final_report.yml
+      # 4) Lista archivio e upload report
       - name: List documents/archive
         run: ls -R documents/archive || true
 
