@@ -15,7 +15,7 @@ jobs:
   build-sign-archive:
     runs-on: ubuntu-latest
     steps:
-      # 1) Checkout e pull iniziale
+      # 1) Checkout e Pull rebase iniziale
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -27,7 +27,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 2) Setup Rust + Typst
+      # 2) Installazione Typst (tramite Rust)
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -51,13 +51,13 @@ jobs:
             typst compile --root . "$file" "$output"
           done
 
-      # 4) Setup Node.js per firmare
+      # 4) Setup Node.js per la firma
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install Node dependencies for signing
+      - name: Install sign dependencies
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
           npm install jsignpdf node-forge pdf-lib node-signpdf
@@ -68,7 +68,7 @@ jobs:
       - name: Create certificate.p12 from secret
         run: echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
 
-      # 5) Firma PDF
+      # 5) Firma i PDF
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
@@ -85,47 +85,59 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      # 6) Esegui il BOT Python (sposta i file, rimuovi, archivia, crea eventuale report)
+      # 6) Genera sign_report.yml con i PDF firmati
+      - name: Generate sign report
+        run: |
+          echo "signed_files:" > sign_report.yml
+          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
+          for pdf in $SIGNED_FILES; do
+            echo "- $pdf" >> sign_report.yml
+          done
+          echo "DEBUG: Creato sign_report.yml:"
+          cat sign_report.yml
+
+      # 7) Esecuzione del bot Python, passandogli sign_report.yml
+      #
+      # Il tuo bot deve generare un file final_report.yml con i risultati
+      # (es. spostamenti, eliminazioni, versioni minori, ecc.).
       - name: Run archiving bot
         run: |
-          echo "Eseguo bot (process_files.py)..."
-          python process_files.py
+          echo "Eseguo bot (process_files.py) con report sign_report.yml..."
+          python process_files.py sign_report.yml
           echo "Bot completato."
 
-      # 7) Commit locale + Pull rebase + Commit e Push finale
+      # 8) Commit locale, pull --rebase, commit e push finale
       - name: Commit, rebase e push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # A) Committa i cambi locali
+
+          # A) Commit delle modifiche locali (PDF firmati + archivio)
           git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No local changes to commit"
           else
-            git commit -m "Commit locale prima del rebase (firma & archivia)"
+            git commit -m "Firma e archivia PDF (pre-rebase)"
           fi
-          
-          # B) Pull con rebase per allinearsi ad eventuali modifiche remote
+
+          # B) Pull con rebase
           git pull --rebase origin main
-          
-          # C) Controlla se ci sono ulteriori cambi (es. risoluzione conflitti)
+
+          # C) Commit e push finale (se ci sono altri cambi)
           git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No changes after rebase"
             exit 0
           fi
-          
-          # D) Commit e push finale
-          git commit -m "Compilazione, firma e archiviazione PDF"
+          git commit -m "Firma e archivia PDF (post-rebase)"
           git push origin HEAD:main
 
-      # 8) Elenco contenuto di documents/archive
+      # 9) (Opzionale) Elenca i contenuti archiviati
       - name: List documents/archive
         run: ls -R documents/archive || true
 
-      # 9) Upload report
-      - name: Upload artifact (final report)
+      # 10) (Opzionale) Carica final_report.yml come artifact
+      - name: Upload final report
         uses: actions/upload-artifact@v4
         with:
           name: final-report
