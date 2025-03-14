@@ -1,34 +1,29 @@
 name: archive
 
 on:
-  # Avvio automatico quando “Build Typst Documentation” termina con successo
   workflow_run:
     workflows: ["Build Typst Documentation"]
     types: [completed]
-  # Avvio manuale (se desiderato)
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  archive_after_build:
+  archive_only:
     runs-on: ubuntu-latest
     steps:
-      # 1) Checkout con credenziali, per poter committare/pushare
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
-      # 2) Pull con rebase per allinearti al branch main
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 3) Genera sign_report.yml con tutti i PDF firmati già esistenti
       - name: Generate sign_report.yml
         run: |
           echo "signed_files:" > sign_report.yml
@@ -39,36 +34,27 @@ jobs:
           echo "DEBUG: Creato sign_report.yml:"
           cat sign_report.yml
 
-      # 4) Esegui lo script Python di archiviazione (process_files.py nella root)
       - name: Run archiving bot
         run: |
           echo "Avvio del bot di archiviazione..."
           python process_files.py sign_report.yml
           echo "Bot completato."
 
-      # 5) Commit e push finale (unico) delle modifiche
       - name: Commit and push archivio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Aggiungiamo documents/archive, sign_report.yml e final_report.yml (se creato)
           git add documents/archive sign_report.yml final_report.yml || true
-
-          # Se non ci sono differenze, usciamo
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit for archivio"
             exit 0
           fi
-
           git commit -m "Archivia vecchie versioni (bot)"
           git push origin HEAD:main
 
-      # 6) (Opzionale) Visualizza la cartella archive
       - name: List documents/archive
         run: ls -R documents/archive || true
 
-      # 7) (Opzionale) Carica final_report.yml come artifact se lo script la crea
       - name: Upload final report
         uses: actions/upload-artifact@v4
         with:
