@@ -1,57 +1,85 @@
 name: archive
 
 on:
+  # Si avvia automaticamente quando “Build Typst Documentation” termina (types: [completed])
   workflow_run:
     workflows: ["Build Typst Documentation"]
     types: [completed]
+  # Permette anche l’avvio manuale
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  archive_job:
+  process_files_after_build:
     runs-on: ubuntu-latest
     steps:
+      # 1) Checkout con credenziali, per poter committare/pushare
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           persist-credentials: true
 
+      # 2) Pull con rebase, per allinearsi a eventuali nuovi commit su main
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 1) Scarica l'artifact sign-report (che contiene sign_report.yml)
-      - name: Download sign_report artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sign-report  # Lo stesso nome usato in "build_typst.yml"
+      # 3) Genera sign_report.yml elencando i PDF firmati (terminano con _signed.pdf)
+      - name: Generate sign_report.yml
+        run: |
+          echo "signed_files:" > sign_report.yml
+          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
+          for pdf in $SIGNED_FILES; do
+            echo "- $pdf" >> sign_report.yml
+          done
+          echo "DEBUG: Creato sign_report.yml:"
+          cat sign_report.yml
 
-      # 2) Esegui lo script di archiviazione
-      #    Se process_files.py è nella root, e prende "sign_report.yml" come argomento
+      # 4) Esegui lo script di archiviazione (process_files.py)
+      #    Si assume che process_files.py sia nella root e si aspetti "sign_report.yml" come argomento
       - name: Run archiving bot
         run: |
           echo "Avvio del bot di archiviazione..."
           python process_files.py sign_report.yml
           echo "Bot completato."
 
-      # 3) Commit & push
+      # 5) Commit e push delle modifiche (PDF spostati in archive/ + final_report.yml)
       - name: Commit and push archivio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add documents/archive final_report.yml || true
+
+          git add documents/archive sign_report.yml final_report.yml || true
+
+          # Se non ci sono differenze, esci
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit for archivio"
             exit 0
           fi
-          git commit -m "Sposta file in archivio (bot)"
+
+          git commit -m "Archivia vecchie versioni (bot)"
+          # Pull --rebase di nuovo per evitare conflitti se c’è stato un commit su main
+          git pull --rebase origin main || true
+
+          # Se dopo il rebase ci sono ancora cambi, li committiamo
+          git add documents/archive sign_report.yml final_report.yml || true
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes after rebase"
+            exit 0
+          fi
+
+          git commit -m "Archivia vecchie versioni (post-rebase)"
           git push origin HEAD:main
 
-      # 4) Lista archivio e upload report
+      # 6) (Opzionale) Lista il contenuto di documents/archive
       - name: List documents/archive
         run: ls -R documents/archive || true
 
+      # 7) (Opzionale) Carica final_report.yml come artifact, se generato dallo script
       - name: Upload final report
         uses: actions/upload-artifact@v4
         with:
