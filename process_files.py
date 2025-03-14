@@ -2,7 +2,10 @@
 """
 Script per:
 1. Caricare config.yml.
-2. Processare le directory (candidatura, rtb, pb) e spostare i file aggiornati.
+2. Processare le directory (candidatura, rtb, pb) contenute in "documents"
+   e spostare il file con la versione precedente (minore) in una sottocartella
+   in "documents/archive/<categoria>/<versione>".
+   Il file viene rimosso dalla cartella sorgente.
 """
 
 import os
@@ -12,30 +15,15 @@ import yaml
 from packaging.version import Version, InvalidVersion
 
 def load_config(config_file=".github/workflows/config.yml"):
-    """Carica il file di configurazione dal percorso specificato."""
+    """Carica il file di configurazione."""
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
-def get_existing_files(dest_folder, file_regex):
-    """Ritorna {doc: (file_path, version)} dalla cartella di destinazione."""
-    existing = {}
-    pattern = re.compile(file_regex)
-    if not os.path.isdir(dest_folder):
-        return existing
-    for file in os.listdir(dest_folder):
-        match = pattern.match(file)
-        if match:
-            doc = match.group("doc")
-            version_str = match.group("version")
-            try:
-                ver = Version(version_str)
-            except InvalidVersion:
-                continue
-            existing[doc] = (os.path.join(dest_folder, file), ver)
-    return existing
-
 def scan_source_directory(source_dir, file_regex, file_pattern):
-    """Ritorna {doc: (file_path, version)} dalla directory sorgente."""
+    """
+    Scansiona la directory sorgente e ritorna un dizionario {doc: (file_path, version)}
+    scegliendo per ogni documento il file con la versione minore.
+    """
     grouped = {}
     regex = re.compile(file_regex)
     for root, _, files in os.walk(source_dir):
@@ -54,59 +42,50 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
                 print(f"Versione non valida in '{file}': {version_str}")
                 continue
             file_path = os.path.join(root, file)
+            # Se il documento è già presente, mantieni il file con la versione minore
             if doc in grouped:
                 _, current_ver = grouped[doc]
-                if ver > current_ver:
+                if ver < current_ver:
                     grouped[doc] = (file_path, ver)
             else:
                 grouped[doc] = (file_path, ver)
     return grouped
 
 def process_category(category, config):
-    """Processa la categoria e sposta i file aggiornati nella cartella di destinazione."""
-    dest_folder_name = config["group_map"].get(category.split(os.sep)[-1], category.capitalize())
+    """
+    Per la categoria (es. "candidatura"), cerca i file in "documents/<category>".
+    Per ogni documento, sposta il file con la versione minore in
+    "documents/archive/<mappatura>/<vX.Y.Z>".
+    """
+    # La directory sorgente è documents/<category>
+    source_dir = os.path.join("documents", category)
+    # Ottieni il nome da usare nella cartella archive (ad es. "Candidatura")
+    group_name = config["group_map"].get(category, category.capitalize())
     archive_folder = config.get("archive_folder", "documents/archive")
-    dest_folder = os.path.join(archive_folder, dest_folder_name)
-    os.makedirs(dest_folder, exist_ok=True)
-    print(f"Categoria '{category}' -> '{dest_folder}'")
+    # Cartella base per questa categoria nella directory archive
+    dest_base = os.path.join(archive_folder, group_name)
+    os.makedirs(dest_base, exist_ok=True)
+    print(f"Processo categoria '{category}' -> '{dest_base}'")
     
-    existing_files = get_existing_files(dest_folder, config["file_regex"])
-    source_files = scan_source_directory(category, config["file_regex"], config["file_pattern"])
+    source_files = scan_source_directory(source_dir, config["file_regex"], config["file_pattern"])
     
     for doc, (src_file, src_ver) in source_files.items():
-        update = False
-        if doc in existing_files:
-            dest_file, dest_ver = existing_files[doc]
-            if src_ver > dest_ver:
-                print(f"Aggiornamento '{doc}': {dest_ver} -> {src_ver}")
-                os.remove(dest_file)
-                update = True
-            else:
-                print(f"Nessun aggiornamento per '{doc}'")
-                continue
-        else:
-            update = True
-        
-        if update:
-            dest_file_path = os.path.join(dest_folder, os.path.basename(src_file))
-            print(f"Spostamento: '{src_file}' -> '{dest_file_path}'")
-            shutil.move(src_file, dest_file_path)
+        # Definisce la cartella di destinazione per la versione (es. v1.0.0)
+        version_folder = os.path.join(dest_base, f"v{src_ver}")
+        os.makedirs(version_folder, exist_ok=True)
+        dest_file_path = os.path.join(version_folder, os.path.basename(src_file))
+        print(f"Spostamento: '{src_file}' -> '{dest_file_path}'")
+        shutil.move(src_file, dest_file_path)
     print()
 
 def main():
-    config = load_config()  # Carica il file di configurazione
-    os.makedirs(config.get("archive_folder", "documents/archive"), exist_ok=True)
-    
-    # Per ogni directory specificata nel config, se non viene trovata in root,
-    # proviamo a cercarla dentro "documents".
+    config = load_config()  # Carica il file di configurazione da .github/workflows/config.yml
     for category in config.get("directories", []):
-        if not os.path.isdir(category):
-            alt_path = os.path.join("documents", category)
-            if os.path.isdir(alt_path):
-                category = alt_path
-            else:
-                print(f"Directory non trovata: '{category}'")
-                continue
+        # Si assume che le directory sorgente siano in documents/<category>
+        source_dir = os.path.join("documents", category)
+        if not os.path.isdir(source_dir):
+            print(f"Directory non trovata: '{source_dir}'")
+            continue
         process_category(category, config)
     print("Elaborazione completata.")
 
