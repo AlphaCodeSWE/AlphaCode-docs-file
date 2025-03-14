@@ -108,6 +108,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Esegui di nuovo un pull con rebase, per assicurarti di essere allineato
+          git pull --rebase origin main
+
           git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit"
