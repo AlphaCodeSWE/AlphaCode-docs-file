@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """
-Processa i file firmati (elencati in sign_report.yml).
-Per ogni documento, mantiene la versione più recente nella cartella originale
-e sposta le versioni più vecchie in documents/archive/.
-
-Esempio di sign_report.yml:
-signed_files:
-  - documents/candidatura/LetteraPresentazione_v1.0.0_signed.pdf
-  - documents/candidatura/LetteraPresentazione_v1.1.0_signed.pdf
+Esempio di script "BOT":
+- Legge sign_report.yml (un YAML con 'signed_files' come elenco di file firmati).
+- Per ciascun "documento", tiene la versione più recente nella cartella originale
+  e sposta in documents/archive/<doc>_v<ver> le versioni più vecchie.
+- Genera final_report.yml.
 """
 
 import os
@@ -17,10 +14,12 @@ import shutil
 import yaml
 from packaging.version import Version, InvalidVersion
 
+# Regex: NomeFile_v1.0.0_signed.pdf
+# Adatta se i tuoi file sono di tipo NomeFile.v1.0.0_signed.pdf
 FILE_REGEX = re.compile(r'^(?P<doc>.+)_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_signed\.pdf$')
 
 def load_sign_report(report_file="sign_report.yml"):
-    """Carica la lista dei file firmati dal report."""
+    """Carica la lista dei file firmati dal file report_file."""
     if not os.path.exists(report_file):
         print(f"ERRORE: Il file di report '{report_file}' non esiste.")
         sys.exit(1)
@@ -35,15 +34,16 @@ def load_sign_report(report_file="sign_report.yml"):
     return data["signed_files"]
 
 def main():
-    # 1) Legge il nome del report
+    # Se lo script riceve un argomento, è il nome del file di report
     if len(sys.argv) > 1:
         report_file = sys.argv[1]
     else:
         report_file = "sign_report.yml"
 
+    # 1) Carica i PDF firmati
     signed_files = load_sign_report(report_file)
 
-    # 2) Raggruppa i file per doc (estraendo la versione dalla regex)
+    # 2) Raggruppa i file per (doc) estraendo la versione
     grouped = {}
     for file_path in signed_files:
         filename = os.path.basename(file_path)
@@ -52,7 +52,7 @@ def main():
             print(f"ERRORE: Il file '{filename}' non rispetta il formato doc_vx.y.z_signed.pdf")
             continue
 
-        doc = match.group("doc")  # Esempio: "LetteraPresentazione"
+        doc = match.group("doc")
         version_str = match.group("version")
         try:
             ver = Version(version_str)
@@ -64,7 +64,7 @@ def main():
             grouped[doc] = []
         grouped[doc].append((ver, file_path))
 
-    # 3) Trova la versione maggiore e sposta le versioni minori
+    # 3) Per ogni doc, trova la versione maggiore e sposta le versioni minori
     final_report = {
         "kept_in_documents": [],
         "archived": []
@@ -93,6 +93,7 @@ def main():
                     "destination": dest_file
                 })
             else:
+                # Mantieni la versione più recente
                 print(f"Mantengo la versione più recente: '{file_path}' (v{ver})")
                 final_report["kept_in_documents"].append({
                     "doc": doc,
