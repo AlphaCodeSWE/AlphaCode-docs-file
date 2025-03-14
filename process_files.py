@@ -12,7 +12,7 @@ import yaml
 from packaging.version import Version, InvalidVersion
 
 def load_config(config_file=".github/workflows/config.yml"):
-    """Carica config.yml."""
+    """Carica il file di configurazione dal percorso specificato."""
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
@@ -63,7 +63,7 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
     return grouped
 
 def process_category(category, config):
-    """Processa la categoria e sposta file aggiornati."""
+    """Processa la categoria e sposta i file aggiornati nella cartella di destinazione."""
     dest_folder_name = config["group_map"].get(category, category.capitalize())
     archive_folder = config.get("archive_folder", "documents/archive")
     dest_folder = os.path.join(archive_folder, dest_folder_name)
@@ -94,7 +94,7 @@ def process_category(category, config):
     print()
 
 def main():
-    config = load_config("config.yml")
+    config = load_config()  # Carica il file di configurazione da .github/workflows/config.yml
     os.makedirs(config.get("archive_folder", "documents/archive"), exist_ok=True)
     for category in config.get("directories", []):
         if not os.path.isdir(category):
