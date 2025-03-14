@@ -6,14 +6,16 @@ on:
       - main
     paths-ignore:
       - 'documents/**/*.pdf'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-and-sign:
+  build-sign-archive:
     runs-on: ubuntu-latest
     steps:
+      # 1) Checkout e pull
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -25,7 +27,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      - name: Set up Rust and Install Typst CLI
+      # 2) Set up Rust + Typst
+      - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Typst CLI
@@ -33,15 +36,13 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      - name: Compile Typst files to PDF recursively
+      # 3) Compila i file .typ in PDF
+      - name: Compile Typst files
         run: |
-          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
           find sources -type f -name "*.typ" | while read -r file; do
-            # Calcola il percorso relativo sostituendo "sources/" con "" e ".typ" con ".pdf"
             relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
             output="documents/$relpath"
             mkdir -p "$(dirname "$output")"
-            # Se il PDF firmato esiste già, salta la compilazione
             if [ -f "${output%.pdf}_signed.pdf" ]; then
               echo "Skipping $file, PDF già firmato."
               continue
@@ -50,28 +51,24 @@ jobs:
             typst compile --root . "$file" "$output"
           done
 
+      # 4) Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Initialize package.json and install dependencies
+      - name: Install sign dependencies
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
           npm install jsignpdf node-forge pdf-lib node-signpdf
-          cat package.json
-          ls -la node_modules
 
       - name: Upload logo for visible signature
-        run: |
-          cp template/assets/AlphaCodeLogo.png logo.png
-          ls -la logo.png
+        run: cp template/assets/AlphaCodeLogo.png logo.png
 
       - name: Create certificate.p12 from secret
-        run: |
-          echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
-          ls -la certificate.p12
+        run: echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
 
+      # 5) Firma i PDF
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
@@ -88,14 +85,44 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      - name: Commit and push signed PDFs
+      # 6) Genera sign_report.yml con l'elenco dei PDF firmati
+      - name: Generate sign report
+        run: |
+          echo "signed_files:" > sign_report.yml
+          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
+          for f in $SIGNED_FILES; do
+            echo "- $f" >> sign_report.yml
+          done
+          echo "Creato sign_report.yml:"
+          cat sign_report.yml
+
+      # 7) Eseguo il bot process_files.py in fondo, passandogli 'sign_report.yml'
+      - name: Run archiving bot
+        run: |
+          echo "Eseguo bot con sign_report.yml..."
+          python process_files.py sign_report.yml
+          echo "Bot completato."
+
+      # 8) Commit e push finale
+      - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add documents/
+          git add documents/ *.yml
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit"
             exit 0
           fi
-          git commit -m "Aggiorna PDF con firma digitale"
+          git commit -m "Compilazione, firma e archiviazione PDF"
           git push origin HEAD:main
+
+      #  Lista contenuti e upload report finale
+      - name: List documents/archive
+        run: ls -R documents/archive || true
+
+      - name: Upload final report
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-report
+          path: final_report.yml
+          if-no-files-found: ignore
