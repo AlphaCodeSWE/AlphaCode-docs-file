@@ -6,24 +6,27 @@ on:
       - main
     paths-ignore:
       - 'documents/**/*.pdf'
-  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build_and_sign:
+  build-and-sign:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true
 
-      # (Opzionale) Pull rebase se vuoi allinearti a eventuali commit
       - name: Pull latest changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git pull --rebase origin main
 
-      # 1) Install Typst
-      - name: Setup Rust
+      # 1) Installa Rust e Typst
+      - name: Set up Rust and Install Typst CLI
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install Typst CLI
@@ -31,40 +34,55 @@ jobs:
           cargo install --locked typst-cli
           typst --version
 
-      # 2) Compila .typ in PDF (se serve)
-      - name: Compile Typst files
+      # 2) Compila i file .typ in PDF
+      - name: Compile Typst files to PDF recursively
         run: |
+          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
           find sources -type f -name "*.typ" | while read -r file; do
+            # Calcola il percorso relativo sostituendo "sources/" con "" e ".typ" con ".pdf"
             relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
             output="documents/$relpath"
             mkdir -p "$(dirname "$output")"
+            # Se il PDF firmato esiste già, salta la compilazione
             if [ -f "${output%.pdf}_signed.pdf" ]; then
-              echo "Skipping $file, PDF già firmato"
+              echo "Skipping $file, PDF già firmato."
               continue
             fi
-            echo "Compiling $file -> $output"
+            echo "Compiling $file to $output..."
             typst compile --root . "$file" "$output"
           done
 
-      # 3) Firma PDF
+      # 3) Setup Node.js e install librerie per la firma
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
-      - name: Install sign dependencies
+      - name: Initialize package.json and install dependencies
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
           npm install jsignpdf node-forge pdf-lib node-signpdf
+          cat package.json
+          ls -la node_modules
+
+      # 4) Upload logo e crea certificato da secret
+      - name: Upload logo for visible signature
+        run: |
+          cp template/assets/AlphaCodeLogo.png logo.png
+          ls -la logo.png
 
       - name: Create certificate.p12 from secret
-        run: echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
+        run: |
+          echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
+          ls -la certificate.p12
 
+      # 5) Firma i PDF
       - name: Run sign.js script
         env:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: node sign.js
 
+      # 6) Verifica che i PDF siano effettivamente firmati
       - name: Verify signed PDFs exist
         run: |
           SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
@@ -76,20 +94,39 @@ jobs:
             echo "$SIGNED_FILES"
           fi
 
-      # 4) Genera sign_report.yml
-      - name: Generate sign report
+      # 7) Commit e push dei PDF firmati, se ci sono modifiche
+      - name: Commit and push signed PDFs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add documents/
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes to commit"
+            exit 0
+          fi
+          git commit -m "Aggiorna PDF con firma digitale"
+          git push origin HEAD:main
+
+      # 8)  Genera il file sign_report.yml e committa
+      - name: Generate and commit sign_report.yml
         run: |
           echo "signed_files:" > sign_report.yml
           SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
           for pdf in $SIGNED_FILES; do
             echo "- $pdf" >> sign_report.yml
           done
-          echo "Creato sign_report.yml:"
+
+          echo "DEBUG: Creato sign_report.yml:"
           cat sign_report.yml
 
-      # 5) Carica sign_report.yml come artifact (niente commit)
-      - name: Upload sign report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sign-report
-          path: sign_report.yml
+          # Commit e push di sign_report.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sign_report.yml
+
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes to commit (sign_report.yml non modifica nulla)"
+            exit 0
+          fi
+          git commit -m "Aggiunge o aggiorna sign_report.yml con elenco PDF firmati"
+          git push origin HEAD:main
