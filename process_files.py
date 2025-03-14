@@ -64,7 +64,7 @@ def scan_source_directory(source_dir, file_regex, file_pattern):
 
 def process_category(category, config):
     """Processa la categoria e sposta i file aggiornati nella cartella di destinazione."""
-    dest_folder_name = config["group_map"].get(category, category.capitalize())
+    dest_folder_name = config["group_map"].get(category.split(os.sep)[-1], category.capitalize())
     archive_folder = config.get("archive_folder", "documents/archive")
     dest_folder = os.path.join(archive_folder, dest_folder_name)
     os.makedirs(dest_folder, exist_ok=True)
@@ -94,12 +94,19 @@ def process_category(category, config):
     print()
 
 def main():
-    config = load_config()  # Carica il file di configurazione da .github/workflows/config.yml
+    config = load_config()  # Carica il file di configurazione
     os.makedirs(config.get("archive_folder", "documents/archive"), exist_ok=True)
+    
+    # Per ogni directory specificata nel config, se non viene trovata in root,
+    # proviamo a cercarla dentro "documents".
     for category in config.get("directories", []):
         if not os.path.isdir(category):
-            print(f"Directory non trovata: '{category}'")
-            continue
+            alt_path = os.path.join("documents", category)
+            if os.path.isdir(alt_path):
+                category = alt_path
+            else:
+                print(f"Directory non trovata: '{category}'")
+                continue
         process_category(category, config)
     print("Elaborazione completata.")
 
