@@ -12,11 +12,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Esegui lo script Python per processare i file
+      - name: Avvio dello script di processamento
         run: |
           echo "Avvio dello script di processamento..."
           python process_files.py
+
       - name: Lista contenuti di documents/archive
-        run: |
-          echo "Contenuto di documents/archive:"
-          ls -R documents/archive
+        run: ls -R documents/archive
+
+      - name: Carica report come artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: report
+          path: report.yml
