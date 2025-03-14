@@ -2,9 +2,10 @@
 """
 process_files.py:
 1. Legge 'sign_report.yml' contenente la lista dei PDF firmati.
-2. Raggruppa i file per documento (in base al nome file) usando il percorso per ottenere la cartella padre.
-3. Per ogni gruppo, individua la versione più recente che rimane nella cartella originale e archivia (sposta)
-   solo i file con versioni inferiori, creando la cartella in
+2. Raggruppa i file per documento utilizzando la cartella padre (es. "candidatura")
+   e il nome base del file (estratto prima della data).
+3. Per ciascun gruppo, individua la versione massima (più recente) che rimane nella cartella originale;
+   archivia (sposta) solo i file con versioni inferiori, creando la cartella in 
    documents/archive/<MappedParent>_v<version>.
 4. Genera 'final_report.yml' con il riepilogo delle operazioni.
 """
@@ -15,9 +16,10 @@ import sys
 import shutil
 import yaml
 from packaging.version import Version, InvalidVersion
-
-# Regex per file del tipo "LetteraPresentazione_v1.0.0_signed.pdf"
-FILE_REGEX = re.compile(r'^(?P<name>.+)_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_signed\.pdf$')
+#regole suffisso file
+FILE_REGEX = re.compile(
+    r'^(?P<name>.+?)_\d{4}_\d{2}_\d{2}_V(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_sigend\.pdf$', re.IGNORECASE
+)
 
 def load_sign_report(report_file="sign_report.yml"):
     if not os.path.exists(report_file):
@@ -38,11 +40,11 @@ def load_config(config_file="config.yml"):
         return yaml.safe_load(f)
 
 def get_mapped_parent(file_path, group_map):
-    # Supponiamo che il file sia in un percorso tipo: documents/<subfolder>/...
+    # Assumiamo che il file sia in un percorso come: documents/<subfolder>/...
     parts = file_path.split(os.sep)
     if len(parts) < 2 or parts[0] != "documents":
         return "Unknown"
-    subfolder = parts[1].lower()  # ad esempio "candidatura"
+    subfolder = parts[1].lower()  # es. "candidatura"
     return group_map.get(subfolder, subfolder.capitalize())
 
 def main():
@@ -61,7 +63,7 @@ def main():
         filename = os.path.basename(file_path)
         match = FILE_REGEX.match(filename)
         if not match:
-            print(f"ERRORE: Il file '{filename}' non rispetta il formato atteso (doc_vX.Y.Z_signed.pdf)")
+            print(f"ERRORE: Il file '{filename}' non rispetta il formato atteso.")
             continue
         version_str = match.group("version")
         try:
@@ -71,6 +73,7 @@ def main():
             continue
         grouped.setdefault(mapped_parent, []).append((ver, file_path))
 
+    # Per ogni gruppo, individua la versione massima e archivia solo quelle inferiori
     for doc, files_info in grouped.items():
         if len(files_info) == 1:
             ver, path_ = files_info[0]
@@ -78,20 +81,18 @@ def main():
             final_report["kept_in_documents"].append({"doc": doc, "version": str(ver), "file": path_})
             continue
 
-        # Trova la versione massima (più recente)
-        max_ver = max(v[0] for v in files_info)
+        max_ver = max(item[0] for item in files_info)
         for ver, src_path in files_info:
             if ver < max_ver:
-                # Crea la cartella di destinazione: documents/archive/<doc>_v<version>
                 dest_folder = os.path.join(archive_root, f"{doc}_v{ver}")
                 os.makedirs(dest_folder, exist_ok=True)
                 src_filename = os.path.basename(src_path)
                 dest_path = os.path.join(dest_folder, src_filename)
                 print(f"Sposto '{src_path}' -> '{dest_path}' (v{ver})")
-                # Usa shutil.move() per spostare (copia e rimuove in automatico)
+                # Usa shutil.move() per spostare il file (copia e rimuove automaticamente)
                 try:
                     shutil.move(src_path, dest_path)
-                    print(f"Rimosso il file originale: '{src_path}'")
+                    print(f"File originale eliminato: '{src_path}'")
                 except Exception as e:
                     print(f"ERRORE nello spostamento di '{src_path}': {e}")
                 final_report["archived"].append({
