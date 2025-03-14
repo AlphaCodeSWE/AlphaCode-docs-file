@@ -2,11 +2,11 @@
 """
 process_files.py:
 1. Legge 'sign_report.yml' contenente la lista dei PDF firmati.
-2. Raggruppa i file per documento (estrapolando il nome base dal filename).
-3. Per ciascun gruppo, individua la versione più recente.
-4. Archivia (copia + elimina) soltanto i file con versioni minori, creando in archivio la cartella
-   solo per quelle versioni.
-5. Genera un 'final_report.yml' con il riepilogo delle operazioni.
+2. Raggruppa i file per documento (in base al nome file).
+3. Per ogni documento, determina la versione massima (più recente).
+4. Archivia (copiando e rimuovendo) solo i file con versioni inferiori rispetto alla massima,
+   creando la cartella di destinazione solo per quelle versioni.
+5. Genera 'final_report.yml' con il riepilogo delle operazioni.
 """
 
 import os
@@ -26,16 +26,16 @@ def load_sign_report(report_file="sign_report.yml"):
     with open(report_file, "r") as f:
         data = yaml.safe_load(f)
     if not data or "signed_files" not in data:
-        print(f"ERRORE: '{report_file}' non contiene 'signed_files:' oppure è vuoto.")
+        print(f"ERRORE: '{report_file}' non contiene 'signed_files:' o è vuoto.")
         sys.exit(1)
     return data["signed_files"]
 
 def main():
-    # Usa il file di report passato come argomento o "sign_report.yml" per default
+    # Se viene passato un argomento, usalo come file di report
     report_file = sys.argv[1] if len(sys.argv) > 1 else "sign_report.yml"
     signed_files = load_sign_report(report_file)
 
-    # Raggruppa i file per documento (doc) estraendo la versione dal nome
+    # Raggruppa i file per "doc" in base al filename
     grouped = {}
     for file_path in signed_files:
         filename = os.path.basename(file_path)
@@ -55,39 +55,32 @@ def main():
     final_report = {"kept_in_documents": [], "archived": []}
     archive_root = "documents/archive"
 
+    # Per ogni documento, archivia solo i file con versione inferiore alla massima
     for doc, versions in grouped.items():
-        # Se c'è un solo file, non archivia nulla
-        if len(versions) == 1:
-            ver, path_ = versions[0]
-            print(f"Mantengo l'unica versione per '{doc}': '{path_}' (v{ver})")
-            final_report["kept_in_documents"].append({"doc": doc, "version": str(ver), "file": path_})
-            continue
-
-        # Trova la versione maggiore
-        max_ver = max(v[0] for v in versions)
-        for ver, path_ in versions:
+        # Trova la versione massima (più recente)
+        max_ver = max(item[0] for item in versions)
+        for ver, src_path in versions:
             if ver < max_ver:
-                # Solo per i file con versione minore, crea la cartella di archivio e sposta il file
+                # Crea la cartella di archivio per questa versione (se non esiste)
                 dest_folder = os.path.join(archive_root, f"{doc}_v{ver}")
                 os.makedirs(dest_folder, exist_ok=True)
-                src_filename = os.path.basename(path_)
+                src_filename = os.path.basename(src_path)
                 dest_path = os.path.join(dest_folder, src_filename)
-                print(f"Sposto '{path_}' -> '{dest_path}' (v{ver})")
-                shutil.copy2(path_, dest_path)
-                os.remove(path_)
+                print(f"Sposto la versione meno recente: '{src_path}' -> '{dest_path}'")
+                shutil.copy2(src_path, dest_path)
+                os.remove(src_path)
                 final_report["archived"].append({
                     "doc": doc,
                     "version": str(ver),
-                    "source": path_,
+                    "source": src_path,
                     "destination": dest_path
                 })
             else:
-                # La versione maggiore la manteniamo in loco
-                print(f"Mantengo la versione più recente per '{doc}': '{path_}' (v{ver})")
+                print(f"Mantengo la versione più recente per '{doc}': '{src_path}' (v{ver})")
                 final_report["kept_in_documents"].append({
                     "doc": doc,
                     "version": str(ver),
-                    "file": path_
+                    "file": src_path
                 })
 
     with open("final_report.yml", "w") as f:
