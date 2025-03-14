@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-process_files.py:
-1. Legge 'sign_report.yml' (o un altro file passato come argomento) con la chiave 'signed_files:'
-   e la lista dei PDF firmati (es: NomeDoc_v1.0.0_signed.pdf).
-2. Per ogni 'doc', individua la versione piu' alta e la mantiene nella cartella originale.
-   Le versioni meno recenti vengono spostate in documents/archive/<doc>_v<version>/.
-3. Esegue la rimozione del file originale dalla cartella documents/... (copia e poi remove).
-4. Crea un 'final_report.yml' con il riepilogo delle operazioni.
+Esempio di BOT che:
+1. Legge 'sign_report.yml' con 'signed_files: [lista di percorsi PDF firmati]'
+2. Per ogni file:
+   - Determina la "subfolder" (candidatura, rtb, pb) dal percorso
+   - Usa una group_map (definita in config.yml) per capire come chiamare la cartella (Candidatura, RTB, PB)
+   - Estrae la versione dal nome file (es. LetteraPresentazione_v1.0.0_signed.pdf -> 1.0.0)
+   - Crea cartella: documents/archive/<NomeDoc>_v<version> (es. Candidatura_v1.0.0)
+   - Copia il file e lo rimuove dalla sorgente
+3. Genera final_report.yml
 """
 
 import os
@@ -16,14 +18,13 @@ import shutil
 import yaml
 from packaging.version import Version, InvalidVersion
 
-# Regex: NomeDoc_v1.0.0_signed.pdf
-# Adatta se i file si chiamano in modo diverso (es. NomeDoc.v1.0.0_signed.pdf).
-FILE_REGEX = re.compile(r'^(?P<doc>.+)_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_signed\.pdf$')
+# Regex per estrarre la VERSIONE dal file, tipo: LetteraPresentazione_v1.0.0_signed.pdf
+# Nota: NON estraiamo 'doc' dal filename, perché lo deduciamo dalla cartella
+VERSION_REGEX = re.compile(r'_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_signed\.pdf$')
 
 def load_sign_report(report_file="sign_report.yml"):
-    """Carica la lista dei PDF firmati dal file di report."""
     if not os.path.exists(report_file):
-        print(f"ERRORE: File di report '{report_file}' non trovato.")
+        print(f"ERRORE: Il file di report '{report_file}' non esiste.")
         sys.exit(1)
 
     with open(report_file, "r") as f:
@@ -35,25 +36,69 @@ def load_sign_report(report_file="sign_report.yml"):
 
     return data["signed_files"]
 
+def load_config(config_file="config.yml"):
+    """
+    Carica la mappa 'group_map' dal config.yml, ad es.:
+    group_map:
+      candidatura: Candidatura
+      rtb: RTB
+      pb: PB
+    """
+    if not os.path.exists(config_file):
+        print(f"ATTENZIONE: '{config_file}' non trovato. Uso default map.")
+        return {"group_map": {}}
+    with open(config_file, "r") as f:
+        return yaml.safe_load(f)
+
+def get_subfolder_doc(path_, group_map):
+    """
+    Dato un path come 'documents/candidatura/LetteraPresentazione_v1.0.0_signed.pdf',
+    ricava la subfolder ('candidatura') e la mappa a un nome doc, es. 'Candidatura'.
+    Se la subfolder non e' presente in group_map, usa subfolder.capitalize().
+    """
+    # Rimuove eventuale 'documents/' davanti
+    rel_path = path_.replace("documents/", "")
+    # Prende il nome della subfolder top-level
+    parts = rel_path.split(os.sep)  # es. ["candidatura", "LetteraPresentazione_v1.0.0_signed.pdf"]
+    if not parts:
+        return "Unknown"
+
+    subfolder = parts[0].lower()  # "candidatura"
+    if subfolder in group_map:
+        return group_map[subfolder]
+    else:
+        return subfolder.capitalize()
+
 def main():
-    # Se l'utente passa un argomento, usalo come nome del file di report
+    # 1) Legge eventuale argomento per 'sign_report.yml'
     if len(sys.argv) > 1:
         report_file = sys.argv[1]
     else:
         report_file = "sign_report.yml"
 
+    # 2) Carica i PDF firmati
     signed_files = load_sign_report(report_file)
 
-    # Raggruppiamo i file per "doc" (es. "NomeDoc") e "version" (es. 1.0.0)
-    grouped = {}
-    for file_path in signed_files:
-        filename = os.path.basename(file_path)
-        match = FILE_REGEX.match(filename)
-        if not match:
-            print(f"ERRORE: Il file '{filename}' non rispetta il formato doc_vX.Y.Z_signed.pdf")
-            continue
+    # 3) Carica config.yml per group_map
+    config = load_config("config.yml")
+    group_map = config.get("group_map", {})
 
-        doc = match.group("doc")
+    final_report = {
+        "archived": [],
+        "kept_in_documents": []
+    }
+
+    archive_root = "documents/archive"
+
+    for src_path in signed_files:
+        # Estrai la subfolder dal path
+        doc_name = get_subfolder_doc(src_path, group_map)
+        # Estrai la versione dal nome file
+        filename = os.path.basename(src_path)
+        match = VERSION_REGEX.search(filename)
+        if not match:
+            print(f"ERRORE: Nome file '{filename}' non contiene '_vX.Y.Z_signed.pdf'")
+            continue
         version_str = match.group("version")
         try:
             ver = Version(version_str)
@@ -61,52 +106,33 @@ def main():
             print(f"ERRORE: Versione non valida in '{filename}': {version_str}")
             continue
 
-        grouped.setdefault(doc, []).append((ver, file_path))
+        # Crea la cartella di destinazione: documents/archive/<DocName>_v<version>
+        dest_folder = os.path.join(archive_root, f"{doc_name}_v{ver}")
+        os.makedirs(dest_folder, exist_ok=True)
 
-    # final_report con due liste: kept_in_documents e archived
-    final_report = {
-        "kept_in_documents": [],
-        "archived": []
-    }
+        # Se c'e' gia' un file piu' recente da qualche parte, dovresti controllarlo, ma qui
+        # supponiamo di spostare sempre TUTTI i file trovati. Oppure potresti deciderne la logica.
+        src_basename = os.path.basename(src_path)
+        dest_path = os.path.join(dest_folder, src_basename)
 
-    # Cartella dove archiviamo le versioni meno recenti
-    archive_root = "documents/archive"
+        # Copia e rimuove
+        print(f"Sposto '{src_path}' in '{dest_path}' (Doc={doc_name}, Ver={ver})")
+        shutil.copy2(src_path, dest_path)
+        os.remove(src_path)
 
-    # Per ogni doc, trova la versione max e sposta le altre in archive
-    for doc, version_list in grouped.items():
-        max_ver = max(v[0] for v in version_list)
+        final_report["archived"].append({
+            "doc": doc_name,
+            "version": str(ver),
+            "source": src_path,
+            "destination": dest_path
+        })
 
-        for (ver, src_path) in version_list:
-            if ver < max_ver:
-                # Creiamo la cartella: documents/archive/<doc>_v<version>/
-                dest_folder = os.path.join(archive_root, f"{doc}_v{ver}")
-                os.makedirs(dest_folder, exist_ok=True)
+    # Se vuoi mantenere la "versione piu' recente" dov'e', devi prima raggruppare e confrontare.
+    # Qui stiamo spostando TUTTI i file con _signed.pdf. 
+    # 
+    # Se intendi SPOSTARE SOLO LE VERSIONI MENO RECENTI, DEVI raggruppare i file e trovarne la max
+    # come nelle versioni precedenti. Qui, invece, e' un esempio di spostamento di tutti i PDF.
 
-                src_filename = os.path.basename(src_path)
-                dest_path = os.path.join(dest_folder, src_filename)
-
-                print(f"Sposto la versione meno recente: '{src_path}' -> '{dest_path}'")
-                # Copia nella cartella di archivio
-                shutil.copy2(src_path, dest_path)
-                # Rimuove il file dalla cartella sorgente
-                os.remove(src_path)
-
-                final_report["archived"].append({
-                    "doc": doc,
-                    "version": str(ver),
-                    "source": src_path,
-                    "destination": dest_path
-                })
-            else:
-                # Manteniamo la versione piu' recente dov'e'
-                print(f"Mantengo la versione piu' recente: '{src_path}' (v{ver})")
-                final_report["kept_in_documents"].append({
-                    "doc": doc,
-                    "version": str(ver),
-                    "file": src_path
-                })
-
-    # Salviamo un final_report.yml con il riepilogo
     with open("final_report.yml", "w") as f:
         yaml.dump(final_report, f, default_flow_style=False, sort_keys=False)
 
