@@ -44,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add documents/archive sign_report.yml final_report.yml || true
+          git add -A
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit per archivio"
             exit 0
