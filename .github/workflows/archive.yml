@@ -1,7 +1,7 @@
 name: archive
 
 on:
-  # Questo workflow si avvia quando il workflow "Build Typst Documentation" termina
+
   workflow_run:
     workflows: ["Build Typst Documentation"]
     types: [completed]
@@ -26,13 +26,15 @@ jobs:
       - name: Avvio dello script di processamento
         run: |
           echo "Avvio dello script di processamento (BOT)"
-          python process_files.py
+          # Qui lo script si aspetta di trovare sign_report.yml nella root
+          python process_files.py sign_report.yml
 
       - name: Commit and push archivio
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add documents/archive
+          # Aggiungiamo documents/archive e (eventualmente) final_report.yml
+          git add documents/archive final_report.yml || true
           if git diff --cached --quiet; then
             echo "DEBUG: No changes to commit for archivio"
             exit 0
@@ -41,10 +43,11 @@ jobs:
           git push origin HEAD:main
 
       - name: Lista contenuti di documents/archive
-        run: ls -R documents/archive
+        run: ls -R documents/archive || true
 
       - name: Upload artifact (report)
         uses: actions/upload-artifact@v4
         with:
           name: report
-          path: report.yml
+          path: final_report.yml
+          if-no-files-found: ignore
