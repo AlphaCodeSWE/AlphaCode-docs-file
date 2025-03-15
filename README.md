@@ -1,3 +1,48 @@
+Ecco il codice per il tuo `README.md` da caricare su GitHub:  
+
+```markdown
+# 📌 Gruppo AlphaCode - Corso di Laurea in Informatica (A.A. 2024/2025) - UniPd  
+
+Benvenuto nella repository ufficiale del **Gruppo AlphaCode**, dedicata alla gestione della documentazione interna ed esterna del progetto.  
+
+## 📂 Struttura della Repository  
+
+La repository è organizzata come segue:  
+
+- **`documents/`** → Contiene i documenti finali in formato `.pdf`.  
+- **`sources/`** → Contiene i file sorgente in formato `.typ`, creati con **Typst**.  
+- **`template/`** → Contiene i template per la creazione dei documenti.  
+- **`sample/`** → Contiene esempi di documenti per riferimento.  
+
+## 🖋️ Firma Digitale  
+
+Tutti i documenti ufficiali sono **firmati digitalmente**. La firma viene applicata utilizzando **nodo-jsignpdf**, che si basa su **JSignPDF** di [@kwart](https://github.com/kwart).  
+
+Per la firma vengono utilizzati:  
+
+- **Variabili segrete della repository**:  
+  - `SIGN_CERT`: Contiene il certificato digitale (`certificate.p12`).  
+  - `SIGN_CERT_PASSWORD`: Contiene la password del certificato.  
+- **Script per la firma**:  
+  - `sign.js`  
+  - `build-typst.yml`  
+
+## 🌐 Accesso ai Documenti  
+
+- La **versione aggiornata** di ogni documento è disponibile sul sito web ufficiale di **AlphaCode**.  
+- Le **versioni precedenti** sono archiviate nel sito web, nella stessa sezione, o nell'**Archivio**.  
+- Le diverse fasi di sviluppo dei documenti (prima della versione finale) vengono archiviate nelle **release**, sempre accessibili tramite la sezione **Contatti** del sito web.  
+
+---  
+
+🔗 Per ulteriori informazioni, visita il sito ufficiale di **AlphaCode**.  
+```
+
+Questo file `README.md` è formattato in **Markdown** e pronto per essere caricato su **GitHub**.
+
+
+
+
 # Informazioni generali
 - Gruppo AlphaCode del corso di Laurea in Informatica, A.A. 2024/2025, UniPd
 - In questa reposity sono presenti tutti i documenti: verbali e documentazione sia interna che esterna
