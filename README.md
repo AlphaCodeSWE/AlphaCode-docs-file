@@ -1,4 +1,4 @@
-# 📌 Gruppo AlphaCode - Corso di Laurea in Informatica (A.A. 2024/2025) - UniPd  
+# 📌 Gruppo-19 - AlphaCode - Corso di Laurea in Informatica (A.A. 2024/2025) - UniPd  
 
 Benvenuto nella repository ufficiale del **Gruppo AlphaCode**, dedicata alla gestione della documentazione interna ed esterna del progetto.  
 
@@ -30,7 +30,7 @@ Per la firma vengono utilizzati:
 - Le **versioni precedenti** sono raggiungibili nel sito web attraverso la sezione [Contatti](https://alphacodeswe.github.io/AlphaCode-sito/contatti/) e, o direttamente nell'[Archivio](https://alphacodeswe.github.io/AlphaCode-docs-file/archive/).
 - Le diverse fasi di sviluppo dei documenti vengono archiviate nelle [release](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/releases).  
 
-# Gruppo 19
+# Membri del gruppo:
 | Nome e Cognome | Matricola  | Mail   |
 |-----------|-------------|-------------|
 | Nicolò Bovo    | 2042885 | nicolo.bovo.1@studenti.unipd.it      |
