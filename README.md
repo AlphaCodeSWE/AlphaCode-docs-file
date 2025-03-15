@@ -27,7 +27,7 @@ Per la firma vengono utilizzati:
 ## 🌐 Accesso ai Documenti  
 
 - La **versione aggiornata** di ogni documento è consultabile anche dal sito web ufficiale [AlphaCode](https://alphacodeswe.github.io/AlphaCode-sito/).  
-- Le **versioni precedenti** sono archiviate nel sito web, nella stessa sezione, o nell'[Archivio](https://alphacodeswe.github.io/AlphaCode-docs-file/archive/).
+- Le **versioni precedenti** sono raggiungibili nel sito web attraverso la sezione [Contatti]([AlphaCode](https://alphacodeswe.github.io/AlphaCode-sito/contatti/) e, o direttamente nell'[Archivio](https://alphacodeswe.github.io/AlphaCode-docs-file/archive/).
 - Le diverse fasi di sviluppo dei documenti vengono archiviate nelle [release](https://github.com/AlphaCodeSWE/AlphaCode-docs-file/releases).  
 
 # Gruppo 19
