@@ -1,2 +1,17 @@
-kept_in_documents: []
-archived: []
+kept_in_documents:
+- doc: Candidatura
+  version: 1.1.0
+  file: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.1.0_signed.pdf
+archived:
+- doc: Candidatura
+  version: 1.0.0
+  source: documents/candidatura/verbali/interni/VI_2025_03_06_v1.0.0_signed.pdf
+  destination: documents/archive/Candidatura_v1.0.0/VI_2025_03_06_v1.0.0_signed.pdf
+- doc: Candidatura
+  version: 1.0.0
+  source: documents/candidatura/verbali/interni/VI_2025_03_10_v1.0.0_signed.pdf
+  destination: documents/archive/Candidatura_v1.0.0/VI_2025_03_10_v1.0.0_signed.pdf
+- doc: Candidatura
+  version: 1.0.0
+  source: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.0.0_signed.pdf
+  destination: documents/archive/Candidatura_v1.0.0/DichiarazioneImpegni_2025_03_14_v1.0.0_signed.pdf
