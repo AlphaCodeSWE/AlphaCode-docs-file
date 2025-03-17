@@ -18,7 +18,7 @@ import yaml
 from packaging.version import Version, InvalidVersion
 #regole suffisso file
 FILE_REGEX = re.compile(
-    r'^(?P<name>.+?)_\d{4}_\d{2}_\d{2}_V(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_sigend\.pdf$', re.IGNORECASE
+    r'^(?P<name>.+?)_\d{4}_\d{2}_\d{2}_v(?P<version>\d+\.\d+\.\d+(?:\.\d+)?)_sigend\.pdf$', re.IGNORECASE
 )
 
 def load_sign_report(report_file="sign_report.yml"):
