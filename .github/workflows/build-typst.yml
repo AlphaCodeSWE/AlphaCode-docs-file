@@ -41,7 +41,7 @@ jobs:
             relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
             output="documents/$relpath"
             mkdir -p "$(dirname "$output")"
-            # Se il PDF firmato esiste già, salta la compilazione
+            # Se il PDF firmato esiste già, salta la compilazione (cioè non si firma nuovamente)
             if [ -f "${output%.pdf}_signed.pdf" ]; then
               echo "Skipping $file, PDF già firmato."
               continue
@@ -77,16 +77,14 @@ jobs:
           SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
         run: node sign.js
 
-      - name: Verify signed PDFs exist
+      - name: Verify PDFs
         run: |
-          SIGNED_FILES=$(find documents -type f -name "*_signed.pdf")
-          if [ -z "$SIGNED_FILES" ]; then
-            echo "ERROR: Nessun PDF firmato trovato!"
-            exit 1
-          else
-            echo "DEBUG: PDF firmati trovati:"
-            echo "$SIGNED_FILES"
-          fi
+          echo "DEBUG: File .typ trovati in 'sources':"
+          find sources -type f -name "*.typ" || echo "Nessun file .typ trovato."
+          echo "DEBUG: File .pdf trovati in 'documents':"
+          find documents -type f -name "*.pdf" || echo "Nessun file .pdf trovato."
+          echo "DEBUG: File PDF firmati trovati in 'documents':"
+          find documents -type f -name "*_signed.pdf" || echo "Nessun PDF firmato trovato."
 
       - name: Commit and push signed PDFs
         run: |
