@@ -34,23 +34,6 @@ Con il presente, il gruppo N.19 "_AlphaCode_" s'impegna nello svolgimento del ca
 
 = Impegni orari
 Ogni componente del gruppo di _AlphaCode_ dedicherà un totale di 90 ore produttive al progetto, ripartite equamente tra i ruoli indicati di seguito.
-== Tabella
-#show table.cell.where(y: 0): set text(fill: white)
-
-#table(
-    columns: (3fr, 2.3fr, 2.5fr, 2.9fr,2.7fr),
-    fill: (x,y) => if (y== 0 ) or (y==7 and x==0) { rgb("#a72229") } else {white },
-    align: (x,y) =>
-    if y == 0 { center } else { if x != 0 {center } else { left + horizon}}, 
-    table.header([*Ruoli*],[*Costo Orario*], [*Ore per ruolo*],[*Ore per membro*],[*Costo per ruolo*]),
-    [Responsabile],[30],[63],[9],[1890],
-    [Amministratore],[20],[56],[8],[1120],
-    [Analista],[25],[70],[10],[1050],
-    [Progettista],[25],[126],[18],[3150],
-    [Programmatore],[15],[175],[25],[2625],
-    [Verificatore],[15],[140],[20],[3500],
-    text(fill: white, align(center)[*Totale :*]),[*130*],[*630*],[*90*],[*12635*],
-  )
 
 = Descrizione ruoli
 Di seguito vengono approfonditi i ruoli che tutti i membri del gruppo dovranno ricoprire nello svolgimento del progetto.
