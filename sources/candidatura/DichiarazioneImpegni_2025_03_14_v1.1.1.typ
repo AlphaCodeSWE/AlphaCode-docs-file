@@ -55,7 +55,7 @@ Ogni componente del gruppo di _AlphaCode_ dedicherà un totale di 90 ore produtt
   )
 == Grafico
 #v(0.1fr)
-#image("../../../../template/assets/GraficoCostoxRuolo.png", alt: "Costo per ruolo", )
+#image("../../template/assets/GraficoCostoxRuolo.png", alt: "Costo per ruolo", )
 #v(1fr)
 #pagebreak()
 
