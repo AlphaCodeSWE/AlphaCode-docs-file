@@ -88,7 +88,7 @@ Come anticipato, dovrà garantire una robusta transizione dall'architettura del 
 Perché ciò sia possibile, chi ricopre questo ruolo deve essere provvisto delle competenze tecniche essenziali per lo sviluppo.
 
 == Verificatore
-Il verificatore agirà nella totalità del progetto, garantendo che ogni suo aspetto venga realizzato in maniera qualitativamente valida, completav e robusta.
+Il verificatore agirà nella totalità del progetto, garantendo che ogni suo aspetto venga realizzato in maniera qualitativamente valida, completa e robusta.
 
 = Preventivo costi e data di consegna
 _AlphaCode_ ha stimato un costo finale di *€12.635,00* per l'implementazione del progetto, con una data di consegna fissata tassativamente al *2025/08/15*. 
