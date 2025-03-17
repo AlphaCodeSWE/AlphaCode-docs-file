@@ -19,10 +19,9 @@
   date: "2025/03/14",
   // date: datetime.today().display("[year]/[month]/[day]"),
   version_history: (
-    "1.1.0", "2025/03/14", "Aggiunta tabella ore e descrizione ruoli", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
-    "1.0.0", "2025/03/14", "Stesura iniziale del documento", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
+    "1.0.0", "2025/03/11", "Stesura iniziale del documento", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
   ),
-  version: "1.1.0",
+  version: "1.0.0",
   main-color: "A72229FF", //set the main color
   group-logo: image("../../template/assets/AlphaCodeLogo.png"),
   logo: image("../../template/assets/UnipdLogo.png"), //set the logo
