@@ -16,14 +16,13 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025/03/14",
+  date: "2025/03/12",
   // date: datetime.today().display("[year]/[month]/[day]"),
   version_history: (
-    "1.1.1", "2025/03/14", "Aggiunto grafico a torta costo per ruolo", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
     "1.1.0", "2025/03/12", "Aggiunta tabella ore e descrizione ruoli", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
     "1.0.0", "2025/03/11", "Stesura iniziale del documento", "Alessandro Di Pasquale, Massimo Chioru",  "Manuel Cinnirella, Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",
   ),
-  version: "1.1.1",
+  version: "1.1.0",
   main-color: "A72229FF", //set the main color
   group-logo: image("../../template/assets/AlphaCodeLogo.png"),
   logo: image("../../template/assets/UnipdLogo.png"), //set the logo
@@ -53,11 +52,6 @@ Ogni componente del gruppo di _AlphaCode_ dedicherà un totale di 90 ore produtt
     [Verificatore],[15],[140],[20],[3500],
     text(fill: white, align(center)[*Totale :*]),[*130*],[*630*],[*90*],[*12635*],
   )
-== Grafico
-#v(0.1fr)
-#image("../../template/assets/GraficoCostoxRuolo.png", alt: "Costo per ruolo", )
-#v(1fr)
-#pagebreak()
 
 = Descrizione ruoli
 Di seguito vengono approfonditi i ruoli che tutti i membri del gruppo dovranno ricoprire nello svolgimento del progetto.
