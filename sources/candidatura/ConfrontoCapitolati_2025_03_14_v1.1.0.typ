@@ -15,9 +15,10 @@
 
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025/03/11",
-  version: "1.0.0",
-  version_history: (    
+  date: "2025/03/14",
+  version: "1.1.0",
+  version_history: (
+    "1.1.0", "2025/03/14", "Aggiunta di capitolati e revisione", "Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi", "Manuel Cinnirella, Massimo Chioru, Alessandro Di Pasquale",
     "1.0.0", "2025/03/11", "Stesura iniziale del documento", "Romeo Calearo, Elia Leonetti, Giovanni Battista Matteazzi",  "Manuel Cinnirella, Massimo Chioru, Alessandro Di Pasquale"
     
   ),
@@ -74,7 +75,40 @@ Il gruppo aveva inizialmente manifestato delle perplessità nell'accettare quest
 Nonostante anche altri capitolati presentassero delle soluzioni all'avanguardia e al passo con i tempi e pure altre aziende si fossero rivelate disponibili alla collaborazione, il gruppo ha trovato solo in questo capitolato tutti gli aspetti positivi desiderati raggruppati insieme, portandolo a diventare la prima scelta per la candidatura.
 
 
+
+
 = Capitolati non scelti
+
+== C1: Artificial QI
+
+=== Descrizione
+La natura statistica e non-deterministica delle reti neurali, rende necessarie verifiche a posteriori sulle prestazioni del sistema. Questo è particolarmente rilevante nel processo di sviluppo di LLM, durante il quale è desiderabile poter valutare la performance di un modello dopo ogni modifica, determinando la bontà dell'intervento. Giacché affidarsi a operatori umani per le revisioni è dispendioso, ci si propone di costruire un sistema di verifica automatico che possa adempiere a questo scopo valutando la qualità delle risposte fornite dal LLM.
+
+=== Obiettivi
+Si richiede che l'applicativo prodotto esponga le seguenti funzionalità:
+- Archiviazione di una lista di domande e delle risposte attese, accessibile e modificabile tramite un'apposita interfaccia utente.
+- Programma di esecuzione dei test che attraverso una API ponga le domande ad un programma esterno e ne registri la risposta.
+- Programma di valutazione della correttezza/verosimiglianza delle risposte ricevute.
+- Procedura di presentazione dei risultati del test in formato aggregato, con un indice sintetico della qualità generale di quanto ottenuto, nonché una evidenziazione dei casi migliori e peggiori e la possibilità di verificare tutte le risposte ottenute.
+Le funzionalità sopra elencate devono essere integrate in un unico sistema che permetta di utilizzarle come parte di un insieme, anziché come utility separate.
+L'azienda ritiene appropriato che lo sviluppo del PoC si incentri sul punto 3, delegando il resto alla fase di sviluppo del MVP.
+
+=== Dominio tecnologico
+ - Database relazionale, file *JSON* o file *XML* per l'archiviazione delle coppie domanda/risposta.
+ - *API Rest*, implementata secondo lo standard *OpenAPI 3.1*, per sottoporre le domande e ricevere le risposte da un sistema esterno.
+- *LLM*, uno dei possibili metodi di verifica per la correttezza delle risposte.
+
+=== Aspetti Positivi
+ - Capitolato incentrato su un tema attuale.
+ - Obiettivi definiti in maniera estensiva ed esaustiva.
+ - Flessibilità nella scelta delle tecnologie implementative.
+
+=== Aspetti negativi
+ - Lo sviluppo del MVP si rivela particolarmente oneroso.
+ - L'argomento non suscita particolare interesse nel gruppo.
+
+=== Conclusioni
+Il capitolato, pur essendo ritenuto valido, presenta delle criticità che mettono in dubbio la facoltà di ultimare la fase di sviluppo del MVP. Inoltre, il gruppo ha espresso la propria preferenza verso progetti che implementassero l'intelligenza artificiale al fine di migliorare direttamente la vita quotidiana degli utenti, anzichè da un punto di vista prevalentemente analitico.
 
 == C3: Automatizzare le routine digitali tramite l'intelligenza generativa
 === Descrizione
@@ -137,3 +171,4 @@ Vengono consigliate tecnologie in linea con lo stack abitualmente utilizzato da 
 
 === Conclusioni
 Questo capitolato è risultato molto stimolante, in particolare per l'impatto molto concreto dell'IA sulla produttività. Il gruppo stava valutando il capitolato come possibile scelta, ma a causa della discrepanza tra le esigenze dello stack tecnologico e le nostre competenze, infine non è stato considerato.
+
