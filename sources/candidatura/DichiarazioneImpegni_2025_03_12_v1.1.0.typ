@@ -57,7 +57,7 @@ Ogni componente del gruppo di _AlphaCode_ dedicherà un totale di 90 ore produtt
 Di seguito vengono approfonditi i ruoli che tutti i membri del gruppo dovranno ricoprire nello svolgimento del progetto.
 
 == Responsabile
-Il responsabile sarà colui che si dedicherà a determinare la direzione in cui il gruppo dovrà operare, tramite un'efficiente gestione delle risorse, una virtù fondamentale nelle prime fasi operative a cui il gruppo sarà dedito, ma che si rivelerà gradualmente meno cruciale grazie al crescente sviluppo dell'autonomia del gruppo nel tempo.
+Il responsabile sarà colui che si occuperà a determinare la direzione in cui il gruppo dovrà operare, tramite un'efficiente gestione delle risorse, una virtù fondamentale nelle prime fasi operative a cui il gruppo sarà dedito, ma che si rivelerà gradualmente meno cruciale grazie al crescente sviluppo dell'autonomia del gruppo nel tempo.
 
 Tale ruolo richiederà inoltre competenze comunicative tali da permettere una soddisfacente interazione sia con i membri del gruppo che con terzi.
 
