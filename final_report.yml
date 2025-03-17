@@ -7,4 +7,8 @@ kept_in_documents:
   base_name: VI
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_10_v1.0.0_signed.pdf
+- doc: Candidatura
+  base_name: DichiarazioneImpegni
+  version: 1.0.0
+  file: documents/candidatura/DichiarazioneImpegni_2025_03_11_v1.0.0_signed.pdf
 archived: []
