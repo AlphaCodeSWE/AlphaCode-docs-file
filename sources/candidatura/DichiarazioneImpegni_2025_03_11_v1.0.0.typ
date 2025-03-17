@@ -30,7 +30,7 @@
 // Edit this content to your liking
 
 = Scopo del documento
-Con il presente, il gruppo N.19 "_AlphaCode_" s'impegna nello svolgimento del capitolato "*C4 - NearYou*", fornito dall'azienda _SynLab_, secondo le modalità e le stime riportate di seguito.
+Con il presente, il gruppo N.19 "_AlphaCode_" s'impegna nello svolgimento del capitolato "*C4 - NearYou*" , fornito dall'azienda _SynLab_, secondo le modalità e le stime riportate di seguito.
 
 = Impegni orari
 Ogni componente del gruppo di _AlphaCode_ dedicherà un totale di 90 ore produttive al progetto, ripartite equamente tra i ruoli indicati di seguito.
