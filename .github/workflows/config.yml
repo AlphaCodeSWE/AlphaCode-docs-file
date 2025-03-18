@@ -1,7 +1,8 @@
-directories:
-  - candidatura
-  - rtb
-  - pb
+on:
+  directories:
+    - candidatura
+    - rtb
+    - pb
 
 archive_folder: documents/archive
 
