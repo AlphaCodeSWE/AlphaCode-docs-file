@@ -26,6 +26,7 @@ def load_sign_report(report_file="sign_report.yml"):
     if not os.path.exists(report_file):
         print(f"ERRORE: Il file di report '{report_file}' non esiste.")
         sys.exit(1)
+    print(f"DEBUG: Trovato il file di report '{report_file}'.")  # Debug: file trovato
     with open(report_file, "r") as f:
         data = yaml.safe_load(f)
     if not data or "signed_files" not in data:
@@ -36,7 +37,9 @@ def load_sign_report(report_file="sign_report.yml"):
 
 def load_config(config_file="config.yml"):
     if not os.path.exists(config_file):
+        print(f"DEBUG: Il file di configurazione '{config_file}' non è stato trovato. Uso configurazione di default.")
         return {"group_map": {}}
+    print(f"DEBUG: Trovato il file di configurazione '{config_file}'.")  # Debug: file trovato
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
