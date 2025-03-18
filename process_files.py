@@ -35,11 +35,18 @@ def load_sign_report(report_file="sign_report.yml"):
     # Escludi file già in archive per evitare duplicati
     return [fp for fp in data["signed_files"] if "documents/archive" not in fp]
 
-def load_config(config_file="config.yml"):
+def load_config(config_file=".github/config.yml"):
+    abs_path = os.path.abspath(config_file)
+    
     if not os.path.exists(config_file):
-        print(f"DEBUG: Il file di configurazione '{config_file}' non è stato trovato. Uso configurazione di default.")
+        print(f"DEBUG: Il file di configurazione '{config_file}' non è stato trovato.")
+        print(f"DEBUG: Percorso assoluto cercato: {abs_path}")
+        print("DEBUG: Uso configurazione di default.")
         return {"group_map": {}}
-    print(f"DEBUG: Trovato il file di configurazione '{config_file}'.")  # Debug: file trovato
+    
+    print(f"DEBUG: Trovato il file di configurazione '{config_file}'.")
+    print(f"DEBUG: Percorso assoluto: {abs_path}")
+
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
@@ -54,7 +61,10 @@ def get_mapped_parent(file_path, group_map):
 def main():
     report_file = sys.argv[1] if len(sys.argv) > 1 else "sign_report.yml"
     signed_files = load_sign_report(report_file)
-    config = load_config("config.yml")
+    
+    # Modifica per assicurarsi che config.yml sia cercato in .github
+    config = load_config(".github/config.yml")
+    
     group_map = config.get("group_map", {})
 
     final_report = {"kept_in_documents": [], "archived": []}
