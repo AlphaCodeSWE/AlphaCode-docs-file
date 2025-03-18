@@ -14,7 +14,7 @@ La repository è organizzata come segue:
 ## 🖋️ Firma Digitale  
 
 - Tutti i documenti ufficiali sono **firmati digitalmente**. La firma viene applicata utilizzando [nodo-jsignpdf](https://github.com/deltazero-cz/node-jsignpdf), che si basa su [JSignPDF](https://github.com/intoolswetrust/jsignpdf) di [@kwart](https://github.com/kwart).  
-- I documenti esterni vengono firmati dal team per attestare l'avvenuta lettura e così confermare la presa visione del contenuto ricevuto e successivamente messi dispoibili online.
+- Anche i documenti esterni vengono firmati per attestare l'avvenuta lettura e così confermare la presa visione del contenuto ricevuto e successivamente messi dispoibili online.
 
 Per la firma vengono utilizzati:  
 
