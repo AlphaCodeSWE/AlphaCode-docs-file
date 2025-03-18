@@ -1,8 +1,9 @@
 on:
-  directories:
-    - candidatura
-    - rtb
-    - pb
+  file_created:
+    directories:
+      - candidatura
+      - rtb
+      - pb
 
 archive_folder: documents/archive
 
