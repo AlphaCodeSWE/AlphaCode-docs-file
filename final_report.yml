@@ -4,6 +4,10 @@ kept_in_documents:
   version: 1.1.1
   file: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.1.1_signed.pdf
 - doc: Candidatura
+  base_name: VE
+  version: 1.0.0
+  file: documents/candidatura/verbali/esterni/VE_2025_03_17_v1.0.0_signed.pdf
+- doc: Candidatura
   base_name: VI
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_06_v1.0.0_signed.pdf
@@ -15,9 +19,4 @@ kept_in_documents:
   base_name: ConfrontoCapitolati
   version: 1.1.0
   file: documents/candidatura/ConfrontoCapitolati_2025_03_14_v1.1.0_signed.pdf
-archived:
-- doc: Candidatura
-  base_name: ConfrontoCapitolati
-  version: 1.0.0
-  source: documents/candidatura/ConfrontoCapitolati_2025_03_11_v1.0.0_signed.pdf
-  destination: documents/archive/Candidatura_v1.0.0/ConfrontoCapitolati_2025_03_11_v1.0.0_signed.pdf
+archived: []
