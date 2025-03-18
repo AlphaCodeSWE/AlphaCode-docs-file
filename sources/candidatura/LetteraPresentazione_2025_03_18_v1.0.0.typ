@@ -50,9 +50,7 @@ In alternativa è possibile accedere direttamente alla repository al seguete lin
 ])
 
 all'interno della quale è possibile trovare:
-- Verbale interno del 2025/03/06;
-- Verbale interno del 2025/03/10;
-- Verbale interno del 2025/03/18;
+- Verbali interni del: 2025/03/06, 2025/03/10 e 2025/03/18;
 - Verbale esterno dell'incontro con _Sync Lab_ del 2025/03/17 ;
 - Dicharazione degli impegni e preventivo dei costi;
 - Valutazione dei capitolati e motivazione della scelta;
