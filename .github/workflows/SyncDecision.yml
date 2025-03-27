@@ -2,7 +2,7 @@ name: SyncDecision
 
 on:
   workflow_run:
-    workflows: ["publish-build-to-pages"]
+    workflows: ["publish latest build to pages"]
     types: [completed]
 
 jobs:
