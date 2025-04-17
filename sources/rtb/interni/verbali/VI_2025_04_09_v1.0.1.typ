@@ -25,8 +25,8 @@
   ),
 
   main-color: "A72229FF", //set the main color
-  group-logo: image("template/assets/AlphaCodeLogo.png"),
-  logo: image("template/assets/UnipdLogo.png"), //set the logo
+  group-logo: image("../../../../template/assets/AlphaCodeLogo.png"),
+  logo: image("../../../../template/assets/UnipdLogo.png"), //set the logo
 ) 
 
 // Edit this content to your liking
