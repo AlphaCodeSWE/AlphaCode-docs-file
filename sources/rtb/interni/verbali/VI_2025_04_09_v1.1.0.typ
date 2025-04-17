@@ -18,14 +18,15 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: "2025/04/09",
-  version: "1.0.0",
+  version: "1.0.1",
   version_history: (
-    "1.0.0", "2025/04/09", "Stesura del verbale", "Giovanni Battista Matteazzi", "Elia Leonetti"
+    "1.0.1", "2025/04/09", "Correzione ruoli", "Giovanni Battista Matteazzi", "Manuel Cinnirella",
+    "1.0.0", "2025/04/09", "Stesura del verbale", "Giovanni Battista Matteazzi", "Manuel Cinnirella"
   ),
 
   main-color: "A72229FF", //set the main color
-  group-logo: image("../../../../template/assets/AlphaCodeLogo.png"),
-  logo: image("../../../../template/assets/UnipdLogo.png"), //set the logo
+  group-logo: image("template/assets/AlphaCodeLogo.png"),
+  logo: image("template/assets/UnipdLogo.png"), //set the logo
 ) 
 
 // Edit this content to your liking
@@ -77,8 +78,8 @@
     columns: 3,
     inset: 10pt,
     table.header(text(fill: rgb("#f5f5eb"), align(center)[*ID*]), text(fill: rgb("#f5f5eb"), align(center)[*Assegnatari*]), text(fill: rgb("#f5f5eb"), align(center)[*Descrizione*])),
-    [#link("https://github.com/AlphaCodeSWE/NearYou-Project")[Project]], [Nicolò Bovo, Massimo Chioru, Manuel Cinnirella], [Script Python per generazione di dati GPS e di status],
+    [#link("https://github.com/AlphaCodeSWE/NearYou-Project")[Project]], [Nicolò Bovo, Massimo Chioru ,Elia Leonetti], [Script Python per generazione di dati GPS e di status],
     [#link("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/issues/4")[docs \#4]], [Romeo Calearo, Alessandro Di Pasquale], [Stesura del Secondo Verbale Esterno],
-    [#link("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/issues/5")[docs \#5]],[Giovanni Battista Matteazzi, Elia Leonetti],[Stesura del Quinto Verbale Interno]
+    [#link("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/issues/5")[docs \#5]],[Giovanni Battista Matteazzi, Manuel Cinnirella ],[Stesura del Quinto Verbale Interno]
   )
 )  
