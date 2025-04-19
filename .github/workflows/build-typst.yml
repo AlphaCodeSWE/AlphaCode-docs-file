@@ -35,13 +35,10 @@ jobs:
 
       - name: Compile Typst files to PDF recursively
         run: |
-          # Trova tutti i file .typ in "sources" (anche nelle sottocartelle)
           find sources -type f -name "*.typ" | while read -r file; do
-            # Calcola il percorso relativo sostituendo "sources/" con "" e ".typ" con ".pdf"
             relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
             output="documents/$relpath"
             mkdir -p "$(dirname "$output")"
-            # Se il PDF firmato esiste già, salta la compilazione (cioè non si firma nuovamente)
             if [ -f "${output%.pdf}_signed.pdf" ]; then
               echo "Skipping $file, PDF già firmato."
               continue
@@ -59,18 +56,32 @@ jobs:
         run: |
           echo '{ "name": "node-signpdf-workflow", "version": "1.0.0" }' > package.json
           npm install jsignpdf node-forge pdf-lib node-signpdf
-          cat package.json
-          ls -la node_modules
 
       - name: Upload logo for visible signature
         run: |
           cp template/assets/AlphaCodeLogo.png logo.png
-          ls -la logo.png
 
-      - name: Create certificate.p12 from secret
+      # ———> NUOVO: installazione di Java (necessario per jsignpdf)
+      - name: Setup Java 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Create and verify certificate.p12 from secret
         run: |
-          echo "${{ secrets.SIGN_CERT }}" | base64 -d > certificate.p12
-          ls -la certificate.p12
+          # decodifica senza newline/spazi
+          printf '%s' "${{ secrets.SIGN_CERT }}" \
+            | tr -d '\r\n ' \
+            | base64 --decode > certificate.p12
+
+          # verifica con OpenSSL
+          openssl pkcs12 -info \
+            -in certificate.p12 \
+            -passin pass:"${{ secrets.SIGN_CERT_PASSWORD }}" \
+            -nokeys -chain >/dev/null \
+            && echo "✔ certificate.p12 OK" \
+            || { echo "❌ certificate.p12 non valido o password errata"; exit 1; }
 
       - name: Run sign.js script
         env:
