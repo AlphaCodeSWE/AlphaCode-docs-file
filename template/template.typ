@@ -45,11 +45,15 @@
   //heading numbering
   set heading(numbering: (..nums) => {
     let level = nums.pos().len()
-    // only level 1 and 2 are numbered
+
     let pattern = if level == 1 {
       "I."
     } else if level == 2 {
-      "I.1."
+      "I - 1."
+    } else if level == 3 {
+      "I - 1.1."
+    } else if level == 4 {
+      "I - 1.1.1."
     }
     if pattern != none {
       numbering(pattern, ..nums)
