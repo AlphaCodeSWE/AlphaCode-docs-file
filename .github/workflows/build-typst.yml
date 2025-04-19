@@ -1,86 +1,98 @@
-// sign.js
-import fs from 'fs';
-import path from 'path';
-import pkg from 'node-signpdf';              // importa l'intero pacchetto
-const { plainAddPlaceholder, sign } = pkg;  // destruttura le funzioni che ci servono
-import { PDFDocument, rgb } from 'pdf-lib';
+name: Build Typst Documentation
 
-// Ricerca ricorsiva dei PDF non firmati
-function getAllPDFs(dir) {
-  let results = [];
-  for (const name of fs.readdirSync(dir)) {
-    const filePath = path.join(dir, name);
-    if (fs.statSync(filePath).isDirectory()) {
-      results = results.concat(getAllPDFs(filePath));
-    } else if (name.toLowerCase().endsWith('.pdf') && !name.toLowerCase().endsWith('_signed.pdf')) {
-      results.push(filePath);
-    }
-  }
-  return results;
-}
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'documents/**/*.pdf'
 
-// Formatta timestamp
-function formatTimestamp(d) {
-  const pad = n => ('0'+n).slice(-2);
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
+permissions:
+  contents: write
 
-// Aggiunge firma visibile con pdf-lib
-async function addVisibleSignature(file, signerName, logoPath) {
-  const bytes = fs.readFileSync(file);
-  const pdfDoc = await PDFDocument.load(bytes);
-  const pages = pdfDoc.getPages();
-  const last = pages[pages.length-1];
-  const { width, height } = last.getSize();
-  const boxW = 250, boxH = 80, margin=20;
-  const x = width - boxW - margin, y = margin;
-  let logoImg;
-  if (fs.existsSync(logoPath)) {
-    const logoBytes = fs.readFileSync(logoPath);
-    logoImg = await pdfDoc.embedPng(logoBytes).catch(() => pdfDoc.embedJpg(logoBytes));
-  }
-  const ts = formatTimestamp(new Date());
-  const text = `Firmato da: ${signerName}\nData: ${ts}`;
-  if (logoImg) {
-    last.drawImage(logoImg, { x: x+5, y: y+5, width: 80, height: 90 });
-  }
-  last.drawText(text, { x: x+90, y: y+boxH-20, size: 10, color: rgb(0,0,0) });
-  fs.writeFileSync(file, await pdfDoc.save());
-  console.log(`DEBUG: Firma visibile aggiunta a ${file}`);
-}
+jobs:
+  build-and-sign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
 
-async function signFiles() {
-  const pdfDir = path.join(__dirname, 'documents');
-  const files = getAllPDFs(pdfDir);
-  console.log(`DEBUG: Trovati ${files.length} PDF da firmare.`);
-  if (!files.length) return;
+      - name: Pull latest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
 
-  const p12 = fs.readFileSync(path.join(__dirname,'certificate.p12'));
-  const pass = process.env.SIGN_CERT_PASSWORD;
-  if (!pass) { console.error("Manca SIGN_CERT_PASSWORD"); process.exit(1); }
+      - name: Set up Rust and Install Typst CLI
+        uses: dtolnay/rust-toolchain@stable
 
-  for (const f of files) {
-    console.log(`DEBUG: Elaborazione ${f}`);
-    const pdf = fs.readFileSync(f);
-    // Inserisce il placeholder
-    const placeholderPdf = plainAddPlaceholder({
-      pdfBuffer: pdf,
-      reason: 'Firma digitale AlphaCode',
-      signatureLength: 8192
-    });
-    // Firma il PDF
-    const signedPdf = sign(placeholderPdf, p12, { passphrase: pass });
-    const signedPath = f.replace('.pdf', '_signed.pdf');
-    fs.writeFileSync(signedPath, signedPdf);
-    console.log(`DEBUG: Salvato firmato: ${signedPath}`);
-    fs.unlinkSync(f);
-    // Aggiunge firma visibile
-    await addVisibleSignature(signedPath, 'AlphaCode®', path.join(__dirname,'logo.png'));
-  }
-  console.log("DEBUG: Firma completata per tutti i file.");
-}
+      - name: Install Typst CLI
+        run: |
+          cargo install --locked typst-cli
+          typst --version
 
-signFiles().catch(e => {
-  console.error("Errore in sign.js:", e);
-  process.exit(1);
-});
+      - name: Compile Typst files to PDF recursively
+        run: |
+          find sources -type f -name "*.typ" | while read -r file; do
+            relpath=$(echo "$file" | sed 's|^sources/||; s|\.typ$|.pdf|')
+            output="documents/$relpath"
+            mkdir -p "$(dirname "$output")"
+            if [ -f "${output%.pdf}_signed.pdf" ]; then
+              echo "Skipping $file, PDF già firmato."
+              continue
+            fi
+            echo "Compiling $file to $output..."
+            typst compile --root . "$file" "$output"
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Initialize package.json and install dependencies
+        run: |
+          echo '{ "name": "node-signpdf-workflow", "version": "1.0.0", "dependencies": { "node-signpdf": "^3.0.0", "pdf-lib": "^1.17.1" } }' > package.json
+          npm install
+
+      - name: Upload logo for visible signature
+        run: |
+          cp template/assets/AlphaCodeLogo.png logo.png
+
+      - name: Create and verify certificate.p12 from secret
+        run: |
+          printf '%s' "${{ secrets.SIGN_CERT }}" | tr -d '\r\n ' | base64 --decode > certificate.p12
+          openssl pkcs12 -info \
+            -in certificate.p12 \
+            -passin pass:"${{ secrets.SIGN_CERT_PASSWORD }}" \
+            -nokeys -chain >/dev/null \
+            && echo "✔ certificate.p12 OK" \
+            || (echo "❌ certificate.p12 non valido o password errata" && exit 1)
+
+      - name: Run sign.js script
+        env:
+          SIGN_CERT_PASSWORD: ${{ secrets.SIGN_CERT_PASSWORD }}
+        run: node sign.js
+
+      - name: Verify PDFs
+        run: |
+          echo "DEBUG: File .typ trovati in 'sources':"
+          find sources -type f -name "*.typ" || echo "Nessun file .typ trovato."
+          echo "DEBUG: File .pdf trovati in 'documents':"
+          find documents -type f -name "*.pdf" || echo "Nessun file .pdf trovato."
+          echo "DEBUG: File PDF firmati trovati in 'documents':"
+          find documents -type f -name "*_signed.pdf" || echo "Nessun PDF firmato trovato."
+
+      - name: Commit and push signed PDFs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add documents/
+          if git diff --cached --quiet; then
+            echo "DEBUG: No changes to commit"
+            exit 0
+          fi
+          git commit -m "Aggiorna PDF con firma digitale"
+          git push origin HEAD:main
