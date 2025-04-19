@@ -2,10 +2,16 @@
 
 const fs = require('fs');
 const path = require('path');
-const { plainAddPlaceholder, sign } = require('node-signpdf');
+
+// 1) Import del signer come default export
+const signer = require('node-signpdf').default; // ora signer.sign è disponibile :contentReference[oaicite:0]{index=0}
+
+// 2) Import del plain placeholder dai dist/helpers
+const { plainAddPlaceholder } = require('node-signpdf/dist/helpers'); // :contentReference[oaicite:1]{index=1}
+
 const { PDFDocument, rgb } = require('pdf-lib');
 
-// Cerca ricorsivamente PDF non ancora firmati
+// Cerca ricorsivamente i PDF non ancora firmati
 function getAllPDFs(dir) {
   let results = [];
   for (const name of fs.readdirSync(dir)) {
@@ -19,13 +25,13 @@ function getAllPDFs(dir) {
   return results;
 }
 
-// Ritorna timestamp "YYYY-MM-DD: HH:MM:SS"
+// Formatta timestamp
 function formatTimestamp(d) {
   const pad = n => ('0' + n).slice(-2);
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-// Aggiunge la firma visibile in basso a destra
+// Aggiunge firma visibile con pdf-lib
 async function addVisibleSignature(file, signerName, logoPath) {
   const bytes = fs.readFileSync(file);
   const pdfDoc = await PDFDocument.load(bytes);
@@ -49,12 +55,11 @@ async function addVisibleSignature(file, signerName, logoPath) {
   }
   last.drawText(text, { x: x + 90, y: y + boxH - 20, size: 10, color: rgb(0, 0, 0) });
 
-  const out = await pdfDoc.save();
-  fs.writeFileSync(file, out);
+  fs.writeFileSync(file, await pdfDoc.save());
   console.log(`DEBUG: Firma visibile aggiunta a ${file}`);
 }
 
-// Firma tutti i PDF trovati
+// Main
 async function signFiles() {
   const pdfDir = path.join(__dirname, 'documents');
   const files = getAllPDFs(pdfDir);
@@ -72,22 +77,18 @@ async function signFiles() {
     console.log(`DEBUG: Elaborazione ${f}`);
     const pdfBuffer = fs.readFileSync(f);
 
-    // 1) Aggiunge placeholder per la firma
-    const placeholderPdf = plainAddPlaceholder({
-      pdfBuffer,
-      reason: 'Firma digitale AlphaCode',
-      signatureLength: 8192
-    });
+    // 3) Inserisce placeholder
+    const placeholderPdf = plainAddPlaceholder({ pdfBuffer });
 
-    // 2) Firma il PDF
-    const signedPdf = sign(placeholderPdf, p12, { passphrase: pass });
+    // 4) Firma col metodo sign() del default export
+    const signedPdf = signer.sign(placeholderPdf, p12, { passphrase: pass });
 
-    // 3) Salva e sostituisci
+    // Salva e sostituisci
     const signedPath = f.replace('.pdf', '_signed.pdf');
     fs.writeFileSync(signedPath, signedPdf);
     console.log(`DEBUG: Salvato firmato: ${signedPath}`);
 
-    // 4) Rimuove l'originale e aggiunge firma visibile
+    // Rimuove l’originale e aggiunge firma visibile
     fs.unlinkSync(f);
     await addVisibleSignature(signedPath, 'AlphaCode®', path.join(__dirname, 'logo.png'));
   }
