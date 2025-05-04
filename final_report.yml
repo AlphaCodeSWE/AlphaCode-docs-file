@@ -11,6 +11,10 @@ kept_in_documents:
   base_name: _VI
   version: 1.0.1
   file: documents/rtb/interni/verbali/_VI_2025_04_17_v1.0.1_signed.pdf
+- doc: RTB
+  base_name: VE
+  version: 1.0.0
+  file: documents/rtb/esterni/verbali/VE_2025_04_17_v1.0.0_signed.pdf
 - doc: Candidatura
   base_name: DichiarazioneImpegni
   version: 1.1.1
