@@ -1,16 +1,16 @@
 kept_in_documents:
 - doc: RTB
-  base_name: NormeDiProgetto
-  version: 0.2.0
-  file: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.2.0_signed.pdf
-- doc: RTB
-  base_name: VI
-  version: 1.1.1
-  file: documents/rtb/interni/verbali/VI_2025_03_27_v1.1.1_signed.pdf
-- doc: RTB
   base_name: _VI
   version: 1.0.1
   file: documents/rtb/interni/verbali/_VI_2025_04_17_v1.0.1_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.2.0
+  file: documents/rtb/interni/verbali/VI_2025_04_09_v1.2.0_signed.pdf
+- doc: RTB
+  base_name: NormeDiProgetto
+  version: 0.2.0
+  file: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.2.0_signed.pdf
 - doc: RTB
   base_name: VE
   version: 1.0.0
@@ -20,17 +20,9 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/esterni/verbali/VE_2025_04_17_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: DichiarazioneImpegni
-  version: 1.1.1
-  file: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.1.1_signed.pdf
-- doc: Candidatura
-  base_name: LetteraPresentazione
-  version: 1.0.0
-  file: documents/candidatura/LetteraPresentazione_2025_03_18_v1.0.0_signed.pdf
-- doc: Candidatura
   base_name: VI
   version: 1.0.0
-  file: documents/candidatura/verbali/interni/VI_2025_03_18_v1.0.0_signed.pdf
+  file: documents/candidatura/verbali/interni/VI_2025_03_10_v1.0.0_signed.pdf
 - doc: Candidatura
   base_name: VI
   version: 1.0.0
@@ -38,7 +30,7 @@ kept_in_documents:
 - doc: Candidatura
   base_name: VI
   version: 1.0.0
-  file: documents/candidatura/verbali/interni/VI_2025_03_10_v1.0.0_signed.pdf
+  file: documents/candidatura/verbali/interni/VI_2025_03_18_v1.0.0_signed.pdf
 - doc: Candidatura
   base_name: VE
   version: 1.0.0
@@ -47,12 +39,20 @@ kept_in_documents:
   base_name: ConfrontoCapitolati
   version: 1.1.0
   file: documents/candidatura/ConfrontoCapitolati_2025_03_14_v1.1.0_signed.pdf
+- doc: Candidatura
+  base_name: DichiarazioneImpegni
+  version: 1.1.1
+  file: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.1.1_signed.pdf
+- doc: Candidatura
+  base_name: LetteraPresentazione
+  version: 1.0.0
+  file: documents/candidatura/LetteraPresentazione_2025_03_18_v1.0.0_signed.pdf
 archived:
 - doc: RTB
-  base_name: NormeDiProgetto
-  version: 0.1.0
-  source: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
-  destination: documents/archive/RTB_v0.1.0/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
+  base_name: VI
+  version: 1.1.1
+  source: documents/rtb/interni/verbali/VI_2025_03_27_v1.1.1_signed.pdf
+  destination: documents/archive/RTB_v1.1.1/VI_2025_03_27_v1.1.1_signed.pdf
 - doc: RTB
   base_name: VI
   version: 1.1.0
@@ -63,3 +63,8 @@ archived:
   version: 1.1.0
   source: documents/rtb/interni/verbali/VI_2025_04_09_v1.1.0_signed.pdf
   destination: documents/archive/RTB_v1.1.0/VI_2025_04_09_v1.1.0_signed.pdf
+- doc: RTB
+  base_name: NormeDiProgetto
+  version: 0.1.0
+  source: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
+  destination: documents/archive/RTB_v0.1.0/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
