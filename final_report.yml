@@ -12,6 +12,10 @@ kept_in_documents:
   version: 0.2.0
   file: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.2.0_signed.pdf
 - doc: RTB
+  base_name: AnalisiDeiRequisiti
+  version: 0.1.0
+  file: documents/rtb/interni/AnalisiDeiRequisiti_2025_05_08_v0.1.0_signed.pdf
+- doc: RTB
   base_name: VI
   version: 1.2.0
   file: documents/rtb/interni/verbali/VI_2025_04_09_v1.2.0_signed.pdf
@@ -43,4 +47,34 @@ kept_in_documents:
   base_name: VI
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_06_v1.0.0_signed.pdf
-archived: []
+archived:
+- doc: RTB
+  base_name: NormeDiProgetto
+  version: 0.1.0
+  source: documents/rtb/interni/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
+  destination: documents/archive/RTB_v0.1.0/NormeDiProgetto_2025_04_18_v0.1.0_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.0.0
+  source: documents/rtb/interni/verbali/VI_2025_05_03_v1.0.0_signed.pdf
+  destination: documents/archive/RTB_v1.0.0/VI_2025_05_03_v1.0.0_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.1.0
+  source: documents/rtb/interni/verbali/VI_2025_04_09_v1.1.0_signed.pdf
+  destination: documents/archive/RTB_v1.1.0/VI_2025_04_09_v1.1.0_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.1.0
+  source: documents/rtb/interni/verbali/VI_2025_03_27_v1.1.0_signed.pdf
+  destination: documents/archive/RTB_v1.1.0/VI_2025_03_27_v1.1.0_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.0.0
+  source: documents/rtb/interni/verbali/VI_2025_04_18_v1.0.0_signed.pdf
+  destination: documents/archive/RTB_v1.0.0/VI_2025_04_18_v1.0.0_signed.pdf
+- doc: RTB
+  base_name: VI
+  version: 1.1.1
+  source: documents/rtb/interni/verbali/VI_2025_03_27_v1.1.1_signed.pdf
+  destination: documents/archive/RTB_v1.1.1/VI_2025_03_27_v1.1.1_signed.pdf
