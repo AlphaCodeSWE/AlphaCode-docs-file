@@ -23,6 +23,7 @@
   // Save heading and body font families in variables.
   let body-font = "Source Sans Pro"
   let title-font = "Barlow"
+  
 
   // Set colors
   let primary-color = rgb(main-color) // alpha = 100%
@@ -169,3 +170,4 @@
 // use primary-color and secondary-color in main
 #let primary-color = rgb("E94845")
 #let secondary-color = rgb(255, 80, 69, 60%)
+#let apice(num) = text(num, size: 6pt, baseline: 3pt, fill: luma(110))
