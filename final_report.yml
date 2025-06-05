@@ -1,39 +1,34 @@
 kept_in_documents:
 - doc: Candidatura
-  base_name: DichiarazioneImpegni
+  name_date: DichiarazioneImpegni_2025_03_14
   version: 1.1.1
   file: documents/candidatura/DichiarazioneImpegni_2025_03_14_v1.1.1_signed.pdf
 - doc: Candidatura
-  base_name: VE
+  name_date: VE_2025_03_17
   version: 1.0.0
   file: documents/candidatura/verbali/esterni/VE_2025_03_17_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: VI
+  name_date: VI_2025_03_06
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_06_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: VI
+  name_date: VI_2025_03_10
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_10_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: VI
+  name_date: VI_2025_03_18
   version: 1.0.0
   file: documents/candidatura/verbali/interni/VI_2025_03_18_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: LetteraPresentazione
+  name_date: LetteraPresentazione_2025_03_18
   version: 1.0.0
   file: documents/candidatura/LetteraPresentazione_2025_03_18_v1.0.0_signed.pdf
 - doc: Candidatura
-  base_name: ConfrontoCapitolati
+  name_date: ConfrontoCapitolati_2025_03_14
   version: 1.1.0
   file: documents/candidatura/ConfrontoCapitolati_2025_03_14_v1.1.0_signed.pdf
 - doc: RTB
-  base_name: VI
+  name_date: VI_2025_03_27
   version: 1.1.0
   file: documents/rtb/verbali/interni/VI_2025_03_27_v1.1.0_signed.pdf
-archived:
-- doc: RTB
-  base_name: VI
-  version: 1.0.0
-  source: documents/rtb/verbali/interni/VI_2025_04_09_v1.0.0_signed.pdf
-  destination: documents/archive/RTB_v1.0.0/VI_2025_04_09_v1.0.0_signed.pdf
+archived: []
