@@ -44,6 +44,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_04_24_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: VE_2025_05_15
+  version: 1.0.0
+  file: documents/rtb/verbali/esterni/VE_2025_05_15_v1.0.0_signed.pdf
+- doc: RTB
   name_date: VI_2025_04_09
   version: 1.2.0
   file: documents/rtb/verbali/interni/VI_2025_04_09_v1.2.0_signed.pdf
