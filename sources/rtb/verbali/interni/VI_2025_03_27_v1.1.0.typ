@@ -86,7 +86,18 @@ I ruoli aggiornati per ciascun membro sono:
   )
 )
 
+= Attività individuate
 
+#align(center,
+  table(
+    fill: (x, y) => if y == 0 {rgb("#404040")},
+    columns: 3,
+    inset: 10pt,
+    table.header(text(fill: rgb("#f5f5eb"), align(center)[*ID*]), text(fill: rgb("#f5f5eb"), align(center)[*Assegnatari*]), text(fill: rgb("#f5f5eb"), align(center)[*Descrizione*])),
+    [#link("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/issues/2")[docs \#2]], [AlphaCode Full Team], [Definizione Norme di Progetto],
+    [#link("https://github.com/AlphaCodeSWE/AlphaCode-docs-file/issues/1")[docs \#1]], [AlphaCode Full Team], [Stesura del Quarto Verbale Interno],
+  )
+)
 
 
 
