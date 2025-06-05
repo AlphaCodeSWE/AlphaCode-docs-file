@@ -9,6 +9,7 @@
    roles: (
       "Responsabile", "Manuel Cinnirella",
       "", "Giovanni Battista Matteazzi",
+      "", "Alessandro Di Pasquale",
       "Redattori", "Giovanni Battista Matteazzi",
       "", "Alessandro Di Pasquale",
       "", "Nicolò Bovo",
@@ -21,8 +22,9 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: "2025/04/18",
-  version: "0.3.0",
+  version: "0.4.0",
   version_history: (
+    "0.4.0", "2025/06/04", "Completamento sezione metriche", "", "",
     "0.3.0", "2025/05/13", "Estensione del docuento", "Alessandro Di Pasquale, Giovanni Battista Matteazzi, Elia Leonetti", "Nicolò Bovo",
     "0.2.0", "2025/04/22", "Estensione del docuento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
     "0.1.0", "2025/04/18", "Bozza del docuento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
@@ -148,7 +150,7 @@ Il documento è strutturato in quattro sezioni principali:
 
 - *Qualità di prodotto*: si stabiliscono i criteri per valutare le caratteristiche del software, come manutenibilità, affidabilità, usabilità e performance. Questi aspetti saranno misurati tramite indicatori oggettivi e soggettivi, per garantire un risultato stabile e robusto.
 
-- *Test*: la sezione include la descrizione delle attività di test previste (unit test, test di integrazione, test funzionali, test di carico) e i criteri di accettazione per ogni funzionalità. I test saranno fondamentali per verificare che ogni componente del sistema rispetti i requisiti funzionali e non funzionali.
+- *Test*: la sezione include la descrizione delle attività di test previste (test funzionali) e i criteri di accettazione per ogni funzionalità. I test saranno fondamentali per verificare che ogni componente del sistema rispetti i requisiti.
 
 - *Valutazioni per il miglioramento*: al termine di ogni ciclo di verifica, verranno registrati i risultati ottenuti, segnalate le criticità emerse e proposte azioni correttive. Questo approccio incrementale permetterà di migliorare costantemente la qualità complessiva del progetto.
 
@@ -270,7 +272,7 @@ Per il progetto NearYou, l'integrazione software comprende:
 
 - *Aggiornamento della documentazione utente*: Revisione e aggiornamento della documentazione operativa per riflettere i cambiamenti dovuti all'integrazione.
 
-- *Preparazione Test di Qualificazione del Software*: Creazione di casi e procedure di test specifiche per ciascun requisito del software integrato, assicurando che l'insieme integrato soddisfi tutti i criteri di qualificazione previsti (copertura ≥ 80%, latenza ≤ \~800 ms).
+- *Preparazione Test di Qualificazione del Software*: Creazione di casi e procedure di test specifiche per ciascun requisito del software integrato, assicurando che l'insieme integrato soddisfi tutti i criteri di qualificazione previsti (copertura ≥ 80%).
 
 - *Valutazione integrazione software*: Verifica con particolare attenzione a:
   - Tracciabilità completa ai requisiti di sistema;
@@ -283,7 +285,7 @@ Per il progetto NearYou, l'integrazione software comprende:
 === Test di qualifica del software
 Per il progetto NearYou, l'attività comprende:
 
-- *Esecuzione test di qualificazione*: Test approfonditi delle funzionalità software integrate, secondo i requisiti definiti nel Piano di Qualifica (copertura test ≥ 80%, latenza ≤ \~800 ms). I risultati sono formalmente documentati.
+- *Esecuzione test di qualificazione*: Test approfonditi delle funzionalità software integrate, secondo i requisiti definiti nel Piano di Qualifica (copertura test ≥ 80%). I risultati sono formalmente documentati.
 
 - *Aggiornamento documentazione utente*: Revisione della documentazione utente per riflettere tutte le modifiche e miglioramenti introdotti dopo i test.
 
@@ -853,42 +855,38 @@ Il software deve garantire:
 - *Installabilità*: facilità di setup tramite configurazione containerizzata;
 - *Conformità*: aderenza agli standard tecnologici indicati nel capitolato.
 
-// TODO: finire parte test
-// == Metriche di qualità del processo
-// Per misurare la qualità del processo di sviluppo, _AlphaCode_ utilizza le seguenti metriche:
+== Metriche di qualità del processo
+Per misurare la qualità del processo di sviluppo, _AlphaCode_ utilizza le seguenti metriche:
 
-// ==== Processi primari
-// - *MPC01 - Completezza della documentazione*: percentuale di requisiti adeguatamente documentati;
-// - *MPC02 - Rispetto delle scadenze*: numero di milestone raggiunte nei tempi previsti;
-// - *MPC03 - Efficienza delle riunioni*: rapporto tra decisioni prese e tempo impiegato.
+==== Processi primari
+- *MPC01 - Completezza della documentazione*: percentuale di requisiti adeguatamente documentati;
+- *MPC02 - Rispetto delle scadenze*: numero di milestone raggiunte nei tempi previsti;
+- *MPC03 - Efficienza delle riunioni*: rapporto tra decisioni prese e tempo impiegato.
 
-// TODO sistemare
-// ==== Processi di supporto
-// - *MPC04 - Copertura dei test*: percentuale di codice coperto da test automatici (target ≥ 80%);
-// - *MPC05 - Densità di difetti*: numero di bug rilevati per 1000 righe di codice;
-// - *MPC06 - Tempo di risoluzione*: tempo medio necessario per risolvere un'issue.
+==== Processi di supporto
+- *MPC04 - Copertura dei test*: percentuale di codice coperto da test automatici (target ≥ 80%);
+- *MPC05 - Tempo di risoluzione*: tempo medio necessario per risolvere un problema.
 
-// == Metriche di qualità del prodotto
-// Per misurare la qualità del prodotto software, _AlphaCode_ utilizza le seguenti metriche:
+== Metriche di qualità del prodotto
+Per misurare la qualità del prodotto software, _AlphaCode_ utilizza le seguenti metriche:
 
-// ==== Funzionalità
-// - *MPD01 - Precisione geospaziale*: accuratezza nella determinazione della posizione dell'utente;
-// - *MPD02 - Rilevanza degli annunci*: corrispondenza tra profilo utente e annuncio generato.
+==== Funzionalità
+- *MPD01 - Precisione geospaziale*: accuratezza nella determinazione della posizione dell'utente;
+- *MPD02 - Rilevanza degli annunci*: corrispondenza tra profilo utente e annuncio generato.
 
-// ==== Affidabilità
-// - *MPD03 - Disponibilità del sistema*: percentuale di tempo in cui il sistema è operativo;
-// - *MPD04 - Tempo di risposta*: latenza massima per la generazione di un annuncio.
+==== Affidabilità
+- *MPD03 - Disponibilità del sistema*: percentuale di tempo in cui il sistema è operativo;
+- *MPD04 - Tempo di risposta*: latenza massima per la generazione di un annuncio.
 
-// TODO sempre dubbio di aggiungere utilizzo richieste API
-// ==== Efficienza
-// - *MPD05 - Throughput*: numero di messaggi processati al secondo;
-// - *MPD06 - Consumo di risorse*: utilizzo di CPU/memoria durante il picco di carico.
+==== Efficienza
+- *MPD05 - Throughput*: numero di messaggi processati al secondo;
+- *MPD06 - Consumo di risorse*: utilizzo di CPU/memoria durante il picco di carico.
 
-// ==== Manutenibilità
-// - *MPD07 - Complessità ciclomatica*: misura della complessità del codice;
-// - *MPD08 - Coesione dei moduli*: grado di coesione interna dei componenti software.
+==== Manutenibilità
+- *MPD07 - Complessità ciclomatica*: misura della complessità del codice;
+- *MPD08 - Coesione dei moduli*: grado di coesione interna dei componenti software.
 
-// Queste metriche saranno monitorate regolarmente e i risultati saranno documentati nel Piano di Qualifica, con aggiornamenti periodici in base all'avanzamento del progetto.
+Queste metriche saranno monitorate e i risultati saranno documentati nel Piano di Qualifica.
 
 
 
