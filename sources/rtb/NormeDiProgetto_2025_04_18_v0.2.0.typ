@@ -7,7 +7,7 @@
 
   hideOutline: true,  //true: nascondo; false: visualizzo
    roles: (
-      "Responabile", "Alessandro Di Pasquale",
+      "Responsabile", "Alessandro Di Pasquale",
       "Redattori", "Giovanni Battista Matteazzi",
       "", "Alessandro Di Pasquale",
       "", "Nicolò Bovo",
@@ -19,9 +19,10 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: "2025/04/18",
-  version: "0.1.0",
+  version: "0.2.0",
   version_history: (
-    "0.1.0", "2025/04/18", "Bozza del docuento", "Alessandro Di Pasquale, Nicolò Bovo, Giovanni Battista Matteazzi", "Manuel Cinnirella",
+    "0.2.0", "2025/04/22", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+    "0.1.0", "2025/04/18", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
   ),
 
   main-color: "A72229FF", //set the main color
@@ -73,7 +74,7 @@ Il gruppo AlphaCode si impegna a mantenere una collaborazione costante e profess
 Attraverso un dialogo continuo, il gruppo intende assicurarsi che il lavoro svolto sia allineato alle richieste del capitolato, ricevendo feedback regolari e chiarendo tempestivamente eventuali dubbi. L'obiettivo è garantire che vincoli, requisiti e scadenze siano rispettati, offrendo trasparenza sullo stato di avanzamento del progetto e favorendo una collaborazione efficace durante tutte le fasi dello sviluppo.
 
 === Comunicazioni con il proponente
-Per garantire un flusso comunicativo efficace e trasparente, il gruppo AlphaCode ha concordato con l'azienda proponente Sync Lab una cadenza settimanale per gli incontri esterni tramite piattaforma Google Met, durante i quali vengono affrontate le principali criticità e discussi i progressi del progetto. Tali riunioni avvengono generalmente in modalità telematica e vedono la partecipazione attiva dei referenti tecnici indicati nel capitolato.
+Per garantire un flusso comunicativo efficace e trasparente, il gruppo AlphaCode ha concordato con l'azienda proponente Sync Lab una cadenza settimanale per gli incontri esterni tramite piattaforma Google Meet, durante i quali vengono affrontate le principali criticità e discussi i progressi del progetto. Tali riunioni avvengono generalmente in modalità telematica e vedono la partecipazione attiva dei referenti tecnici indicati nel capitolato.
 
 Gli incontri hanno lo scopo di:
 - chiarire dubbi sui requisiti o sui vincoli progettuali;
@@ -166,7 +167,7 @@ Le attività che compongono il processo di sviluppo del progetto NearYou, strutt
 - *Progettazione architetturale del software*: suddivisione in microservizi, definizione delle interfacce, scelte tecnologiche (containerizzazione, sicurezza TLS, ecc.).
 - *Progettazione dettagliata del software*: specifica dei componenti interni, logiche di business, gestione degli errori, logging, sicurezza e configurabilità.
 - *Codifica e testing unitario*: sviluppo del codice con pratiche di qualità e test delle singole unità.
-- *Integrazione progressiva*: combinazione delle componenti in ambienti Docker tramite Docker Compose, verifica dei flussi end-to-end.
+- *Integrazione progressiva*: combinazione delle componenti in ambienti Docker tramite Docker Compose.
 - *Test di qualifica del software*: verifica che ogni modulo soddisfi i requisiti previsti (es. throughput del producer, correttezza del consumer, efficienza dei DAG).
 - *Integrazione di sistema*: test del sistema completo, inclusi pipeline Kafka→ClickHouse→PostGIS e moduli AI.
 - *Test di qualifica di sistema*: valutazione delle prestazioni, affidabilità, sicurezza e scalabilità del sistema.
@@ -192,10 +193,10 @@ Nel contesto della progettazione architetturale del sistema NearYou, la prima fa
 
 Tutti i requisiti del sistema sono stati allocati con precisione ai rispettivi elementi architetturali, distinguendo tra componenti software, operazioni automatizzate (es. DAG di Airflow) e interazioni manuali (es. generazione certificati, monitoraggio).
 
-Successivamente è stata condotta una valutazione dell'architettura proposta, con particolare attenzione alla tracciabilità dei requisiti, alla coerenza tra i moduli, all'adeguatezza degli standard tecnologici adottati, alla fattibilità implementativa dei singoli elementi software e alla manutenibilità del sistema. I risultati della progettazione e della valutazione sono stati documentati nel Documento di Progettazione Architetturale, punto di riferimento per lo sviluppo e le future estensioni del progetto.
+Successivamente è stata condotta una valutazione dell'architettura proposta, con particolare attenzione alla tracciabilità dei requisiti, alla coerenza tra i moduli, all'adeguatezza degli standard tecnologici adottati, alla fattibilità implementativa dei singoli elementi software e alla manutenibilità del sistema.
 
 ==== Analisi dei requisiti software
-Nel contesto del progetto NearYou, l'analisi dei requisiti software ha avuto lo scopo di identificare e documentare in maniera strutturata tutte le caratteristiche funzionali e non funzionali necessarie alla realizzazione degli elementi software che compongono la piattaforma. Per ciascun modulo identificato (es. microservizi Kafka, consumer, producer, FastAPI, DAG Airflow), il team ha definito e documentato:
+Nel contesto del progetto NearYou, l'analisi dei requisiti software ha avuto lo scopo di identificare e documentare in maniera strutturata tutte le caratteristiche funzionali e non funzionali necessarie alla realizzazione degli elementi software che compongono la piattaforma. Per ciascun modulo identificato (es. microservizi Kafka, consumer, producer, FastAPI, DAG Airflow), il team ha definito:
 
 - _Specifiche funzionali e prestazionali_, tenendo conto delle capacità di throughput, latenza di risposta, volume dati gestito e resilienza;
 - _Interfacce esterne_, in particolare tra Kafka ↔ ClickHouse, ClickHouse ↔ FastAPI e tra API ↔ frontend;
@@ -204,11 +205,156 @@ Nel contesto del progetto NearYou, l'analisi dei requisiti software ha avuto lo 
 - _Definizione dei dati gestiti_, tra cui eventi GPS, utenti, POI, annunci e le strutture dei relativi database (ClickHouse e PostGIS);
 - _Requisiti di deploy_, operatività e manutenzione dei container Docker e dei servizi;
 - _Documentazione prevista per l'utente e per lo sviluppatore_ (es. API reference, struttura delle query in Grafana);
-- _Requisiti per la gestione in produzione_, inclusi logging, osservabilità, alerting e recupero da errori.
 A completamento dell'analisi, ogni requisito è stato valutato in base a:
 - Rintracciabilità rispetto ai requisiti di sistema;
 - Coerenza interna ed esterna con le specifiche architetturali;
-- Testabilità tramite test unitari, integrazione e stress test;
-- Fattibilità di sviluppo, mantenimento e deploy.
+- Fattibilità di sviluppo e mantenimento.
 
-Al termine di questa fase, è stata formalizzata una baseline dei requisiti software, approvata internamente, che ha guidato la successiva progettazione dettagliata dei componenti.
+=== Progettazione architetturale del software
+Per ciascun elemento software identificato nel progetto NearYou, l'attività di progettazione architetturale comprende i seguenti compiti:
+
+- *Conversione dei requisiti in architettura*: Gli sviluppatori traducono i requisiti software in una struttura architetturale ad alto livello, identificando chiaramente i componenti software necessari (ad esempio: modulo simulazione GPS, stream processor Kafka/Flink, servizio LLM con LangChain, dashboard analitica Grafana, web-app frontend). Ogni requisito viene assegnato a un componente specifico, facilitando la successiva progettazione dettagliata. L'intera architettura viene documentata tramite diagrammi C4 (System, Container, Component).
+
+- *Progettazione di alto livello delle interfacce*: Viene definito e documentato il progetto preliminare delle interfacce tra i componenti software (REST API, WebSocket, formati di messaggi JSON/Avro) e le interfacce esterne al sistema (ad esempio database geospaziali).
+
+- *Progettazione di alto livello del database*: Viene progettata la struttura preliminare del database geospaziale (PostGIS) e analitico (ClickHouse), definendo schemi tabellari principali, indici geospaziali e strategie di partizionamento dei dati temporali per ottimizzare query e performance.
+
+- *Valutazione dell'architettura e interfacce*: Viene effettuata una valutazione strutturata dell'architettura proposta e dei progetti preliminari delle interfacce e dei database, verificando in particolare la rintracciabilità dei requisiti, la coerenza interna ed esterna, l'uso adeguato delle tecnologie suggerite (Kafka, Flink, LangChain, PostGIS), la fattibilità della progettazione dettagliata e la semplicità di manutenzione.
+
+- *Revisione formale*: Si conducono una o più revisioni formali (peer review) con tutto il team AlphaCode e l'azienda proponente, validando l'architettura definita e apportando eventuali miglioramenti derivanti dai feedback raccolti.
+
+=== Progettazione dettagliata del software
+
+Per ciascun componente software identificato nel progetto NearYou, l'attività prevede:
+
+- *Progettazione dettagliata dei componenti software*: Definizione puntuale di unità software (moduli Python, funzioni, classi, query SQL) per simulazione dati, stream processing (Kafka/Flink), generazione annunci (LangChain), dashboard analitica e web-app, in modo che ciascuna unità sia immediatamente codificabile e testabile.
+
+- *Progettazione dettagliata delle interfacce*: Documentazione precisa delle API REST, WebSocket e schemi JSON/Avro, incluse specifiche tecniche complete che permettono la codifica diretta senza ambiguità.
+
+- *Progettazione dettagliata del database*: Struttura dettagliata delle tabelle PostGIS (positions, places, ads) e ClickHouse, definendo esattamente campi, tipi, indici e partizioni.
+
+- *Aggiornamento preliminare della documentazione utente*: Revisione e ampliamento della documentazione utente con dettagli tecnici aggiornati e indicazioni operative più complete.
+
+- *Aggiornamento requisiti e pianificazione integrazione software*: Revisione delle strategie e criteri per test di integrazione software (Docker Compose).
+- *Valutazione della progettazione dettagliata e test*: Analisi documentata della progettazione dettagliata sulla base di rintracciabilità requisiti, coerenza architetturale, semplicità di manutenzione, fattibilità dei test unitari e integrazione.
+
+- *Revisione formale interna*: Una o più sessioni di revisione obbligatorie del team AlphaCode per verificare la progettazione.
+
+=== Codifica e testing del software
+Per ciascuna unità software del progetto NearYou, il programmatore svolge le seguenti attività:
+
+- *Codifica unità software e database*: Sviluppo e documentazione delle unità software (Python 3.12, TypeScript ) e relativi schemi di database (PostGIS, ClickHouse).
+
+- *Esecuzione e documentazione test unitari*: Conduzione sistematica dei test automatizzati per verificare conformità ai requisiti funzionali e tecnici, riportando chiaramente i risultati in report strutturati.
+
+- *Aggiornamento documentazione utente*: Revisione e integrazione continua delle guide operative e manuali utente per riflettere tutte le modifiche effettuate nel software.
+
+- *Aggiornamento requisiti e piano integrazione software*: Affinamento dei requisiti e del piano di test di integrazione basato su Docker Compose.
+
+- *Valutazione codice e test*: 
+  - Tracciabilità codice-requisiti;
+  - Coerenza interna ed esterna delle unità;
+  - Adeguata copertura dei test (≥ 80 %);
+  - Conformità agli standard di codifica adottati;
+  - Fattibilità tecnica di integrazione e manutenzione.
+
+=== Integrazione del software
+Per il progetto NearYou, l'integrazione software comprende:
+
+- *Sviluppo del Piano di Integrazione*: Documentazione delle procedure e sequenze di integrazione delle unità software (moduli Python, servizi Docker), inclusi requisiti di test, dati, responsabilità assegnate e pianificazione delle attività.
+
+- *Esecuzione integrazione e test*: Unione progressiva delle unità software secondo il piano, effettuando test di integrazione con ambienti Docker Compose per verificare il rispetto dei requisiti funzionali e non funzionali definiti nel capitolato.
+
+- *Aggiornamento della documentazione utente*: Revisione e aggiornamento della documentazione operativa per riflettere i cambiamenti dovuti all'integrazione.
+
+- *Preparazione Test di Qualificazione del Software*: Creazione di casi e procedure di test specifiche per ciascun requisito del software integrato, assicurando che l'insieme integrato soddisfi tutti i criteri di qualificazione previsti (copertura ≥ 80%, latenza ≤ \~800 ms).
+
+- *Valutazione integrazione software*: Verifica con particolare attenzione a:
+  - Tracciabilità completa ai requisiti di sistema;
+  - Coerenza interna/esterna dell'integrazione;
+  - Adeguata copertura dei test;
+  - Rispetto dei metodi e standard adottati;
+  - Conformità dei risultati ai requisiti previsti;
+  - Fattibilità operativa e manutentiva della piattaforma.
+
+=== Test di qualifica del software
+Per il progetto NearYou, l'attività comprende:
+
+- *Esecuzione test di qualificazione*: Test approfonditi delle funzionalità software integrate, secondo i requisiti definiti nel Piano di Qualifica (copertura test ≥ 80%, latenza ≤ \~800 ms). I risultati sono formalmente documentati.
+
+- *Aggiornamento documentazione utente*: Revisione della documentazione utente per riflettere tutte le modifiche e miglioramenti introdotti dopo i test.
+
+- *Valutazione del prodotto software*: Revisione formale basata su:
+
+  - Copertura completa dei requisiti software;
+
+  - Conformità ai risultati attesi;
+
+  - Fattibilità tecnica e operativa dell'integrazione e dei test di sistema;
+
+  - Manutenibilità e operatività futura del sistema.
+
+*Preparazione per integrazione di sistema*:
+Aggiornamento del prodotto software e definizione di una baseline stabile del codice e del design software, pronta per la fase successiva di integrazione di sistema.
+
+=== Integrazione di sistema
+
+Inizialmente, le componenti software del sistema NearYou devono essere integrate tra loro e con gli elementi di simulazione hardware (ad esempio, generatori di dati GPS e sensori simulati), operazioni manuali (come la configurazione dei dataset utente) e altri sistemi esterni (ad esempio, modelli LLM e piattaforme di visualizzazione). Gli aggregati, come il flusso dati (dai simulatori al message broker, allo stream processing, al database e alla generative AI), devono essere testati incrementalmente durante lo sviluppo, verificando la conformità ai requisiti funzionali e non funzionali definiti nel capitolato. L'integrazione e i risultati dei test devono essere documentati in modo dettagliato, inclusi schemi logici del comportamento dei simulatori e report di copertura dei test (≥80%).  
+
+Successivamente, per ciascun requisito di qualificazione del sistema (MVP o prodotto completo), è necessario sviluppare e documentare: 
+- *Casi di test*: input (es. percorsi GPS predefiniti, profili utente), output attesi (es. annunci contestuali generati da LLM), criteri di accettazione (es. latenza massima consentita, precisione geospaziale);  
+- *Procedure di test*: esecuzione manuale o automatizzata, convalidata in presenza della Proponente.
+
+La valutazione del sistema integrato deve considerare i seguenti criteri, documentando i risultati:  
+- *Copertura dei test*: rispetto ai requisiti di sistema (es. supporto di più sorgenti dati, interpolazione contestuale, gestione di percorsi non predefiniti);  
+- *Appropriatezza dei metodi*: allineamento con le tecnologie proposte (Kafka, Flink, LangChain) e standard di settore per lo stream processing e l'AI;  
+- *Conformità ai risultati attesi*: coerenza tra annunci generati e contesto utente (es. target giovane vs. coppia), corretto salvataggio dei dati su storage ottimizzato (ClickHouse, PostGIS);  
+- *Fattibilità del test di qualificazione*: capacità di replicare scenari reali (es. picchi di dati, fallimenti di rete) e integrazione con strumenti di visualizzazione (Superset, web-app);  
+- *Fattibilità di operatività e manutenzione*: modularità dell'architettura, documentazione delle scelte progettuali (es. utilizzo di HiveMQ vs. RabbitMQ) e gestione degli eventuali problemi aperti.
+
+=== Test di qualifica del sistema
+
+*Il testing di qualificazione per NearYou deve verificare*:
+
+- Conformità ai requisiti (simulatori GPS, LLM, dashboard base);
+
+- Funzionalità critiche: generazione annunci contestuali (es. target specifici), integrazione con broker (Kafka/HiveMQ), persistenza dati (ClickHouse/PostGIS).
+
+*Criteri di valutazione*:
+
+- *Copertura test*: Requisiti avanzati (interpolazione contestuale, visualizzazione lato utente).
+
+- *Conformità*: Correlazione annunci-contesto utente, precisione geospaziale, prestazioni storage.
+
+- *Fattibilità operativa*: Architettura modulare, documentazione chiara (scelte tecnologiche, es. LangChain).
+
+*Post-verifica*:
+
+- Consegnare pacchetto software con codice, configurazioni, dashboard (Superset/Grafana) e web-app demo.
+
+- Stabilire baseline tramite versionamento (Git) e documentazione progettuale aggiornata.
+
+=== Installazione del software
+
+Il fornitore deve sviluppare un piano di installazione del sistema NearYou, considerando:
+
+- *Ambiente di destinazione*: Configurazione di server/cloud per componenti chiave (message broker, stream processing, database, LLM);
+
+- *Risorse necessarie*: Librerie Python (es. Faker), container Docker (per Kafka, Flink, Superset), accesso a modelli LLM (es. API OpenAI, Groq Cloud o open-source);
+
+- *Supporto alla configurazione*: Assistenza alla Proponente (Sync Lab) per integrare dataset predefiniti, percorsi simulati e parametri di personalizzazione annunci.
+In caso di sostituzione di sistemi esistenti, garantendo la compatibilità dei formati dati. Il piano deve includere schemi logici e istruzioni dettagliate per l'avvio delle simulazioni (GPS, stato fisico).
+
+*Esecuzione dell'installazione*: Il fornitore installerà il software conformemente al piano, garantendo:
+
+- *Inizializzazione corretta*: Avvio dei broker (Kafka/HiveMQ), connessione allo stream processing (Flink), configurazione dello storage (ClickHouse/PostGIS) e integrazione con LLM (LangChain);
+
+- *Funzionamento atteso*: Verifica che i dati simulati generino annunci contestuali e che le dashboard (Superset/Grafana/web-app) visualizzino posizioni e messaggi in tempo reale;
+
+=== Supporto all'accettazione del software
+
+Il team di sviluppo dovrà coordinarsi in tutte le fasi di verifica e validazione della soluzione, ponendo particolare attenzione all'integrazione dei simulatori GPS, al corretto funzionamento del message broker per lo streaming dei dati e all'implementazione dei moduli di generative AI per la creazione di annunci personalizzati. Le prove, siano esse a livello unitario o integrato, devono dimostrare che l'intero sistema - dalla raccolta e memorizzazione dei dati alla visualizzazione in dashboard - soddisfi i requisiti tecnici e funzionali previsti.  
+
+Per ogni fase, è necessario documentare accuratamente i risultati, includendo le metriche prestazionali e il livello di copertura dei test (minimo 80%), in modo da identificare e risolvere eventuali criticità.
+
+// === LAST EDIT ===
