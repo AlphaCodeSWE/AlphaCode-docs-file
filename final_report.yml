@@ -71,4 +71,8 @@ kept_in_documents:
   name_date: VI_2025_05_03
   version: 1.0.0
   file: documents/rtb/verbali/interni/VI_2025_05_03_v1.0.0_signed.pdf
+- doc: RTB
+  name_date: Glossario_2025_04_13
+  version: 0.1.0
+  file: documents/rtb/Glossario_2025_04_13_v0.1.0_signed.pdf
 archived: []
