@@ -18,9 +18,10 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025/04/17",
-  version: "1.1.0",
+  date: "2025/05/11",
+  version: "1.2.0",
   version_history: (
+    "1.2.0", "2025/05/11", "Precisazione durata rotazione ruoli", "Alessandro Di Pasquale", "Nicolò Bovo",
     "1.1.0", "2025/04/17", "Appunto su rotazione ruoli", "Giovanni Battista Matteazzi", "Manuel Cinnirella",
     "1.0.0", "2025/04/09", "Stesura del verbale", "Giovanni Battista Matteazzi", "Manuel Cinnirella"
   ),
@@ -55,7 +56,9 @@
  La riunione è iniziata con un riepilogo dei contenuti emersi nel precedente incontro con l'azienda Sync Lab, in cui si è approfondito il contesto operativo e l'architettura tecnica che sarà alla base del progetto. Nonostante ci fossero più tecnologie disponibili tra cui scegliere per la fase implementativa, onde favorire il corretto flusso dei dati è stato deciso di attenersi a quelle consigliate e già utilizzate dall'azienda; questo ci assicura di operare in un contesto noto ai proponenti. 
  I membri che non avevano preso parte al meeting sono stati inoltre messi al corrente degli spunti operativi offerti da Sync Lab, sia a livello tecnico che organizzativo. 
  Il gruppo ha quindi valutato le competenze necessarie per affrontare le prossime fasi del lavoro, individuando come priorità l'apprendimento del framework Docker, e la stesura di uno script Python che consenta di simulare la generazione di dati GPS e di stato. 
- Parallelamente sono stati individuati i documenti da redigere nel breve termine: verbali (interno ed esterno), glossario tecnico e norme di progetto.
+ Parallelamente sono stati individuati i documenti da redigere nel breve termine: verbali (interno ed esterno), glossario tecnico e norme di progetto. La discussione si è chiusa con l'individuazione delle scadenze per ciascuna attività e con l'assegnazione dei compiti sulla base della rotazione dei ruoli. Quest'ultima sarà effettivamente su base settimanale a partire dal 2025/05/03, prima di allora sono state svolte due rotazioni da tre settimane ed è prevista un'ultima rotazione "lunga", da due settimane, per garantire maggiore stabilità e la possibilità di apprendere meglio il proprio ruolo in quelle che sono le prime fasi del progetto. Si è decisa una riduzione progressiva della durata di ogni rotazione in virtù di un adattamento graduale ai nuovi ritmi di lavoro. 
+
+
 
 = Decisioni prese
 
