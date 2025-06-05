@@ -29,6 +29,11 @@ kept_in_documents:
   file: documents/candidatura/ConfrontoCapitolati_2025_03_14_v1.1.0_signed.pdf
 - doc: RTB
   base_name: VI
+  version: 1.1.0
+  file: documents/rtb/verbali/interni/VI_2025_03_27_v1.1.0_signed.pdf
+archived:
+- doc: RTB
+  base_name: VI
   version: 1.0.0
-  file: documents/rtb/verbali/interni/VI_2025_03_27_v1.0.0_signed.pdf
-archived: []
+  source: documents/rtb/verbali/interni/VI_2025_03_27_v1.0.0_signed.pdf
+  destination: documents/archive/RTB_v1.0.0/VI_2025_03_27_v1.0.0_signed.pdf
