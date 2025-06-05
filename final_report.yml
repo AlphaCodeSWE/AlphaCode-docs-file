@@ -36,6 +36,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_04_08_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: VE_2025_05_05
+  version: 1.0.0
+  file: documents/rtb/verbali/esterni/VE_2025_05_05_v1.0.0_signed.pdf
+- doc: RTB
   name_date: VE_2025_04_24
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_04_24_v1.0.0_signed.pdf
