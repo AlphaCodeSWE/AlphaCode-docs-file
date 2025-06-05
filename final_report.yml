@@ -32,6 +32,10 @@ kept_in_documents:
   version: 0.3.0
   file: documents/rtb/NormeDiProgetto_2025_04_18_v0.3.0_signed.pdf
 - doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_05_08
+  version: 0.1.0
+  file: documents/rtb/AnalisiDeiRequisiti_2025_05_08_v0.1.0_signed.pdf
+- doc: RTB
   name_date: VE_2025_04_17
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_04_17_v1.0.0_signed.pdf
@@ -67,9 +71,4 @@ kept_in_documents:
   name_date: VI_2025_05_03
   version: 1.0.0
   file: documents/rtb/verbali/interni/VI_2025_05_03_v1.0.0_signed.pdf
-archived:
-- doc: RTB
-  name_date: NormeDiProgetto_2025_04_18
-  version: 0.2.0
-  source: documents/rtb/NormeDiProgetto_2025_04_18_v0.2.0_signed.pdf
-  destination: documents/archive/RTB_v0.2.0/NormeDiProgetto_2025_04_18_v0.2.0_signed.pdf
+archived: []
