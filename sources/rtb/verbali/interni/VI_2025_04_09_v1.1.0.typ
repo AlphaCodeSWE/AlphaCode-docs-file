@@ -18,10 +18,11 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025/04/09",
-  version: "1.2.0",
+  date: "2025/04/17",
+  version: "1.1.0",
   version_history: (
-        "1.0.0", "2025/04/09", "Stesura del verbale", "Giovanni Battista Matteazzi", "Manuel Cinnirella"
+    "1.1.0", "2025/04/17", "Appunto su rotazione ruoli", "Giovanni Battista Matteazzi", "Manuel Cinnirella",
+    "1.0.0", "2025/04/09", "Stesura del verbale", "Giovanni Battista Matteazzi", "Manuel Cinnirella"
   ),
 
   main-color: "A72229FF", //set the main color
@@ -54,8 +55,7 @@
  La riunione è iniziata con un riepilogo dei contenuti emersi nel precedente incontro con l'azienda Sync Lab, in cui si è approfondito il contesto operativo e l'architettura tecnica che sarà alla base del progetto. Nonostante ci fossero più tecnologie disponibili tra cui scegliere per la fase implementativa, onde favorire il corretto flusso dei dati è stato deciso di attenersi a quelle consigliate e già utilizzate dall'azienda; questo ci assicura di operare in un contesto noto ai proponenti. 
  I membri che non avevano preso parte al meeting sono stati inoltre messi al corrente degli spunti operativi offerti da Sync Lab, sia a livello tecnico che organizzativo. 
  Il gruppo ha quindi valutato le competenze necessarie per affrontare le prossime fasi del lavoro, individuando come priorità l'apprendimento del framework Docker, e la stesura di uno script Python che consenta di simulare la generazione di dati GPS e di stato. 
- Parallelamente sono stati individuati i documenti da redigere nel breve termine: verbali (interno ed esterno), glossario tecnico e norme di progetto. La discussione si è chiusa con l'individuazione delle scadenze per ciascuna attività e con l'assegnazione dei compiti sulla base della rotazione dei ruoli. 
-
+ Parallelamente sono stati individuati i documenti da redigere nel breve termine: verbali (interno ed esterno), glossario tecnico e norme di progetto.
 
 = Decisioni prese
 
@@ -68,7 +68,23 @@
  3. Organizzazione del lavoro: la ripartizione delle attività avverrà secondo i ruoli attuali del team.
  4. Scadenze: ogni attività dovrà essere completata in tempo utile per poter presentare i risultati alla prossima riunione con l'azienda.
 
-
+= Rotazione ruoli
+I ruoli aggiornati per ciascun membro a partire dal 18 aprile 2025 saranno i seguenti:
+#align(center,
+  table(
+    fill: (x, y) => if y == 0 {rgb("#404040")},
+    columns: 2,
+    inset: 10pt,
+    table.header(text(fill: rgb("#f5f5eb"), align(center)[*Membro*]), text(fill: rgb("#f5f5eb"), align(center)[*Ruolo*])),
+    [Alessandro Di Pasquale], [Programmatore],
+    [Giovanni Battista Matteazzi], [Verificatore],
+    [Elia Leonetti], [Amministratore],
+    [Massimo Chioru], [Analista],
+    [Romeo Calearo], [Programmatore],
+    [Nicolò Bovo], [Progettista],
+    [Manuel Cinnirella], [Responsabile]
+  )
+)
 
 = Attività individuate
 
