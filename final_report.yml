@@ -35,9 +35,8 @@ kept_in_documents:
   name_date: VI_2025_03_27
   version: 1.1.0
   file: documents/rtb/verbali/interni/VI_2025_03_27_v1.1.0_signed.pdf
-archived:
 - doc: RTB
-  name_date: VI_2025_04_09
-  version: 1.1.0
-  source: documents/rtb/verbali/interni/VI_2025_04_09_v1.1.0_signed.pdf
-  destination: documents/archive/RTB_v1.1.0/VI_2025_04_09_v1.1.0_signed.pdf
+  name_date: VI_2025_04_18
+  version: 1.0.0
+  file: documents/rtb/verbali/interni/VI_2025_04_18_v1.0.0_signed.pdf
+archived: []
