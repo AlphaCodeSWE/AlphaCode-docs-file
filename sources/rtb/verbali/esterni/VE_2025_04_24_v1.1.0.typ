@@ -17,8 +17,9 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: "2025-04-24",
-  version: "1.0.0",
+  version: "1.1.0",
   version_history: (
+    "1.1.0", "2025-04-24", "Correzione errori ortografici", "Alessandro Di Pasquale, Romeo Calearo, Massimo Chioru, Giovanni Battista Matteazzi, Elia Leonetti, Nicolò Bovo"
     "1.0.0", "2025-04-24", "Stesura del verbale", "Alessandro Di Pasquale, Romeo Calearo, Massimo Chioru, Giovanni Battista Matteazzi, Elia Leonetti, Nicolò Bovo"
   ),
 
@@ -47,8 +48,8 @@
 == Aggiornamento lavoro pregresso
 
 - Baseline#apice("G") dell'Incremento#apice("G") 1 mantenuta stabile: Il simulatore GPS#apice("G") rimane completamente operativo durante l'integrazione delle nuove funzionalità, seguendo i principi del modello incrementale#apice("G").
-- Consegna Incremento#apice("G") 2 in corso: Il gruppo ha presentato i progressi dell'Incremento#apice("G") 2 del modello incrementale#apice("G"), mantenendo operative tutte le funzionalità dell'Incremento#apice("G") 1 precedente senza modifiche distruttive.
-- Il gruppo ha implementato un sistema per la generazione di percorsi GPX#apice("G") utilizzando OSRM#apice("G") (Open Source Routing Machine) e le mappe gratuite fornite da OpenStreetMap.
+- Consegna Incremento#apice("G") 2 in corso: ll gruppo ha presentato i progressi dell'Incremento#apice("G") 2 del modello incrementale#apice("G"), mantenendo operative tutte le funzionalità dell'Incremento#apice("G") precedente senza modifiche distruttive.
+- Il team ha implementato un sistema per la generazione di percorsi GPX#apice("G") utilizzando OSRM#apice("G") (Open Source Routing Machine) e le mappe gratuite fornite da OpenStreetMap.
   È stato impiegato l'ambiente di sviluppo Gitpod#apice("G"), sfruttando le ore gratuite disponibili, mentre per l'integrazione di un modello linguistico è stato utilizzato Groq#apice("G").
 - È stato richiesto un riepilogo generale del funzionamento del sistema, che è stato descritto come segue: 
  - Producer#apice("G"): genera e invia dati di coordinate GPS#apice("G");
