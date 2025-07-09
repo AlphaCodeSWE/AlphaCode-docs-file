@@ -19,7 +19,7 @@
   date: "2025-04-24",
   version: "1.1.0",
   version_history: (
-    "1.1.0", "2025-04-24", "Correzione errori ortografici", "Alessandro Di Pasquale, Romeo Calearo, Massimo Chioru, Giovanni Battista Matteazzi, Elia Leonetti, Nicolò Bovo"
+    "1.1.0", "2025-04-24", "Correzione errori ortografici", "Alessandro Di Pasquale, Romeo Calearo, Massimo Chioru, Giovanni Battista Matteazzi, Elia Leonetti, Nicolò Bovo",
     "1.0.0", "2025-04-24", "Stesura del verbale", "Alessandro Di Pasquale, Romeo Calearo, Massimo Chioru, Giovanni Battista Matteazzi, Elia Leonetti, Nicolò Bovo"
   ),
 
