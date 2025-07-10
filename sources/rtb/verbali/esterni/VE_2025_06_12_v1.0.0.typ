@@ -38,7 +38,7 @@
 - Discussione sulle modifiche al P.o.C.#apice("G") e sullo stato della documentazione
 == Aggiornamento lavoro pregresso
 - Nessuna regressione agli incrementi#apice("G") precedenti. 
-- Consegna dell'Incremento#apice("G") 5: Introduzione Stream Processor#apice("G") all'interno del P.o.C.#apice("G");
+- Consegna dell'Incremento#apice("G") 5: Introduzione Stream Processor#apice("G") e approvazione finale del P.o.C.#apice("G");
 - Perfezionamento documentazione mancante;
 == Consigli ricevuti
 Durante l'incontro l'azienda, dopo essersi informata sui vantaggi derivanti dall'implementazione delle ultime modifiche, ha approvato gli ultimi aggiornamenti al P.o.C.#apice("G") 
