@@ -21,9 +21,10 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025-04-10",
-  version: "0.1.0",
+  date: "2025-05-20",
+  version: "0.5.0",
   version_history: (
+      "0.5.0", "2025-05-20", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
       "0.1.0", "2025-04-10", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
   ),
 
@@ -381,4 +382,83 @@ Le norme garantiscono conformità con i requisiti del capitolato, come l'uso di 
   - Risultati dei test end-to-end e metriche di copertura.  
 - *Conformità al Capitolato*: Rispetto delle specifiche _Sync Lab_ (es. dashboard con Superset/Grafana, simulazione dati GPS).  
 - *Tracciabilità*: Registrazione delle decisioni progettuali e allineamento con i referenti aziendali.  
+
+=== Ciclo di vita
+Il ciclo di vita di un documento prevede sette fasi principali:
+
+1. *Definizione o modifica del template:*
+   Nella prima fase si procede con la definizione o la modifica del modello (template) specifico per il documento. Questo template stabilisce la struttura, gli stili di formattazione e include elementi essenziali quali titolo, autore, data di creazione e altre informazioni basilari necessarie per la corretta identificazione del documento.
+
+2. *Pianificazione e assegnazione delle sezioni:*
+   Successivamente, le varie sezioni del documento vengono accuratamente pianificate e assegnate ai rispettivi Redattori, ciascuno responsabile per la redazione della propria parte in linea con le specifiche delle Norme di Progetto.
+
+3. *Raccolta dei contenuti e stesura:*
+   In questa fase intermedia, i Redattori raccolgono tutto il materiale necessario e procedono a realizzare una prima versione (bozza) del documento.
+
+4. *Redazione definitiva del documento:*
+   Durante la quarta fase, i Redattori elaborano ulteriormente le proprie sezioni, correggendo e perfezionando i contenuti, in caso di necessità, così da assicurare la conformità al modello stabilito e alle Norme di Progetto.
+
+5. *Verifica dei contenuti:*
+   La quinta fase prevede un controllo approfondito da parte dei Redattori sui contenuti redatti, assicurandosi che questi rispettino integralmente le Norme di Progetto e siano privi di errori logici, tecnici o di compilazione.
+
+6. *Revisione generale del documento:*
+   In questa fase, il documento viene sottoposto a una revisione da parte di un Verificatore incaricato, che ha il compito di assicurare la coerenza complessiva, la correttezza delle modifiche effettuate e la rispondenza del documento agli standard di qualità previsti.
+
+7. *Approvazione finale e pubblicazione:*
+   Infine, il documento giunge alla fase conclusiva, in cui un Responsabile effettua l'approvazione finale, certificandone la qualità e l'idoneità al rilascio. Dopo l'approvazione ufficiale, il documento viene pubblicato e distribuito nella sua versione definitiva.
+
+
+=== Sistema di composizione tipografica 
+Per garantire coerenza e semplicità nella produzione della documentazione, il gruppo ha adottato *Typst* come strumento principale, in sostituzione di LaTeX. La scelta è motivata dai seguenti vantaggi:  
+- *Semplicità d'uso*: Sintassi simile a Markdown, ideale per redattori con competenze eterogenee.  
+- *Programmabilità avanzata*: Supporto nativo per logiche condizionali e gestione dinamica dei contenuti, utile per documenti tecnici complessi (es. integrazione di diagrammi architetturali dal capitolato).  
+- *Velocità di compilazione*: Generazione immediata di output PDF, ottimizzando i tempi di revisione.  
+- *Coerenza grafica*: Template predefiniti nella cartella `template/` della repository `AlphaCode-docs-file`, allineati alle richieste del capitolato.  
+
+=== Struttura dei documenti  
+Ogni documento segue una struttura standardizzata per garantire tracciabilità e chiarezza, conforme alle aspettative del proponente _Sync Lab_.  
+
+==== Intestazione
+La prima pagina include:  
+- *Logo del gruppo e dell'università* (`imgs/group_logo.png`).  
+- *Nome del documento* (es. "Analisi dei Requisiti").  
+- *Data* della creazione del documento.  
+- *Responsabile, Redattori, Validatori*: È un elenco dei ruoli ricoperti dai vari membri nel corso della stesura del documento (es. risultano due responsabili elencati nel caso in cui una versione sia stata scritta sotto un determinato responsabile e la successiva in una rotazione dei ruoli differente). Ruoli definiti in base alle competenze (es. redattore esperto in A.I. per sezioni LLM#apice("G")). 
+- *Tabella versionamento*: Partendo dalla più recente in alto verso la prima in basso, contiene una breve descrizione delle modifiche fatte, chi le ha applicate e chi le ha successivamente verificate. In caso di unica versione, la suddetta tabella non risulterà visibile. 
+- *Versione attuale*:(e.g. `v0.3.1`).  
+
+==== Registro delle modifiche  
+La seconda pagina è dedicata alla tabella di versionamento, la quale permette di tenere traccia delle modifiche applicate al documento. La tabella riporta le seguenti informazioni:
+- Versione: il numero di versione del documento;
+- Data: data di stesura della relativa versione del documento;
+- Descrizione: un'introduzione sintetica alle modifiche effettuate.
+- Autori: membri che hanno effettuato le modifiche;
+- Validatori: membri che hanno approvato le modifiche;
+
+==== Indice
+Organizzato per capitoli e sezioni, con riferimenti alle pagine.
+
+==== Corpo del documento
+Strutturato in capitoli e sottosezioni con eventuali:  
+- *Descrizioni tecniche*: Dettagli su tecnologie (es. *PostGIS* per dati geospaziali).  
+- *Diagrammi*: Riproduzione degli schemi architetturali del capitolato.
+
+==== Corpo del verbale 
+Include:  
+- *Informazioni sulla riunione*:  
+  - Luogo (fisico o virtuale), data, ora, partecipanti (interni/esterni).  
+- *Ordine del giorno*: Elenco temi discussi (es. "Integrazione LLM con Apache Flink").  
+- *Sintesi e decisioni*: Breve riassunto e accordi presi.
+- *Consigli ricevuti*: Solo per i verbali esterni, riguarda quanto ci è stato suggerito dall'azienda su come procedere.
+- *Attività individuate*: In formato tabulare, comprendendo l'eventuale Issue di GitHub associata, la descrizione dell'attività e gli assegnatari (stabiliti sulla base dei loro ruoli secondo la rotazione corrente)
+
+==== Documenti del progetto
+Elenco dei documenti obbligatori, allineati al capitolato C4:  
+1. *Norme di Progetto* (_questo documento_).  
+2. *Piano di Progetto*: Timeline e allocazione risorse.
+3. *Piano di Qualifica*: Metriche di testing (copertura ≥ 80%).  
+4. *Analisi dei Requisiti*: Casi d'uso (es. simulazione GPS, generazione annunci).  
+5. *Glossario*: Definizioni tecniche (es. "LLM", "stream processing").  
+6. *Lettera di presentazione*: Lettera di presentazione ad RTB compiuta.
+7. *Verbali Interni/Esterni*: Registri degli incontri con _Sync Lab_.
 
