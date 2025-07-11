@@ -21,10 +21,11 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025-04-05",
-  version: "0.1.0",
+  date: "2025-05-20",
+  version: "0.5.0",
   version_history: (
-       "0.1.0", "2025-04-05", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+      "0.5.0", "2025-05-20", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+      "0.1.0", "2025-04-05", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
   ),
 
   main-color: "A72229FF", //set the main color
@@ -406,7 +407,6 @@ Il ciclo di vita di un documento prevede sette fasi principali:
 7. *Approvazione finale e pubblicazione:*
    Infine, il documento giunge alla fase conclusiva, in cui un Responsabile effettua l'approvazione finale, certificandone la qualità e l'idoneità al rilascio. Dopo l'approvazione ufficiale, il documento viene pubblicato e distribuito nella sua versione definitiva.
 
-// Next section
 
 === Sistema di composizione tipografica 
 Per garantire coerenza e semplicità nella produzione della documentazione, il gruppo ha adottato *Typst* come strumento principale, in sostituzione di LaTeX. La scelta è motivata dai seguenti vantaggi:  
@@ -461,69 +461,3 @@ Elenco dei documenti obbligatori, allineati al capitolato C4:
 5. *Glossario*: Definizioni tecniche (es. "LLM", "stream processing").  
 6. *Lettera di presentazione*: Lettera di presentazione ad RTB compiuta.
 7. *Verbali Interni/Esterni*: Registri degli incontri con _Sync Lab_.
-
-=== Regole stilistiche
-
-==== Convenzioni di denominazione dei file
-I PDF presenti nella repository dei documenti seguono precise convenzioni per la denominazione, riassunte di seguito:
-
-Formato PascalCase per i nomi dei documenti, ovvero la prima lettera di ciascuna parola è maiuscola e non sono presenti spazi tra le parole.
-Assenza di spazi, sostituiti semplicemente dal formato PascalCase.
-Indicazione della data (formato YYYY_MM_DD) presente nel nome dei file relativi ai verbali.
-Indicazione esplicita della versione, posizionata alla fine del nome del file con formato vX.X.X.
-
-In base a queste regole, i file avranno la seguente struttura di denominazione:
-
-- *Norme di Progetto*: `NormeDiProgetto_YYYY_MM_DD_vX.X.X`
-- *Piano di Progetto*: `PianoDiProgetto_YYYY_MM_DD_vX.X.X`
-- *Piano di Qualifica*: `PianoDiQualifica_YYYY_MM_DD_vX.X.X`
-- *Analisi dei Requisiti*: `AnalisiDeiRequisiti_YYYY_MM_DD_vX.X.X`
-- *Glossario*: `Glossario_YYYY_MM_DD_vX.X.X`
-- *Verbali Interni*: `VI_YYYY_MM_DD_vX.X.X`
-- *Verbali Esterni*: `VE_YYYY_MM_DD_vX.X.X`
-
-Si precisa inoltre che i file sorgenti .typ  includono la versione nel nome, la quale verrà aggiunta anche al documento PDF dopo la compilazione, insieme a signed per indicare che il file è firmato digitalmente.
-
-L'utilizzo uniforme e rigoroso di questo formato facilita notevolmente l'impiego di Git, permettendo di sfruttare appieno le funzioni di tracciamento e confronto delle versioni (funzione "diff")
-
-==== Stile del testo
-Nei documenti (ad esclusione dei verbali) sarà obbligatorio utilizzare i seguenti stili tipografici:
-
-_Corsivo_ per:
-- Il nome del gruppo (_AlphaCode_);
-- Il nome dell'azienda proponente (_Sync Lab_).
-
-*Grassetto* per:
-- Termini chiave o importanti;
-- Parole introduttive seguite da una descrizione negli elenchi puntati.
-
-`Font monospace` per:
-- I nomi dei documenti;
-- I nomi dei file;
-- I nomi delle repository;
-- I nomi delle cartelle;
-- I nomi dei branch;
-- Frammenti o esempi di codice.
-
-#underline[Sottolineato] per:  
-- I collegamenti (link);
-- Gli indirizzi email.
-
-LETTERE MAIUSCOLE per:
-- Le iniziali dei nomi propri;
-- Gli acronimi;
-- Le iniziali dei ruoli assegnati ai membri del gruppo.
-
-// ==== Elenchi puntati
-// Ogni voce degli elenchi puntati termina con il simbolo “;”, ad eccezione dell'ultima che termina con un punto “.”. Nel caso una voce sia composta da più frasi, può terminare con un punto, indipendentemente dalla sua posizione nell'elenco stesso. L'uso del grassetto è previsto come descritto nella sezione precedente.
-
-=== Formato delle date
-Tutte le date presenti nei nomi dei documenti devono rispettare il formato seguente: *YYYY_MM_DD*, dove:
-
-- *YYYY* indica l'anno con quattro cifre;
-- *MM* indica il mese con due cifre;
-- *DD* indica il giorno con due cifre.
-
-Le date riportate all'interno dei documenti, invece, seguiranno la formattazione *YYYY-MM-DD*, come da ISO 8601.
-
-
