@@ -76,6 +76,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_05_29_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: Glossario_2025_07_07
+  version: 1.0.0
+  file: documents/rtb/Glossario_2025_07_07_v1.0.0_signed.pdf
+- doc: RTB
   name_date: NormeDiProgetto_2025_04_05
   version: 0.9.0
   file: documents/rtb/NormeDiProgetto_2025_04_05_v0.9.0_signed.pdf
