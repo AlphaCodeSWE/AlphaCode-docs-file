@@ -21,11 +21,12 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025-05-20",
-  version: "0.5.0",
+  date: "2025-06-18",
+  version: "0.9.0",
   version_history: (
-      "0.5.0", "2025-05-20", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
-      "0.1.0", "2025-04-05", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+    "0.9.0", "2025-06-18", "Estensione del documento", "Alessandro Di Pasquale, Giovanni Battista Matteazzi, Elia Leonetti", "Nicolò Bovo",
+    "0.5.0", "2025-05-20", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+    "0.1.0", "2025-04-05", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
   ),
 
   main-color: "A72229FF", //set the main color
@@ -407,6 +408,7 @@ Il ciclo di vita di un documento prevede sette fasi principali:
 7. *Approvazione finale e pubblicazione:*
    Infine, il documento giunge alla fase conclusiva, in cui un Responsabile effettua l'approvazione finale, certificandone la qualità e l'idoneità al rilascio. Dopo l'approvazione ufficiale, il documento viene pubblicato e distribuito nella sua versione definitiva.
 
+// Next section
 
 === Sistema di composizione tipografica 
 Per garantire coerenza e semplicità nella produzione della documentazione, il gruppo ha adottato *Typst* come strumento principale, in sostituzione di LaTeX. La scelta è motivata dai seguenti vantaggi:  
@@ -461,3 +463,432 @@ Elenco dei documenti obbligatori, allineati al capitolato C4:
 5. *Glossario*: Definizioni tecniche (es. "LLM", "stream processing").  
 6. *Lettera di presentazione*: Lettera di presentazione ad RTB compiuta.
 7. *Verbali Interni/Esterni*: Registri degli incontri con _Sync Lab_.
+
+=== Regole stilistiche
+
+==== Convenzioni di denominazione dei file
+I PDF presenti nella repository dei documenti seguono precise convenzioni per la denominazione, riassunte di seguito:
+
+Formato PascalCase per i nomi dei documenti, ovvero la prima lettera di ciascuna parola è maiuscola e non sono presenti spazi tra le parole.
+Assenza di spazi, sostituiti semplicemente dal formato PascalCase.
+Indicazione della data (formato YYYY_MM_DD) presente nel nome dei file relativi ai verbali.
+Indicazione esplicita della versione, posizionata alla fine del nome del file con formato vX.X.X.
+
+In base a queste regole, i file avranno la seguente struttura di denominazione:
+
+- *Norme di Progetto*: `NormeDiProgetto_YYYY_MM_DD_vX.X.X`
+- *Piano di Progetto*: `PianoDiProgetto_YYYY_MM_DD_vX.X.X`
+- *Piano di Qualifica*: `PianoDiQualifica_YYYY_MM_DD_vX.X.X`
+- *Analisi dei Requisiti*: `AnalisiDeiRequisiti_YYYY_MM_DD_vX.X.X`
+- *Glossario*: `Glossario_YYYY_MM_DD_vX.X.X`
+- *Verbali Interni*: `VI_YYYY_MM_DD_vX.X.X`
+- *Verbali Esterni*: `VE_YYYY_MM_DD_vX.X.X`
+
+Si precisa inoltre che i file sorgenti .typ  includono la versione nel nome, la quale verrà aggiunta anche al documento PDF dopo la compilazione, insieme a signed per indicare che il file è firmato digitalmente.
+
+L'utilizzo uniforme e rigoroso di questo formato facilita notevolmente l'impiego di Git, permettendo di sfruttare appieno le funzioni di tracciamento e confronto delle versioni (funzione "diff")
+
+==== Stile del testo
+Nei documenti (ad esclusione dei verbali) sarà obbligatorio utilizzare i seguenti stili tipografici:
+
+_Corsivo_ per:
+- Il nome del gruppo (_AlphaCode_);
+- Il nome dell'azienda proponente (_Sync Lab_).
+
+*Grassetto* per:
+- Termini chiave o importanti;
+- Parole introduttive seguite da una descrizione negli elenchi puntati.
+
+`Font monospace` per:
+- I nomi dei documenti;
+- I nomi dei file;
+- I nomi delle repository;
+- I nomi delle cartelle;
+- I nomi dei branch;
+- Frammenti o esempi di codice.
+
+#underline[Sottolineato] per:  
+- I collegamenti (link);
+- Gli indirizzi email.
+
+LETTERE MAIUSCOLE per:
+- Le iniziali dei nomi propri;
+- Gli acronimi;
+- Le iniziali dei ruoli assegnati ai membri del gruppo.
+
+// ==== Elenchi puntati
+// Ogni voce degli elenchi puntati termina con il simbolo “;”, ad eccezione dell'ultima che termina con un punto “.”. Nel caso una voce sia composta da più frasi, può terminare con un punto, indipendentemente dalla sua posizione nell'elenco stesso. L'uso del grassetto è previsto come descritto nella sezione precedente.
+
+=== Formato delle date
+Tutte le date presenti nei nomi dei documenti devono rispettare il formato seguente: *YYYY_MM_DD*, dove:
+
+- *YYYY* indica l'anno con quattro cifre;
+- *MM* indica il mese con due cifre;
+- *DD* indica il giorno con due cifre.
+
+Le date riportate all'interno dei documenti, invece, seguiranno la formattazione *YYYY-MM-DD*, come da ISO 8601.
+
+
+=== Strumenti
+Gli strumenti selezionati dal gruppo _AlphaCode_ per la produzione e gestione della documentazione sono:
+- *Typst*: linguaggio per la composizione e stesura dei documenti, utilizzando typst.app;
+- *GitHub*: piattaforma di hosting e controllo versione, con la repository ufficiale del gruppo situata al seguente indirizzo: [https://github.com/AlphaCodeSWE/AlphaCode-docs-file](https://github.com/AlphaCodeSWE/AlphaCode-docs-file);
+- *Capitolato*: il documento ufficiale fornito dalla proponente (_Sync Lab_) contenente i requisiti del progetto.
+
+== Verifica
+=== Scopo e aspettative
+
+All'interno del ciclo di vita del software, la verifica rappresenta un processo continuo e strutturato che prende avvio fin dalle prime fasi di progettazione e prosegue fino alla manutenzione post-rilascio. Questo processo ha lo scopo di garantire che ogni artefatto prodotto - siano essi codice sorgente, documentazione, casi di test o altri deliverable - rispetti pienamente i requisiti prefissati.
+
+L'obiettivo principale è assicurare che ciascun prodotto realizzato dal gruppo _AlphaCode_ sia conforme agli standard qualitativi attesi in termini di correttezza, completezza e coerenza. Questo viene ottenuto mediante attività di revisione e controllo sistematico che fanno uso di tecniche di analisi e test ben definite.
+
+Per raggiungere tali scopi, è fondamentale seguire procedure consolidate, applicare criteri di verifica affidabili e validare ogni deliverable al termine della sua produzione.
+
+=== Descrizione
+
+Il processo di verifica è svolto da uno o più membri del gruppo _AlphaCode_ incaricati come Verificatori, e viene applicato in modo sistematico a tutti gli artefatti del progetto. La verifica non si configura come un'attività isolata o occasionale, bensì come un processo ciclico e reiterato, che accompagna costantemente lo sviluppo e si adatta all'evoluzione del progetto.
+
+Il riferimento centrale per tutte le attività di verifica è il Piano di Qualifica, un documento che definisce con chiarezza:
+
+- Gli obiettivi specifici della verifica;
+- I criteri di accettazione per i diversi artefatti;
+- Le tecniche e i metodi adottati per ciascuna attività di controllo.
+
+Le attività di verifica applicabili sono descritte nelle sezioni seguenti.
+
+=== Analisi statica
+
+L'analisi statica è una tecnica di verifica che viene svolta senza la necessità di eseguire il prodotto software. Essa si concentra sull'esame diretto del codice sorgente e della documentazione prodotta, al fine di individuare eventuali incongruenze, difetti o violazioni delle convenzioni stabilite nel progetto.
+Questa forma di analisi può essere applicata a qualunque artefatto del progetto e si basa principalmente su due modalità operative:
+
+- *Walkthrough*: una lettura condivisa e collaborativa del contenuto, condotta tra il Verificatore e l'autore dell'artefatto. Serve a individuare anomalie o aree da migliorare, promuovendo anche un confronto diretto e costruttivo.
+
+- *Inspection*: una modalità più strutturata e formale rispetto al walkthrough, che si avvale di una checklist predefinita per analizzare sistematicamente il contenuto. L'inspection è particolarmente indicata per la sua efficienza nel rilevare errori in modo tempestivo e puntuale.
+
+L'analisi statica risulta particolarmente efficace nelle prime fasi del progetto, quando la documentazione è ancora contenuta e facilmente gestibile, consentendo una verifica rapida e accurata di tutti i materiali prodotti. Si configura come una fase fondamentale per ridurre la propagazione di errori nelle fasi successive.
+
+// Next Section 2
+
+=== Analisi dinamica
+L'analisi dinamica è una tecnica di verifica che si basa sull'esecuzione effettiva del software per individuare malfunzionamenti, bug e comportamenti inattesi. Tale approccio consente di valutare la qualità del prodotto osservandone il comportamento in condizioni controllate e riproducibili.
+
+Nel contesto del progetto _NearYou_ di _Sync Lab_, l'analisi dinamica riveste un ruolo fondamentale, in particolare per testare la correttezza dell'elaborazione dei dati in streaming, la generazione di messaggi pubblicitari tramite LLM e la coerenza delle visualizzazioni fornite tramite dashboard.
+
+Le principali attività previste in questa fase sono i test, ovvero l'esecuzione del codice con input definiti per verificarne il comportamento atteso. L'efficacia di un test deriva da due caratteristiche chiave:
+
+- *Decidibilità*: un test è considerato valido se, a parità di input, produce sempre lo stesso output;
+- *Ripetibilità*: il test deve poter essere eseguito più volte in ambienti diversi senza variazioni di risultato dovute a fattori esterni.
+
+Per massimizzare la copertura e l'affidabilità, il gruppo _AlphaCode_ dovrà definire un opportuno dominio di test, ovvero l'insieme dei casi di prova necessari a verificare i requisiti funzionali e non funzionali, con attenzione particolare alle componenti più critiche, come i sistemi di geolocalizzazione, i filtri per il targeting e i prompt AI.
+L'automazione dei test sarà supportata mediante strumenti come:
+
+- *Driver*: componenti attivi che simulano input o comportamenti dell'utente o di sistemi esterni;
+- *Stub*: elementi passivi che replicano funzionalità non ancora disponibili o isolate;
+- *Logger*: moduli di tracciamento che registrano gli output e i risultati delle esecuzioni.
+
+==== Test di unità
+I test di unità sono progettati per verificare singole componenti del sistema in modo isolato, come ad esempio:
+
+- un modulo di simulazione GPS;
+- una funzione per il salvataggio su database;
+- un handler per l'elaborazione dei prompt.
+
+Questi test vengono generalmente scritti durante lo sviluppo e sono cruciali per intercettare errori nelle fasi iniziali. Possono essere classificati in:
+
+- *Test funzionali*: verificano che, dato un input specifico, l'output prodotto sia corretto e conforme ai requisiti funzionali attesi (es. il generatore di messaggi produce output personalizzati corretti).
+
+- *Test strutturali*: mirano a esplorare tutti i possibili cammini logici del codice, assicurando che ogni ramo o condizione venga eseguita almeno una volta, migliorando la copertura del codice e riducendo il rischio di errori nascosti.
+
+==== Test di integrazione
+
+I *test di integrazione* vengono progettati in seguito alla realizzazione dei test di unità, durante la fase di progettazione architetturale. Il loro scopo è verificare il corretto funzionamento delle interazioni tra i vari moduli software che, singolarmente, sono già stati testati e validati.
+
+Nel contesto del progetto *NearYou*, questi test saranno particolarmente rilevanti per garantire il corretto scambio di dati tra i simulatori di posizione, i moduli di stream processing, il motore di generazione AI e le dashboard di visualizzazione.
+
+L'integrazione tra i moduli avviene secondo un approccio incrementale, che consente di individuare e isolare più facilmente eventuali malfunzionamenti. In caso di errori critici, sarà possibile annullare temporaneamente le modifiche e ripristinare una versione stabile del sistema.
+
+Si possono adottare due strategie principali per condurre i test:
+
+- *Approccio Top-down*: si parte dalle componenti più esterne e interattive, come le interfacce utente o i sistemi di output, integrando progressivamente i moduli di livello inferiore. Questo approccio permette di testare fin da subito le funzionalità principali del sistema e garantisce la disponibilità anticipata di funzionalità ad alto impatto.
+
+- *Approccio Bottom-up*: si inizia con i componenti più interni e a basso livello, come i servizi di gestione dati, database o API locali, per poi risalire alle componenti esterne. Questo metodo consente di costruire una base solida e ben verificata prima di affrontare l'integrazione con moduli più complessi.
+
+==== Test di sistema
+
+I *test di sistema* sono eseguiti dopo il completamento dei test di integrazione e hanno l'obiettivo di verificare che l'intero sistema risponda correttamente ai requisiti definiti nell'Analisi dei Requisiti e nel Capitolato fornito da _Sync Lab_.
+
+Nel caso del progetto *NearYou*, ciò include la verifica del corretto funzionamento di tutte le funzionalità principali: dalla generazione dei messaggi pubblicitari personalizzati alla corretta visualizzazione su mappa, fino all'aggiornamento in tempo reale delle posizioni dei veicoli.
+
+Questi test vengono condotti in un ambiente il più possibile simile a quello di produzione e coprono l'intera infrastruttura software, valutando la robustezza, l'affidabilità e la rispondenza dell'applicazione alle aspettative del committente.
+
+==== Test di regressione
+
+I *test di regressione* vengono eseguiti per assicurarsi che eventuali modifiche o migliorie introdotte nel sistema (nuove funzionalità, bug fix, refactoring) non compromettano il comportamento corretto di funzionalità già verificate in precedenza.
+
+Si tratta di una ripetizione selettiva di test di unità, integrazione e sistema già validati, mirata a identificare possibili effetti collaterali non intenzionali. Questo tipo di test è essenziale in progetti iterativi e modulari come *NearYou*, dove l'aggiunta di nuove componenti (es. nuove fonti dati, nuovi moduli di personalizzazione) può facilmente introdurre errori in parti già funzionanti.
+
+==== Test di accettazione
+
+I *test di accettazione* rappresentano l'ultima fase del processo di verifica e hanno lo scopo di validare il prodotto finale rispetto ai requisiti espressi dal committente, ovvero _Sync Lab_.
+
+Nel caso del progetto *NearYou*, i test di accettazione verificheranno che:
+
+- il sistema generi correttamente messaggi pubblicitari personalizzati;
+- i dati siano raccolti, processati e visualizzati in tempo reale;
+- la piattaforma rispetti tutte le funzionalità minime previste dalla consegna della P.O.C. o, eventualmente, quelle della versione completa.
+
+Solo il superamento di questa fase certifica ufficialmente la qualità e l'idoneità del software per l'utilizzo previsto.
+
+== Validazione
+=== Scopo e aspettative
+La validazione rappresenta una fase fondamentale del ciclo di sviluppo, poiché ha l'obiettivo di accertare che il prodotto software realizzato rispecchi fedelmente le aspettative e i requisiti indicati dal committente, in questo caso _Sync Lab_.
+
+Questa fase non si limita alla sola verifica tecnica, ma coinvolge un'analisi complessiva dell'esperienza d'uso e della reale efficacia del sistema rispetto agli obiettivi stabiliti. I principali aspetti su cui si concentra sono:
+
+- *Aderenza ai requisiti*: il sistema deve implementare in modo completo e corretto tutte le funzionalità richieste nel capitolato;
+- *Corretto funzionamento*: il comportamento del software deve risultare coerente con la logica di progettazione e senza anomalie durante l'esecuzione;
+- *Usabilità*: l'interfaccia utente e le interazioni devono risultare semplici, intuitive e comprensibili per l'utente finale;
+- *Efficacia*: il sistema deve essere in grado di soddisfare le esigenze operative, migliorando la rilevanza e l'impatto della comunicazione pubblicitaria.
+
+L'obiettivo ultimo è ottenere un prodotto completo, funzionante e apprezzabile da parte del committente, sia dal punto di vista tecnico che funzionale.
+
+=== Descrizione
+
+La fase di validazione si basa in larga parte sui risultati ottenuti durante la fase di verifica, sfruttando i test documentati nelle sezioni precedenti (unità, integrazione, sistema, regressione e accettazione). L'elemento determinante per concludere con successo la validazione è il superamento del test di accettazione.
+
+Questo test rappresenta la conferma finale che il sistema NearYou sviluppato dal gruppo _AlphaCode_ risponde in maniera piena ai requisiti funzionali e qualitativi attesi. Solo dopo l'esito positivo di questa fase il prodotto potrà essere considerato validato e pronto per l'utilizzo o per ulteriori estensioni.
+
+== Gestione della configurazione
+=== Descrizione
+
+Il processo di gestione della configurazione viene applicato lungo l'intero ciclo di vita del progetto e definisce le regole adottate dal gruppo _AlphaCode_ per garantire la tracciabilità e il controllo delle modifiche apportate ai documenti e al codice sorgente. Tale processo assicura che ogni artefatto prodotto sia identificabile, monitorabile e ripristinabile, contribuendo a mantenere ordine e coerenza all'interno del progetto.
+
+=== Scopo
+
+Lo scopo della gestione della configurazione è garantire una corretta organizzazione e supervisione di tutte le modifiche effettuate sulla documentazione e sul codice. Ogni cambiamento sarà tracciabile e documentato, permettendo in qualsiasi momento di risalire:
+
+- alla motivazione della modifica;
+- all'autore che l'ha effettuata;
+- al contesto temporale e funzionale del cambiamento.
+
+Questo approccio consente una maggiore affidabilità e facilita l'analisi retrospettiva del lavoro svolto.
+
+=== Versionamento
+
+Per gestire in modo ordinato le modifiche ai documenti, _AlphaCode_ adotta una convenzione di versionamento nel formato X.Y.Z, così definita:
+
+- *X*: identifica una nuova release stabile (o di base), (es. revisione, rilascio ufficiale). Può essere incrementata solo previa validazione;
+- *Y*: rappresenta una nuova release "minore", introduce aggiunte o funzionalità base;
+- *Z*: nuova release di patch che indica una modifica puntuale o minore, spesso una "messa a punto" (correzioni, nessuna aggiunta considerevole).
+
+Ad ogni incremento di una cifra, tutte quelle alla sua destra vengono azzerate (es. da `1.2.3` a `1.3.0`, oppure da `2.0.5` a `2.1.0`).
+
+//TODO PARTE NUOVA FATTA:
+
+=== Tecnologie utilizzate
+Per implementare efficacemente la gestione della configurazione, il gruppo _AlphaCode_ utilizza i seguenti strumenti:
+
+- *Git*: sistema di controllo versione distribuito per tracciare ogni modifica ai documenti e al codice sorgente;
+- *GitHub*: piattaforma di hosting per repository, gestione versioni, pull request e issue tracking;
+- *GitPod*: ambiente di sviluppo cloud che facilita la configurazione e l'accesso uniforme agli ambienti di lavoro;
+- *Docker*: per la containerizzazione delle componenti software, garantendo coerenza tra ambienti di sviluppo e di produzione;
+- *Discord*: per la comunicazione e coordinamento del team durante le attività di configurazione.
+
+=== Repository
+
+==== Lista Repository
+Il gruppo utilizza le seguenti repository all'interno dell'organizzazione GitHub "AlphaCodeSWE":
+
+- `AlphaCode-docs-file`: contiene tutta la documentazione del progetto;
+- `NearYou-Code`: contiene il codice sorgente dell'applicazione, inclusi simulatori GPS, moduli di stream processing, e componenti di visualizzazione;
+
+
+==== Struttura delle repository
+La repository dei documenti è organizzata con le seguenti cartelle principali:
+- `documents/`: contiene i documenti finali in formato PDF;
+- `sources/`: contiene i file sorgenti Typst;
+- `template/`: contiene il template condiviso per la documentazione;
+- `template/assets/`: contiene immagini e altri file utilizzati nei documenti.
+- `template/fonts/`: contiene eventuali font aggiuntivi utilizzati nei documenti.
+
+// TODO aggiornare in PB
+La repository del codice è organizzata secondo i principali componenti dell'architettura NearYou:
+- `airflow/`: codice per gestire il caricamento periodico delle informazioni sui negozi associati nella mappa;
+- `certs/`: certificati per Kafka;
+- `deployment/`: configurazione per Kafka, Docker e programma di avvio;
+- `docs/`: documenti per informazioni varie;
+- `monitoring/`: codice di Grafana (dashboard admin) e Prometeus (monitoraggio risorse hardware);
+- `requirements/`: librerie necessarie per il corretto funzionamento del codice python;
+- `services/`: codice di dashboard utente e generatore di messaggi A.I.;
+- `src/`: contiene cache, logger e simulatore utenti.
+- Variabili di sistema e configurazione vari (`.env`, `.compose`, `.gitpod`, etc.).
+
+Questa struttura può essere soggetta a cambiamenti giunti alla fase di PB.
+
+// === Sincronizzazione
+
+// TODO riscriverla;
+// ==== Branch
+// Non è prevista alcuna tecnica di branching nello sviluppo del P.o.C.
+// Per la gestione del codice di M.V.P. il gruppo _AlphaCode_ prevede di adottare la seguente strategia di branching:
+
+// - `main`: contiene la versione stabile e funzionante del software/documentazione;
+// - `develop`: ramo principale di sviluppo, dal quale vengono creati i branch specifici per feature;
+// - `feature/*`: branch dedicati allo sviluppo di specifiche funzionalità;
+// - `bugfix/*`: branch dedicati alla correzione di errori;
+// - `release/*`: branch preparatori per il rilascio di nuove versioni.
+
+// ==== Pull Request
+// Quando un'attività viene completata, il membro del gruppo che ci ha lavorato apre una Pull Request (PR) su GitHub. La PR deve:
+// - Includere una descrizione chiara delle modifiche apportate;
+// - Referenziare l'Issue correlata (usando la sintassi `closes #X`);
+// - Assegnare almeno un Verificatore per la review.
+
+// Il Verificatore controlla le modifiche, fornisce feedback se necessario, e approva la PR. Solo dopo l'approvazione, le modifiche possono essere unite al branch principale (develop o main).
+
+// == Gestione della qualità
+
+// TODO finire e scrivere tutti i nostri test
+// === Metriche e strumenti
+// Per garantire un elevato standard qualitativo, _AlphaCode_ adotta specifiche metriche e strumenti:
+
+
+// Il dettaglio delle metriche è documentato nel Piano di Qualifica, insieme ai valori di soglia minimi accettabili per ciascuna di esse.
+
+== Processi organizzativi
+
+=== Gestione dei processi
+
+==== Coordinamento
+Il coordinamento all'interno del gruppo _AlphaCode_ avviene principalmente attraverso:
+
+- *Riunioni periodiche*: incontri per la revisione delle attività, aggiornamenti sullo stato di avanzamento e pianificazione delle prossime attività;
+- *Comunicazioni interne*: utilizzo di Discord e Telegram per comunicazioni sincrone e asincrone tra i membri del team;
+- *Comunicazioni con il proponente*: interazioni via email e Google Meet con i referenti di _Sync Lab_, seguendo le modalità indicate nel capitolato.
+
+Ogni riunione viene documentata attraverso un verbale, che include:
+- Data, ora e partecipanti;
+- Ordine del giorno;
+- Decisioni prese;
+- Attività assegnate.
+
+=== Miglioramento
+
+==== Scopo
+Il processo di miglioramento ha lo scopo di ottimizzare continuamente le pratiche di lavoro adottate dal gruppo _AlphaCode_, identificando inefficienze e implementando soluzioni per aumentare la produttività e la qualità del lavoro svolto.
+
+==== Descrizione
+Il miglioramento dei processi si articola in:
+
+- *Identificazione di problemi*: raccolta di feedback dai membri del team e analisi dei dati di performance;
+- *Proposta di soluzioni*: discussione e valutazione di potenziali miglioramenti;
+- *Implementazione dei cambiamenti*: applicazione delle soluzioni scelte;
+- *Valutazione dell'efficacia*: monitoraggio dei risultati e raccolta di ulteriori feedback.
+
+==== Metriche
+Per valutare l'efficacia del processo di miglioramento, vengono utilizzate le seguenti metriche:
+
+- *Velocità di sviluppo*: numero di task completati;
+- *Tasso di regressione*: numero di bug rilevati dopo il rilascio;
+- *Tempo di risoluzione dei problemi*: media del tempo necessario per risolvere un'issue;
+- *Copertura dei test*: percentuale di codice coperto dai test automatizzati.
+
+=== Formazione
+
+==== Scopo
+Il processo di formazione mira a garantire che tutti i membri del gruppo _AlphaCode_ possiedano le competenze necessarie per contribuire efficacemente al progetto *NearYou*, con particolare attenzione alle tecnologie di streaming dati, database geospaziali e modelli di linguaggio.
+
+==== Descrizione
+La formazione si articola in:
+
+- *Sessioni di studio individuali*: ogni membro studia autonomamente le tecnologie assegnate;
+- *Workshop interni*: sessioni collaborative (sincrone) o spiegazioni scritte (asincrone) per la condivisione di conoscenze;
+- *Sessioni tecniche con _Sync Lab_*: incontri specifici con i referenti aziendali per approfondimenti su tecnologie come Apache Kafka, ClickHouse e LangChain;
+- *Pair programming*: sviluppo collaborativo per trasferimento di competenze tra membri del team.
+
+==== Strumenti
+Per supportare il processo di formazione, vengono utilizzati:
+
+- *Repository privata* per la condivisione di materiale formativo;
+- *Documentazione ufficiale* delle tecnologie adottate;
+- *Ambienti sandbox* per sperimentazione e prove tecniche;
+- *Tutorial e corsi online* per linguaggi, stream processing#apice("G"), AI generativa, etc.
+
+== Standard di qualità
+
+=== Standard ISO/IEC 9126 per la qualità
+Per la valutazione della qualità del software prodotto, _AlphaCode_ fa riferimento allo standard ISO/IEC 9126#apice("G"), che identifica sei caratteristiche principali del software di qualità:
+
+==== Funzionalità
+La piattaforma NearYou deve garantire:
+- *Adeguatezza*: implementazione completa delle funzionalità di profilazione, generazione di annunci personalizzati e visualizzazione su mappa;
+- *Accuratezza*: precisione nella geolocalizzazione e nella personalizzazione degli annunci;
+- *Interoperabilità*: capacità di integrazione tra i diversi componenti (streaming, database, LLM);
+- *Sicurezza*: protezione dei dati sensibili degli utenti.
+
+==== Affidabilità
+Il sistema deve garantire:
+- *Maturità*: stabilità durante l'elaborazione dei dati in streaming;
+- *Tolleranza agli errori*: capacità di gestire errori nei flussi di dati o nella generazione degli annunci;
+- *Recuperabilità*: ripristino del funzionamento dopo eventuali crash o errori.
+
+==== Usabilità
+L'interfaccia utente deve assicurare:
+- *Comprensibilità*: facilità di interpretazione degli annunci generati;
+- *Apprendibilità*: curve di apprendimento rapide per utenti e client;
+- *Operabilità*: semplicità di interazione con la dashboard e la web-app.
+
+==== Efficienza
+Il sistema deve garantire:
+- *Comportamento temporale*: tempi di risposta adeguati per la generazione degli annunci;
+- *Utilizzo risorse*: ottimizzazione nell'uso di CPU e memoria, specialmente per i componenti di stream processing.
+- *Richieste API*: ottimizzazione numero di chiamate all'API#apice("G") di A.I. per ridurre i costi.
+
+==== Manutenibilità
+Il codice deve garantire:
+- *Analizzabilità*: facilità nell'individuazione di eventuali bug;
+- *Modificabilità*: semplicità nell'aggiungere nuove funzionalità o sorgenti dati;
+- *Stabilità*: minimizzazione degli effetti collaterali in caso di modifiche;
+- *Testabilità*: copertura di test ≥ 80%.
+
+==== Portabilità
+Il software deve garantire:
+- *Adattabilità*: capacità di funzionare in diversi ambienti;
+- *Installabilità*: facilità di setup tramite configurazione containerizzata;
+- *Conformità*: aderenza agli standard tecnologici indicati nel capitolato.
+
+== Metriche di qualità del processo
+Per misurare la qualità del processo di sviluppo, _AlphaCode_ utilizza le seguenti metriche:
+
+==== Processi primari
+- *MPC01 - Completezza della documentazione*: percentuale di requisiti adeguatamente documentati;
+- *MPC02 - Rispetto delle scadenze*: numero di milestone raggiunte nei tempi previsti;
+- *MPC03 - Efficienza delle riunioni*: rapporto tra decisioni prese e tempo impiegato.
+
+==== Processi di supporto
+- *MPC04 - Copertura dei test*: percentuale di codice coperto da test automatici (target ≥ 80%);
+- *MPC05 - Tempo di risoluzione*: tempo medio necessario per risolvere un problema.
+
+== Metriche di qualità del prodotto
+Per misurare la qualità del prodotto software, _AlphaCode_ utilizza le seguenti metriche:
+
+==== Funzionalità
+- *MPD01 - Precisione geospaziale*: accuratezza nella determinazione della posizione dell'utente;
+- *MPD02 - Rilevanza degli annunci*: corrispondenza tra profilo utente e annuncio generato.
+
+==== Affidabilità
+- *MPD03 - Disponibilità del sistema*: percentuale di tempo in cui il sistema è operativo;
+- *MPD04 - Tempo di risposta*: latenza massima per la generazione di un annuncio.
+
+==== Efficienza
+- *MPD05 - Throughput*: numero di messaggi processati al secondo;
+- *MPD06 - Consumo di risorse*: utilizzo di CPU/memoria durante il picco di carico.
+
+==== Manutenibilità
+- *MPD07 - Complessità ciclomatica*: misura della complessità del codice;
+- *MPD08 - Coesione dei moduli*: grado di coesione interna dei componenti software.
+
+Queste metriche saranno monitorate e i risultati saranno documentati nel Piano di Qualifica.
+
+
+
