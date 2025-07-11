@@ -56,6 +56,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/verbali/esterni/VE_2025_05_29_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: NormeDiProgetto_2025_04_05
+  version: 0.1.0
+  file: documents/rtb/NormeDiProgetto_2025_04_05_v0.1.0_signed.pdf
+- doc: RTB
   name_date: NormeDiProgetto_2025_05_20
   version: 0.1.0
   file: documents/rtb/NormeDiProgetto_2025_05_20_v0.1.0_signed.pdf
