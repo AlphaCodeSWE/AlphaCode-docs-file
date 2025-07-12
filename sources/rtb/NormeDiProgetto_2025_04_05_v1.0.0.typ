@@ -10,23 +10,27 @@
       "Responsabile", "Manuel Cinnirella",
       "", "Giovanni Battista Matteazzi",
       "", "Alessandro Di Pasquale",
+      "", "Nicolò Bovo",
+      "", "Massimo Chioru",
       "Redattori", "Giovanni Battista Matteazzi",
       "", "Alessandro Di Pasquale",
       "", "Nicolò Bovo",
-      "", "Romeo Calearo",
-      "Validatori", "Massimo Chioru",
+      "", "Massimo Chioru",
       "", "Manuel Cinnirella",
-      "", "Elia Leonetti",
-      "", "Nicolò Bovo",
+      "Verificatori", "Romeo Calearo",
+      "", "Giovanni Battista Matteazzi",
+      "", "Romeo Calearo",
+      "", "Manuel Cinnirella",
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025-06-18",
-  version: "0.9.0",
-  version_history: (
-    "0.9.0", "2025-06-18", "Estensione del documento", "Alessandro Di Pasquale, Giovanni Battista Matteazzi, Elia Leonetti", "Nicolò Bovo",
-    "0.5.0", "2025-05-20", "Estensione del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
-    "0.1.0", "2025-04-05", "Bozza del documento", "Giovanni Battista Matteazzi, Alessandro Di Pasquale, Nicolò Bovo, Romeo Calearo", "Massimo Chioru, Manuel Cinnirella, Elia Leonetti",
+  date: "2025-04-05",
+  version: "1.0.0",
+  version_history: (   
+    "1.0.0", "2025-07-07", "Controllo finale del documento", "Massimo Cinnirella, Giovanni Battista Matteazzi", "Romeo Calearo",
+    "0.9.0", "2025-06-18", "Estensione del documento", "Alessandro Di Pasquale, Manuel Cinnirella", "Giovanni Battista Matteazzi",
+    "0.5.0", "2025-05-20", "Estensione del documento", "Massimo Chioru, Manuel Cinnirella ", "Romeo Calearo",
+    "0.1.0", "2025-04-05", "Bozza del documento"," Alessandro Di Pasquale, Nicolò Bovo", "Manuel Cinnirella",
   ),
 
   main-color: "A72229FF", //set the main color
@@ -452,7 +456,12 @@ Include:
 - *Ordine del giorno*: Elenco temi discussi (es. "Integrazione LLM con Apache Flink").  
 - *Sintesi e decisioni*: Breve riassunto e accordi presi.
 - *Consigli ricevuti*: Solo per i verbali esterni, riguarda quanto ci è stato suggerito dall'azienda su come procedere.
-- *Attività individuate*: In formato tabulare, comprendendo l'eventuale Issue di GitHub associata, la descrizione dell'attività e gli assegnatari (stabiliti sulla base dei loro ruoli secondo la rotazione corrente)
+- *Attività individuate*: In formato tabulare, comprendendo l'eventuale Issue di GitHub associata, la descrizione dell'attività e gli assegnatari (stabiliti sulla base dei loro ruoli secondo la rotazione corrente). Sarà attribuito un ID tra i seguenti:
+  - ORG: attività di organizzazione;
+  - DOCS: attività relativa alla documentazione;
+  - Incremento N: attività relativa all'incremento di numero N;
+  - Code/project: attività relativa allo sviluppo software.
+
 
 ==== Documenti del progetto
 Elenco dei documenti obbligatori, allineati al capitolato C4:  
