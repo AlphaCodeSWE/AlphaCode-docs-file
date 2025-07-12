@@ -29,8 +29,8 @@ kept_in_documents:
   file: documents/candidatura/ConfrontoCapitolati_2025_03_14_v1.1.0_signed.pdf
 - doc: RTB
   name_date: AnalisiDeiRequisiti_2025_03_10
-  version: 0.2.0
-  file: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.2.0_signed.pdf
+  version: 1.0.0
+  file: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v1.0.0_signed.pdf
 - doc: RTB
   name_date: NormeDiProgetto_2025_04_05
   version: 1.0.0
@@ -93,3 +93,28 @@ archived:
   version: 0.1.0
   source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.1.0_signed.pdf
   destination: documents/archive/RTB_v0.1.0/AnalisiDeiRequisiti_2025_03_10_v0.1.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.6.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.6.0_signed.pdf
+  destination: documents/archive/RTB_v0.6.0/AnalisiDeiRequisiti_2025_03_10_v0.6.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.3.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.3.0_signed.pdf
+  destination: documents/archive/RTB_v0.3.0/AnalisiDeiRequisiti_2025_03_10_v0.3.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.5.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.5.0_signed.pdf
+  destination: documents/archive/RTB_v0.5.0/AnalisiDeiRequisiti_2025_03_10_v0.5.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.4.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.4.0_signed.pdf
+  destination: documents/archive/RTB_v0.4.0/AnalisiDeiRequisiti_2025_03_10_v0.4.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.2.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.2.0_signed.pdf
+  destination: documents/archive/RTB_v0.2.0/AnalisiDeiRequisiti_2025_03_10_v0.2.0_signed.pdf
