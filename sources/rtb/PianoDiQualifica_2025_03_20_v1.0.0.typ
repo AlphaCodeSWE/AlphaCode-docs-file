@@ -422,7 +422,7 @@ Il Piano di Qualifica inizia dal Periodo 6 crescendo fino a 51, coincidendo con 
 Metriche che misurano la presenza di errori ortografici nei documenti, valutando la qualità formale
 del contenuto.
 
-#image("../assets/PQ/ortografico.png")
+#image("../assets/PQ/Ortografico.png")
 
 Il grafico evidenzia un progressivo miglioramento della qualità ortografica durante tutto il progetto. I documenti pre-codice (Analisi dei Requisiti e Norme di Progetto) mostrano il picco di errori nei primi periodi, seguiti da una rapida diminuzione verso l'obiettivo zero grazie alle revisioni sistematiche.
 Il Piano di Progetto presenta una decrescita costante riflettendo il continuo processo di correzione durante gli aggiornamenti, mentre il Piano di Qualifica mostra un miglioramento rapido dalla sua introduzione. Il Glossario mantiene sempre valori bassi data la semplicità dei contenuti, e il lieve aumento finale è dovuto alle intensive revisioni pre-consegna RTB.
