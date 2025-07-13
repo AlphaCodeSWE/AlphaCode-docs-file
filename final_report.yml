@@ -40,6 +40,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/PianoDiQualifica_2025_03_20_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: LetteraPresentazione_2025_07_09
+  version: 1.0.0
+  file: documents/rtb/LetteraPresentazione_2025_07_09_v1.0.0_signed.pdf
+- doc: RTB
   name_date: NormeDiProgetto_2025_04_05
   version: 1.0.0
   file: documents/rtb/NormeDiProgetto_2025_04_05_v1.0.0_signed.pdf
