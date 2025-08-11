@@ -18,8 +18,8 @@
   ),
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
-  date: "2025-08-04",
-  version: "1.0.0",
+  date: "2025-08-11",
+  version: "1.1.0",
   version_history: (
     "1.0.0", "2025-08-04", "Stesura iniziale del documento", "Matteazzi Giovanni Battista",
   ),
