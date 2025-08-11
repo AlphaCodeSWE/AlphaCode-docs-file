@@ -5,8 +5,8 @@ kept_in_documents:
   file: documents/pb/RelazioneDiAvanzamento_2025_08_04_v1.0.0_signed.pdf
 - doc: PB
   name_date: RelazioneDiAvanzamento_2025_08_11
-  version: 1.0.0
-  file: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.0.0_signed.pdf
+  version: 1.1.0
+  file: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.1.0_signed.pdf
 - doc: PB
   name_date: RelazioneSulRitardo_2025_07_31
   version: 1.0.0
@@ -116,6 +116,11 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/LetteraPresentazione_2025_07_09_v1.0.0_signed.pdf
 archived:
+- doc: PB
+  name_date: RelazioneDiAvanzamento_2025_08_11
+  version: 1.0.0
+  source: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.0.0_signed.pdf
+  destination: documents/archive/PB_v1.0.0/RelazioneDiAvanzamento_2025_08_11_v1.0.0_signed.pdf
 - doc: RTB
   name_date: PianoDiProgetto_2025_03_17
   version: 0.11.0
