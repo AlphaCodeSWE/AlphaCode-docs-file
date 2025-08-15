@@ -120,11 +120,6 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/LetteraPresentazione_2025_07_09_v1.0.0_signed.pdf
 archived:
-- doc: PB
-  name_date: ManualeUtente_2025_08_09
-  version: 0.1.0
-  source: documents/pb/ManualeUtente_2025_08_09_v0.1.0_signed.pdf
-  destination: documents/archive/PB_v0.1.0/ManualeUtente_2025_08_09_v0.1.0_signed.pdf
 - doc: RTB
   name_date: PianoDiProgetto_2025_03_17
   version: 0.11.0
