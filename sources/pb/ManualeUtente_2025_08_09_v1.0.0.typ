@@ -57,7 +57,7 @@ Procedura professionale basata sul flusso consigliato (import su account persona
   - Git#apice("G"):
     - HTTPS#apice("G"): git clone https://github.com/AlphaCodeSWE/NearYou-Code.git
 
-#image("../../github.png")
+#image("../assets/MU/github.png")
 
 - Import nel proprio account GitHub#apice("G")
   - Consigliato: utilizzare lo strumento di importazione GitHub#apice("G") (https://github.com/new/import), indicando come sorgente l'URL#apice("G") https://github.com/AlphaCodeSWE/NearYou-Code.git, quindi selezionare owner, nome e visibilità del nuovo repository#apice("G").
@@ -70,9 +70,9 @@ Procedura professionale basata sul flusso consigliato (import su account persona
 3. Attendere la creazione dell'ambiente
 4. Creazione e setup dei container#apice("G") automatica
 
-#image("../../gitpodA.png")
-#image("../../gitpodB.png")
-#image("../../gitpodC.png")
+#image("../assets/MU/gitpodA.png")
+#image("../assets/MU/gitpodB.png")
+#image("../assets/MU/gitpodC.png")
 
 === Avvio in locale
 1. Entrare nella directory principale della repository#apice("G") con `cd NearYou-Code`;
