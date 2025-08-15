@@ -8,6 +8,10 @@ kept_in_documents:
   version: 1.1.0
   file: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.1.0_signed.pdf
 - doc: PB
+  name_date: ManualeUtente_2025_08_09
+  version: 1.0.0
+  file: documents/pb/ManualeUtente_2025_08_09_v1.0.0_signed.pdf
+- doc: PB
   name_date: RelazioneSulRitardo_2025_07_31
   version: 1.0.0
   file: documents/pb/RelazioneSulRitardo_2025_07_31_v1.0.0_signed.pdf
@@ -40,6 +44,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/candidatura/LetteraPresentazione_2025_03_18_v1.0.0_signed.pdf
 - doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 1.0.0
+  file: documents/rtb/PianoDiProgetto_2025_03_17_v1.0.0_signed.pdf
+- doc: RTB
   name_date: RelazioneDiAvanzamento_2025_07_16
   version: 0.1.0
   file: documents/rtb/RelazioneDiAvanzamento_2025_07_16_v0.1.0_signed.pdf
@@ -48,9 +56,9 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v1.0.0_signed.pdf
 - doc: RTB
-  name_date: PianoDiProgetto_2025_03_17
+  name_date: PianoDiQualifica_2025_03_20
   version: 1.0.0
-  file: documents/rtb/PianoDiProgetto_2025_03_17_v1.0.0_signed.pdf
+  file: documents/rtb/PianoDiQualifica_2025_03_20_v1.0.0_signed.pdf
 - doc: RTB
   name_date: Glossario_2025_07_07
   version: 1.0.0
@@ -108,11 +116,127 @@ kept_in_documents:
   version: 1.0.0
   file: documents/rtb/NormeDiProgetto_2025_04_05_v1.0.0_signed.pdf
 - doc: RTB
-  name_date: PianoDiQualifica_2025_03_20
-  version: 1.0.0
-  file: documents/rtb/PianoDiQualifica_2025_03_20_v1.0.0_signed.pdf
-- doc: RTB
   name_date: LetteraPresentazione_2025_07_09
   version: 1.0.0
   file: documents/rtb/LetteraPresentazione_2025_07_09_v1.0.0_signed.pdf
-archived: []
+archived:
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.11.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.11.0_signed.pdf
+  destination: documents/archive/RTB_v0.11.0/PianoDiProgetto_2025_03_17_v0.11.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.1.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.1.0_signed.pdf
+  destination: documents/archive/RTB_v0.1.0/PianoDiProgetto_2025_03_17_v0.1.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.5.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.5.0_signed.pdf
+  destination: documents/archive/RTB_v0.5.0/PianoDiProgetto_2025_03_17_v0.5.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.13.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.13.0_signed.pdf
+  destination: documents/archive/RTB_v0.13.0/PianoDiProgetto_2025_03_17_v0.13.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.9.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.9.0_signed.pdf
+  destination: documents/archive/RTB_v0.9.0/PianoDiProgetto_2025_03_17_v0.9.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.15.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.15.0_signed.pdf
+  destination: documents/archive/RTB_v0.15.0/PianoDiProgetto_2025_03_17_v0.15.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.14.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.14.0_signed.pdf
+  destination: documents/archive/RTB_v0.14.0/PianoDiProgetto_2025_03_17_v0.14.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.10.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.10.0_signed.pdf
+  destination: documents/archive/RTB_v0.10.0/PianoDiProgetto_2025_03_17_v0.10.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.4.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.4.0_signed.pdf
+  destination: documents/archive/RTB_v0.4.0/PianoDiProgetto_2025_03_17_v0.4.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.2.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.2.0_signed.pdf
+  destination: documents/archive/RTB_v0.2.0/PianoDiProgetto_2025_03_17_v0.2.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.12.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.12.0_signed.pdf
+  destination: documents/archive/RTB_v0.12.0/PianoDiProgetto_2025_03_17_v0.12.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.6.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.6.0_signed.pdf
+  destination: documents/archive/RTB_v0.6.0/PianoDiProgetto_2025_03_17_v0.6.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.8.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.8.0_signed.pdf
+  destination: documents/archive/RTB_v0.8.0/PianoDiProgetto_2025_03_17_v0.8.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.7.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.7.0_signed.pdf
+  destination: documents/archive/RTB_v0.7.0/PianoDiProgetto_2025_03_17_v0.7.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiProgetto_2025_03_17
+  version: 0.3.0
+  source: documents/rtb/PianoDiProgetto_2025_03_17_v0.3.0_signed.pdf
+  destination: documents/archive/RTB_v0.3.0/PianoDiProgetto_2025_03_17_v0.3.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.3.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.3.0_signed.pdf
+  destination: documents/archive/RTB_v0.3.0/AnalisiDeiRequisiti_2025_03_10_v0.3.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.6.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.6.0_signed.pdf
+  destination: documents/archive/RTB_v0.6.0/AnalisiDeiRequisiti_2025_03_10_v0.6.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.1.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.1.0_signed.pdf
+  destination: documents/archive/RTB_v0.1.0/AnalisiDeiRequisiti_2025_03_10_v0.1.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.2.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.2.0_signed.pdf
+  destination: documents/archive/RTB_v0.2.0/AnalisiDeiRequisiti_2025_03_10_v0.2.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.5.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.5.0_signed.pdf
+  destination: documents/archive/RTB_v0.5.0/AnalisiDeiRequisiti_2025_03_10_v0.5.0_signed.pdf
+- doc: RTB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 0.4.0
+  source: documents/rtb/AnalisiDeiRequisiti_2025_03_10_v0.4.0_signed.pdf
+  destination: documents/archive/RTB_v0.4.0/AnalisiDeiRequisiti_2025_03_10_v0.4.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiQualifica_2025_03_20
+  version: 0.3.0
+  source: documents/rtb/PianoDiQualifica_2025_03_20_v0.3.0_signed.pdf
+  destination: documents/archive/RTB_v0.3.0/PianoDiQualifica_2025_03_20_v0.3.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiQualifica_2025_03_20
+  version: 0.1.0
+  source: documents/rtb/PianoDiQualifica_2025_03_20_v0.1.0_signed.pdf
+  destination: documents/archive/RTB_v0.1.0/PianoDiQualifica_2025_03_20_v0.1.0_signed.pdf
+- doc: RTB
+  name_date: PianoDiQualifica_2025_03_20
+  version: 0.2.0
+  source: documents/rtb/PianoDiQualifica_2025_03_20_v0.2.0_signed.pdf
+  destination: documents/archive/RTB_v0.2.0/PianoDiQualifica_2025_03_20_v0.2.0_signed.pdf
