@@ -4,6 +4,10 @@ kept_in_documents:
   version: 1.0.0
   file: documents/pb/RelazioneDiAvanzamento_2025_08_04_v1.0.0_signed.pdf
 - doc: PB
+  name_date: AnalisiDeiRequisiti_2025_03_10
+  version: 1.1.0
+  file: documents/pb/AnalisiDeiRequisiti_2025_03_10_v1.1.0_signed.pdf
+- doc: PB
   name_date: RelazioneDiAvanzamento_2025_08_11
   version: 1.1.0
   file: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.1.0_signed.pdf
