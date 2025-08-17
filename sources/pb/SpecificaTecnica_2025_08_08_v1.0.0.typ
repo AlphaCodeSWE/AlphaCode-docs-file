@@ -43,6 +43,7 @@
   date: "2025-08-08",
   version: "0.2.0",
   version_history: (
+    "1.0.0", "2025-08-14", "Aggiunta nuove classi, ricontroll del documento", "Nicolò Bovo", "Massimo Chioru",    
     "0.2.0", "2025-08-13", "Aggiunta classi, pattern e test", "Nicolò Bovo", "Massimo Chioru",
     "0.1.0", "2025-04-13", "Stesura iniziale del glossario", "Alessandro Di Pasquale", "Manuel Cinnirella"
   ),
