@@ -1,4 +1,4 @@
-#import "template/template.typ": *
+#import "../../../../template/template.typ": *
 #set outline(title: "Table of contents")
 #show: bubble.with(
   title: "Riunione Esterna",
@@ -18,8 +18,8 @@
     "1.0.0", "2025-08-08", "Stesura del verbale", "Alessandro Di Pasquale, Romeo Calearo, Manuel Cinnirella, Nicolò Bovo, Elia Leonetti, Massimo Chioru, Giovanni Battista Matteazzi"
   ),
   main-color: "A72229FF", //set the main color
-  group-logo: image("template/assets/AlphaCodeLogo.png"),
-  logo: image("template/assets/UnipdLogo.png"), //set the logo
+  group-logo: image("../../../../template/assets/AlphaCodeLogo.png"),
+  logo: image("../../../../template/assets/UnipdLogo.png"), //set the logo
 ) 
 // Edit this content to your liking
 #outline(title: "Indice")
