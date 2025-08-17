@@ -1,5 +1,9 @@
 kept_in_documents:
 - doc: PB
+  name_date: VI_2025_07_29
+  version: 1.0.0
+  file: documents/pb/verbali/interni/VI_2025_07_29_v1.0.0_signed.pdf
+- doc: PB
   name_date: RelazioneDiAvanzamento_2025_08_04
   version: 1.0.0
   file: documents/pb/RelazioneDiAvanzamento_2025_08_04_v1.0.0_signed.pdf
