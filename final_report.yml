@@ -93,8 +93,8 @@ kept_in_documents:
   file: documents/rtb/PianoDiQualifica_2025_03_20_v1.0.0_signed.pdf
 - doc: RTB
   name_date: Glossario_2025_07_07
-  version: 1.0.0
-  file: documents/rtb/Glossario_2025_07_07_v1.0.0_signed.pdf
+  version: 2.0.0
+  file: documents/rtb/Glossario_2025_07_07_v2.0.0_signed.pdf
 - doc: RTB
   name_date: VI_2025_05_03
   version: 1.0.0
@@ -317,3 +317,8 @@ archived:
   version: 0.2.0
   source: documents/rtb/PianoDiQualifica_2025_03_20_v0.2.0_signed.pdf
   destination: documents/archive/RTB_v0.2.0/PianoDiQualifica_2025_03_20_v0.2.0_signed.pdf
+- doc: RTB
+  name_date: Glossario_2025_07_07
+  version: 1.0.0
+  source: documents/rtb/Glossario_2025_07_07_v1.0.0_signed.pdf
+  destination: documents/archive/RTB_v1.0.0/Glossario_2025_07_07_v1.0.0_signed.pdf
