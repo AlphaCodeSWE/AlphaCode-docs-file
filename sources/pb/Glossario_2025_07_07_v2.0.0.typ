@@ -20,9 +20,9 @@
   date: "2025-07-07",
   version: "2.0.0",
   version_history: (
-    "2.0.0", "2025-08-15", "Aggiornamento termini", "Alessandro Di Pasquale, Nicolò Bovo",
+    "2.0.0", "2025-08-15", "Aggiornamento termini", "Elia Leonetti", "Alessandro Di Pasquale, Nicolò Bovo",
 
-    "1.0.0", "2025-07-07", "Ricerca dei termini e stesura finale", "Alessandro Di Pasquale, Elia Leonetti",
+    "1.0.0", "2025-07-07", "Ricerca dei termini e stesura finale", "Alessandro Di Pasquale, Elia Leonetti", "Romeo Calearo"
     
   ),
 
