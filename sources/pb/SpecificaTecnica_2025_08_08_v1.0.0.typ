@@ -31,7 +31,7 @@
    roles: (
       "Responsabile", "Alessandro",
       "Redattori", "Alessandro Di Pasquale",
-      "","Nicolò Bovo"
+      "","Nicolò Bovo",
       "", "Elia Leonetti",
       "Verificatori", "Massimo Chioru",
       "", "Romeo Calearo",
