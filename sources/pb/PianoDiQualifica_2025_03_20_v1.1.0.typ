@@ -1,4 +1,4 @@
-#import "template/template.typ": *
+#import "../../template/template.typ": *
 
 #set outline(title: "Table of contents")
 
@@ -47,8 +47,8 @@
   ),
 
   main-color: "A72229FF", //set the main color
-  group-logo: image("template/assets/AlphaCodeLogo.png"),
-  logo: image("template/assets/UnipdLogo.png"), //set the logo
+  group-logo: image("../../template/assets/AlphaCodeLogo.png"),
+  logo: image("../../template/assets/UnipdLogo.png"), //set the logo
 ) 
 
 // Edit this content to your liking
@@ -380,22 +380,22 @@ Di seguito sono riportate le misurazioni effettuate nel periodo compreso tra l'a
 
 == Estimated At Completion (MPC-EAC)
 
-#image("EAC.png")
+#image("../assets/PQ/EAC.png")
 Il grafico sull'EAC evidenzia un andamento complessivamente sotto controllo, con una prima fase in cui le stime di completamento si mantengono vicine o addirittura inferiori al budget previsto. Nei periodi centrali si registra un aumento dell'EAC, con un picco massimo al quinto periodo che supera temporaneamente la soglia superiore, dovuto a un momentaneo calo di efficienza. Questo scostamento, però, è stato prontamente contenuto grazie a un'attenta gestione delle risorse e a un costante monitoraggio#apice("G"). A partire dal sesto periodo, infatti, si osserva un progressivo miglioramento che porta i valori stimati a rientrare entro limiti accettabili. Negli ultimi periodi l'EAC si stabilizza, segno di una gestione efficace e coerente. Pur restando leggermente al di sopra del valore ideale, il trend complessivo dimostra una buona capacità del team di intervenire in modo tempestivo, mantenendo il progetto su un percorso sostenibile e ben governato.
 
 == Earned Value (MPC-EV) e Planned Value (MPC-PV)
 
-#image("EV-PV.png")
+#image("../assets/PQ/EV-PV.png")
 Il grafico mostra un andamento molto solido della fase RTB, con un Earned Value (EV) costantemente superiore al Planned Value (PV) fino al dodicesimo periodo. Questo indica che il progetto ha mantenuto un buon ritmo di avanzamento, completando attività in anticipo rispetto al piano. Il margine tra EV e PV è particolarmente ampio nei primi periodi, segnalando un avvio molto efficace. A partire dal nono periodo si osserva un avvicinamento tra EV e PV, che si mantengono comunque vicini fino alla fine del periodo RTB. Questo trend evidenzia un allineamento progressivo tra quanto realizzato e quanto pianificato, segno di una pianificazione realistica e di una buona capacità di adattamento. Anche l'EAC si stabilizza nella parte alta del grafico, coerente con il buon avanzamento delle attività. Nel complesso, il team ha dimostrato un controllo efficace, riuscendo a mantenere performance superiori alle attese per la maggior parte del progetto.
 
 == Actual Cost (MPC-AC) e Estimate To Completion (MPC-ETC)
 
-#image("AC-ETC.png")
+#image("../assets/PQ/AC-ETC.png")
 Il grafico evidenzia una gestione efficace dei costi lungo tutto la fase RTB. L'Actual Cost (AC) cresce in modo regolare e controllato, mantenendosi sempre ben al di sotto del valore dell'EAC, a conferma di una spesa coerente con le previsioni. L'EAC, pur presentando una fase centrale leggermente più elevata, si stabilizza verso la fine, mostrando che i costi complessivi previsti sono rimasti entro una soglia sostenibile. Il valore dell'ETC, ovvero la stima dei costi rimanenti, decresce in modo progressivo e costante: questo trend riflette una corretta distribuzione dell'impegno economico e una chiara visione sul lavoro residuo. Nel complesso, il progetto è stato condotto con attenzione e precisione, contenendo i costi e dimostrando una buona capacità di previsione e adattamento.
 
 == Budget Variance (MPC-BV) e Schedule Variance (MPC-SV)
 
-#image("BV-SV.png")
+#image("../assets/PQ/BV-SV.png")
 Il grafico mostra un andamento molto positivo dello Schedule Variance (SV) per la maggior parte della fase RTB: i valori restano ampiamente sopra lo zero fino al nono periodo, indicando che le attività sono state completate in anticipo rispetto alla pianificazione. Questo evidenzia una buona organizzazione del lavoro e una produttività costante. La leggera discesa di SV negli ultimi periodi rappresenta un progressivo riallineamento al piano, senza però segnalare ritardi critici. Per quanto riguarda la Budget Variance (BV), il progetto ha registrato oscillazioni contenute attorno allo zero, con alcuni periodi in lieve disavanzo. Tuttavia, la BV non ha mai superato soglie di allarme, dimostrando una gestione oculata delle risorse economiche. Nel complesso, le due curve evidenziano una performance solida, con una forte partenza, una gestione attenta dei costi e una tendenza al riequilibrio nella fase finale della fase RTB.
 
 #pagebreak()
@@ -404,7 +404,7 @@ Il grafico mostra un andamento molto positivo dello Schedule Variance (SV) per l
 L'ISR misura la stabilità dei requisiti del progetto nel tempo, valutando quanto siano stati modificati
 o aggiornati durante il ciclo di vita.
 
-#image("ISR.png")
+#image("../assets/PQ/isr.png")
 
 Il grafico dell'ISR mostra una crescita costante da 0% a 82% nei primi sei periodi, superando stabilmente la soglia accettabile del 75%. Nel Periodo 7 si osserva un calo a 79% dovuto alle modifiche per l'integrazione di Grafana#apice("G") emerse dai feedback aziendali.
 La fase finale (Periodi 8-13) presenta una stabilizzazione ottimale con valori tra 83-91%, raggiungendo il picco nel Periodo 12 con l'approvazione del P.o.C.#apice("G") Il valore finale dell'88% dimostra un controllo efficace dei requisiti, nonostante l'aggiunta tardiva dello stream processor#apice("G") nell'ultimo periodo.
@@ -413,7 +413,7 @@ La fase finale (Periodi 8-13) presenta una stabilizzazione ottimale con valori t
 == Indice Gulpease (MPC-GP)
 - Indice che valuta la leggibilità dei documenti scritti in italiano.
 
-#image("GULPEASE.png")
+#image("../assets/PQ/gulpease.png")
 
 Il grafico mostra un andamento differenziato che riflette la timeline del modello incrementale#apice("G") adottato. I documenti pre-codice (Analisi dei Requisiti e Norme di Progetto) presentano crescita rapida nei primi periodi, mentre Piano di Progetto e Glossario mostrano progressione costante per tutto il ciclo di vita.
 Il Piano di Qualifica inizia dal Periodo 6 crescendo fino a 51, coincidendo con l'accumulo di metriche durante lo sviluppo. Tutti i documenti superano la soglia accettabile del 40, con Analisi dei Requisiti e Glossario che raggiungono 58 punti finali, dimostrando elevata leggibilità.
@@ -426,7 +426,7 @@ Il Piano di Qualifica inizia dal Periodo 6 crescendo fino a 51, coincidendo con 
 Metriche che misurano la presenza di errori ortografici nei documenti, valutando la qualità formale
 del contenuto.
 
-#image("CORRETTEZZA_ORTOGRAFICA.png")
+#image("../assets/PQ/Ortografico.png")
 
 Il grafico evidenzia un progressivo miglioramento della qualità ortografica durante tutto il progetto. I documenti pre-codice (Analisi dei Requisiti e Norme di Progetto) mostrano il picco di errori nei primi periodi, seguiti da una rapida diminuzione verso l'obiettivo zero grazie alle revisioni sistematiche.
 Il Piano di Progetto presenta una decrescita costante riflettendo il continuo processo di correzione durante gli aggiornamenti, mentre il Piano di Qualifica mostra un miglioramento rapido dalla sua introduzione. Il Glossario mantiene sempre valori bassi data la semplicità dei contenuti, e il lieve aumento finale è dovuto alle intensive revisioni pre-consegna RTB.
@@ -436,7 +436,7 @@ Il Piano di Progetto presenta una decrescita costante riflettendo il continuo pr
 Percentuale di metriche di qualità definite per il progetto che sono state soddisfatte rispetto agli
 obiettivi prefissati.
 
-#image("PMS.png")
+#image("../assets/PQ/MS.png")
 
 Il grafico evidenzia una crescita costante della qualità complessiva del progetto attraverso il modello incrementale adottato. Il superamento della soglia accettabile avviene a metà progetto, dimostrando l'efficacia dei cicli di sviluppo e verifica sistematici.
 Il picco finale coincide con l'approvazione del P.o.C. da parte dell'azienda, testimoniando il raggiungimento degli standard qualitativi prefissati. Il lieve calo nell'ultimo periodo è dovuto all'introduzione dello stream processor, che ha aggiunto nuove metriche da soddisfare senza compromettere la qualità già raggiunta.
@@ -446,7 +446,7 @@ Il picco finale coincide con l'approvazione del P.o.C. da parte dell'azienda, te
 == Efficienza Temporale (MPC-ET)
 Misura l'efficacia nell'utilizzo del tempo per completare le attività, confrontando il tempo effettivamente impiegato con quello previsto.
 
-#image("ET.png")
+#image("../assets/PQ/ET.png")
 
 Il grafico evidenzia un andamento variabile dell'efficienza temporale durante il progetto. I primi periodi mostrano buona efficienza, seguiti da superamenti delle ore previste dovuti alla sottostima della complessità delle attività tecniche.
 La criticità maggiore si concentra nei Periodi 10-12 dovuto alla sessione estiva universitaria che ha drasticamente ridotto le ore dedicate al progetto. Il Periodo 13 conferma il ritorno a pieno regime del team con un intenso sforzo finale per completare la fase RTB, dimostrando capacità di recupero nonostante le criticità temporanee legate agli impegni accademici.
