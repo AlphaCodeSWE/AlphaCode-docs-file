@@ -31,6 +31,18 @@
   logo: image("../../template/assets/UnipdLogo.png"), //set the logo
 ) 
 
+// Rimuove numerazione superflua
+#set heading(numbering: (..nums) => {
+  let level = nums.pos().len()
+  let pattern = if level == 1 {
+  } else if level == 2 {
+    "1."
+  }
+  if pattern != none {
+    numbering(pattern, nums.pos().last())
+  }
+})
+
 // Edit this content to your liking
 #outline(title: "Indice")
 #pagebreak()
