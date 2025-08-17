@@ -301,12 +301,12 @@ Nonostante ciò, non l'intero ventaglio di capacità che Apache Kafka mette a di
 
 ==== Configurazione protezione comunicazioni
 L'ecosistema implementa trasmissioni protette mediante SSL/TLS#apice("G") con credenziali configurate nel modulo *src/configg.py*
-#image("../../template/assets/immagini/kafka_sicuro.png")
+#image("../assets/immagini/kafka_sicuro.png")
 L'architettura prevede validazione client-side obbligatoria e cifratura end-to-end per preservare integrità e riservatezza delle informazioni di posizionamento degli utilizzatori.
 
 ===== Schema dei messaggi di posizionamento
 Ogni informazione di coordinate emessa dal generatore di simulazione è strutturata come oggetto JSON#apice("G") contenente le seguenti proprietà:
-#image("../../template/assets/immagini/kafka_json.png") 
+#image("../assets/immagini/kafka_json.png") 
 - *user_id*: Codice identificativo univoco dell'utilizzatore che ha generato l'informazione di posizionamento (si rimanda alla documentazione delle entità utente in ClickHouse per approfondimenti riguardo l'oggetto User).
 
 - *latitude*: Coordinata latitudinale della localizzazione attuale dell'utilizzatore espressa in notazione decimale secondo lo standard WGS84#apice("G").
@@ -355,7 +355,7 @@ LangChain supporta numerosi provider di modelli linguistici: uno tra questi, da 
 
 Il provider può essere facilmente sostituito per permettere l'utilizzo di altri modelli grazie alla modularità del sistema implementato:
 
-#image("../../template/assets/immagini/llm.png")
+#image("../assets/immagini/llm.png")
 
 La generazione dei messaggi integra inoltre un sistema di cache Redis per ottimizzare le performance e ridurre i costi di inferenza, memorizzando risposte precedenti per combinazioni simili di parametri utente e negozio.
 
@@ -379,13 +379,13 @@ Per la gestione di grandi volumi di dati analitici e telemetria utente è stato 
 - *Data retention*: Partizionamento automatico per gestione lifecycle dati
 
 ==== Architettura Database: schema PostgreSQL (Negozi e Offerte)
-#image("../../template/assets/immagini/postgres.png")
+#image("../assets/immagini/postgres.png")
 
 ==== Architettura Database:  Schema ClickHouse (Eventi e Analytics)
-#image("../../template/assets/immagini/clickhouse1.png")
-#image("../../template/assets/immagini/clickhouse2.png")
+#image("../assets/immagini/clickhouse1.png")
+#image("../assets/immagini/clickhouse2.png")
 ==== Diagramma Relazionale
- #image("../../template/assets/immagini/E.png")
+ #image("../assets/immagini/E.png")
 ==== Decisioni Architetturali
 Alcune scelte progettuali, apparentemente ridondanti, sono state implementate per soddisfare esigenze specifiche, in particolare per strumenti di monitoraggio come Grafana e ottimizzazioni performance.
 1. *Strategie di Chiavi Primarie*:
@@ -458,7 +458,7 @@ La Lambda Architecture consente di combinare:
 - Ricalcoli completi e arricchimenti intensivi (batch) per dataset storici, feature e modelli
 - Un layer di serving che unifica vista "storica consolidata" + "delta recenti"
 
-#image("../../template/assets/immagini/tecnologie.png")
+#image("../assets/immagini/tecnologie.png")
 
 === Strati Principali
 
@@ -510,7 +510,7 @@ Compone viste logiche e servizi:
 
 === Flusso dei Dati
 
-#image("../../template/assets/immagini/flusso_dati.png")
+#image("../assets/immagini/flusso_dati.png")
 
 1. Ingest Posizioni:
    - Producer simula movimento utenti (OSRM) e pubblica eventi GPS su Kafka (gps_stream)
