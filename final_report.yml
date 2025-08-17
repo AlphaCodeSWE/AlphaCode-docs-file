@@ -20,10 +20,6 @@ kept_in_documents:
   version: 2.0.0
   file: documents/pb/PianoDiQualifica_2025_03_20_v2.0.0_signed.pdf
 - doc: PB
-  name_date: SpecificaTecnica_2025_08_08
-  version: 1.0.0
-  file: documents/pb/SpecificaTecnica_2025_08_08_v1.0.0_signed.pdf
-- doc: PB
   name_date: RelazioneDiAvanzamento_2025_08_11
   version: 1.1.0
   file: documents/pb/RelazioneDiAvanzamento_2025_08_11_v1.1.0_signed.pdf
@@ -31,6 +27,10 @@ kept_in_documents:
   name_date: ManualeUtente_2025_08_09
   version: 1.0.0
   file: documents/pb/ManualeUtente_2025_08_09_v1.0.0_signed.pdf
+- doc: PB
+  name_date: SpecificaTecnica_2025_08_08
+  version: 0.1.0
+  file: documents/pb/SpecificaTecnica_2025_08_08_v0.1.0_signed.pdf
 - doc: PB
   name_date: RelazioneSulRitardo_2025_07_31
   version: 1.0.0
