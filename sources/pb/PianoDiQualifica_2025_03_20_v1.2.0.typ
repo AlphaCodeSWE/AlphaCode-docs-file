@@ -396,7 +396,7 @@ Il grafico mostra un andamento molto positivo dello Schedule Variance (SV) per l
 L'ISR misura la stabilità dei requisiti del progetto nel tempo, valutando quanto siano stati modificati
 o aggiornati durante il ciclo di vita.
 
-#image("../assets/PQ/ISR.png")
+#image("../assets/PQ/isr.png")
 Il grafico dell'ISR mostra una crescita costante da 0% a 82% nei primi sei periodi, superando stabilmente la soglia accettabile del 75%. Nel Periodo 7 si osserva un calo a 79% dovuto alle modifiche per l'integrazione di Grafana#apice("G") emerse dai feedback aziendali.
 La fase finale (Periodi 8-13) presenta una stabilizzazione ottimale con valori tra 83-91%, raggiungendo il picco nel Periodo 12 con l'approvazione del P.o.C.#apice("G") Il valore finale dell'88% dimostra un controllo efficace dei requisiti, nonostante l'aggiunta tardiva dello stream processor#apice("G") nell'ultimo periodo.
 
