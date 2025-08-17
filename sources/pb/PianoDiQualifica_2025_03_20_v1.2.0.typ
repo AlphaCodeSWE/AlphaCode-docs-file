@@ -404,7 +404,7 @@ La fase finale (Periodi 8-13) presenta una stabilizzazione ottimale con valori t
 == Indice Gulpease (MPC-GP)
 - Indice che valuta la leggibilità dei documenti scritti in italiano.
 
-#image("../assets/PQ/Gulpease.png")
+#image("../assets/PQ/gulpease.png")
 Il grafico mostra un andamento differenziato che riflette la timeline del modello incrementale#apice("G") adottato. I documenti pre-codice (Analisi dei Requisiti e Norme di Progetto) presentano crescita rapida nei primi periodi, mentre Piano di Progetto e Glossario mostrano progressione costante per tutto il ciclo di vita.
 Il Piano di Qualifica inizia dal Periodo 6 crescendo fino a 51, coincidendo con l'accumulo di metriche durante lo sviluppo. Tutti i documenti superano la soglia accettabile del 40, con Analisi dei Requisiti e Glossario che raggiungono 58 punti finali, dimostrando elevata leggibilità.Nei Periodi 14 e 15 si osserva un lieve incremento in quasi tutti i documenti, legato alle ultime revisioni e uniformazioni stilistiche pre-consegna, mantenendo un'elevata leggibilità complessiva.
 
