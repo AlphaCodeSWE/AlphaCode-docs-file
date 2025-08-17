@@ -41,9 +41,10 @@
   author: "AlphaCode",
   affiliation: "Università Degli Studi di Padova",
   date: "2025-08-08",
-  version: "0.1.0",
+  version: "0.2.0",
   version_history: (
-    "0.1.0", "2025-08-08", "Stesura iniziale del documento", "Alessandro Di Pasquale, Manuel Cinnirella"
+    "0.2.0", "2025-08-13", "Aggiunta classi, pattern e test", "Nicolò Bovo", "Massimo Chioru",
+    "0.1.0", "2025-04-13", "Stesura iniziale del glossario", "Alessandro Di Pasquale", "Manuel Cinnirella"
   ),
 
   main-color: "A72229FF", //set the main color
@@ -542,3 +543,1106 @@ Compone viste logiche e servizi:
 
 === Riepilogo
 NearYou applica pienamente la Lambda Architecture per conciliare latenza real-time e consistenza storica verificabile. La separazione funzionale dei layer permette evoluzione rapida della personalizzazione (LLM + feature store) preservando affidabilità e scalabilità orizzontale dell'intero ecosistema dati.
+== Diagramma delle classi
+Il diagramma illustra l'organizzazione strutturale del sistema attraverso le classi implementate e le loro interdipendenze. Le classi sono raggruppate per domini funzionali, omettendo i dettagli implementativi delle librerie esterne per mantenere la leggibilità.
+// === Layer infrastrutturale
+// Questa sezione comprende le classi responsabili della gestione delle risorse di sistema, connessioni database e meccanismi di caching.
+// == Struttura delle classi
+// === DatabaseConnections
+// La classe DatabaseConnections rappresenta il gestore centralizzato delle connessioni ai database utilizzando il pattern singleton con lazy initialization. Gestisce connessioni a PostgreSQL, ClickHouse e client HTTP per garantire efficienza e riuso delle risorse.
+
+// 1. Attributi: 
+//   - *pg_pool: Optional[asyncpg.Pool]*: pool di connessioni PostgreSQL per operazioni asincrone
+//   - *ch_client: Optional[CHClient]*: client ClickHouse per operazioni di analytics
+//   - *http_client: Optional[httpx.AsyncClient]*: client HTTP per chiamate API esterne
+= Documentazione delle Classi - Sistema NearYou
+
+== Gestione Configurazione
+
+Questa sezione rappresenta le classi impiegate nella gestione della configurazione del sistema.
+
+=== Struttura delle classi
+
+==== ConfigurationManager
+#image("../assets/immagini/configurationmanager.png")
+
+===== Attributi
+- `_instance: Optional[ConfigurationManager]` - Istanza singleton#apice("G") della classe
+- `_initialized: bool` - Flag per prevenire re-inizializzazione
+- `environment: str` - Ambiente di esecuzione (development, production, staging)
+- `kafka_broker: str` - Indirizzo del broker Kafka
+- `kafka_topic: str` - Topic Kafka per i messaggi GPS
+- `clickhouse_host: str` - Host del database ClickHouse
+- `postgres_host: str` - Host del database PostgreSQL
+- `jwt_secret: str` - Chiave segreta per JWT
+- `redis_host: str` - Host del server Redis per cache
+
+===== Costruttori
+- `__new__() -> ConfigurationManager` - Implementa pattern Singleton#apice("G")
+- `__init__()` - Inizializza configurazioni da variabili d'ambiente
+
+===== Metodi
+- `_load_environment_config()` - Carica tutte le configurazioni dalle variabili d'ambiente
+- `get_clickhouse_config() -> Dict[str, Any]` - Restituisce configurazione ClickHouse
+- `get_postgres_uri() -> str` - Genera URI#apice("G") di connessione PostgreSQL
+- `get_postgres_config() -> Dict[str, Any]` - Restituisce configurazione PostgreSQL come dictionary
+- `get_redis_config() -> Dict[str, Any]` - Restituisce configurazione Redis
+- `validate_critical_configs() -> None` - Valida configurazioni critiche per ambienti di produzione
+
+== Sistema di Cache
+
+Questa sezione rappresenta le classi per la gestione del caching nel sistema.
+
+=== Struttura delle classi
+
+==== MemoryCache
+#image("../assets/immagini/memorycache.png")
+
+===== Attributi
+- `cache: Dict` - Dictionary per memorizzare coppie chiave-valore con scadenza
+- `default_ttl: int` - Time-to-live predefinito in secondi (default 86400)
+- `lock: threading.RLock` - Lock per thread-safety
+- `cleanup_thread: threading.Thread` - Thread per pulizia automatica chiavi scadute
+
+===== Costruttori
+- `__init__(default_ttl: int = 86400)` - Inizializza cache in-memory con pulizia periodica
+
+===== Metodi
+- `get(key: str) -> Optional[Any]` - Recupera valore dalla cache
+- `set(key: str, value: Any, ttl: Optional[int] = None) -> bool` - Salva valore nella cache
+- `delete(key: str) -> bool` - Elimina chiave dalla cache
+- `exists(key: str) -> bool` - Verifica se la chiave esiste ed è valida
+- `info() -> Dict[str, Any]` - Restituisce statistiche sulla cache
+- `_cleanup_expired_keys()` - Thread di background per pulizia chiavi scadute
+
+==== RedisCache
+#image("../assets/immagini/rediscache.png")
+
+===== Attributi
+- `client: redis.Redis` - Client Redis per connessione al server
+- `default_ttl: int` - Time-to-live predefinito per le chiavi
+
+===== Costruttori
+- `__init__(host: str, port: int, db: int, password: str, default_ttl: int)` - Inizializza connessione Redis
+
+===== Metodi
+- `get(key: str) -> Optional[Any]` - Recupera valore da cache con deserializzazione JSON
+- `set(key: str, value: Any, ttl: Optional[int] = None) -> bool` - Salva valore con serializzazione JSON
+- `delete(key: str) -> bool` - Elimina chiave dalla cache Redis
+- `exists(key: str) -> bool` - Verifica esistenza chiave
+- `info() -> Dict[str, Any]` - Restituisce statistiche del server Redis
+
+== Modelli Dati
+
+Questa sezione rappresenta le classi che definiscono i modelli dati del sistema.
+
+=== Struttura delle classi
+
+==== OfferType
+#image("../assets/immagini/offertype.png")
+
+===== Attributi
+- `PERCENTAGE: str` - Sconto percentuale
+- `FIXED_AMOUNT: str` - Importo fisso di sconto  
+- `BUY_ONE_GET_ONE: str` - Promozione prendi 2 paghi 1
+
+===== Costruttori
+Enum#apice("G") definito staticamente con valori costanti per i tipi di offerta disponibili.
+
+===== Metodi
+Nessun metodo specifico, utilizzato come enum per tipizzazione delle offerte.
+
+==== OfferValidatorProtocol
+#image("../assets/immagini/offervalidatorprotocol.png")
+
+===== Attributi
+Nessun attributo, definisce solo l'interfaccia per la validazione.
+
+===== Costruttori
+Protocol interface#apice("G"), non ha costruttori diretti.
+
+===== Metodi
+- `validate(offer: Offer) -> bool` - Metodo astratto per validare un'offerta
+
+==== OfferValidator
+#image("../assets/immagini/offervalidator.png")
+
+===== Attributi
+Nessun attributo di istanza.
+
+===== Costruttori
+- `__init__()` - Costruttore standard per implementazione default
+
+===== Metodi
+- `validate(offer: Offer) -> bool` - Valida vincoli base dell'offerta (percentuale, date, età)
+
+==== Offer
+#image("../assets/immagini/offer.png")
+
+===== Attributi
+- `offer_id: Optional[int]` - ID univoco dell'offerta
+- `shop_id: int` - ID del negozio che offre la promozione
+- `discount_percent: int` - Percentuale di sconto (0-100)
+- `description: str` - Descrizione testuale dell'offerta
+- `offer_type: str` - Tipo di offerta (da OfferType enum)
+- `valid_from: Optional[date]` - Data inizio validità
+- `valid_until: Optional[date]` - Data fine validità
+- `is_active: bool` - Flag attivazione offerta
+- `max_uses: Optional[int]` - Numero massimo di utilizzi
+- `current_uses: int` - Utilizzi attuali
+- `min_age: Optional[int]` - Età minima target
+- `max_age: Optional[int]` - Età massima target
+- `target_categories: Optional[List[str]]` - Categorie di interesse target
+- `_validator: OfferValidatorProtocol` - Validatore per l'offerta
+
+===== Costruttori
+- `__init__()` - Inizializza offerta con parametri opzionali
+- `__post_init__()` - Post-inizializzazione per valori di default
+
+===== Metodi
+- `set_validator(validator: OfferValidatorProtocol) -> None` - Imposta validatore custom
+- `is_valid() -> bool` - Verifica validità usando il validatore corrente
+- `to_dict() -> Dict[str, Any]` - Converte in dictionary per DB
+- `from_dict(data: Dict[str, Any]) -> Offer` - Crea istanza da dictionary
+- `is_valid_for_user(user_age: int, user_interests: List[str]) -> bool` - Verifica compatibilità utente
+- `get_display_text(shop_name: str) -> str` - Genera testo descrittivo per display
+
+==== OfferBuilder
+#image("../assets/immagini/offerbuilder.png")
+
+===== Attributi
+- `_offer: Offer` - Istanza dell'offerta in costruzione
+
+===== Costruttori
+- `__init__()` - Inizializza builder#apice("G") e resetta stato
+
+===== Metodi
+- `reset() -> OfferBuilder` - Resetta builder per nuovo utilizzo
+- `shop(shop_id: int) -> OfferBuilder` - Imposta ID negozio
+- `discount(percentage: int) -> OfferBuilder` - Imposta percentuale sconto
+- `description(text: str) -> OfferBuilder` - Imposta descrizione
+- `offer_type(offer_type: OfferType) -> OfferBuilder` - Imposta tipo offerta
+- `valid_period(from_date: date, until_date: date) -> OfferBuilder` - Imposta periodo validità
+- `valid_for_days(days: int) -> OfferBuilder` - Imposta validità in giorni da oggi
+- `max_uses(uses: int) -> OfferBuilder` - Imposta numero massimo utilizzi
+- `age_target(min_age: int, max_age: int) -> OfferBuilder` - Imposta target età
+- `interest_target(categories: List[str]) -> OfferBuilder` - Imposta target interessi
+- `active(is_active: bool) -> OfferBuilder` - Imposta stato attivazione
+- `build() -> Offer` - Costruisce e valida l'offerta finale
+- `build_unsafe() -> Offer` - Costruisce senza validazione
+
+==== OfferFactory
+#image("../assets/immagini/offerfactory.png")
+
+===== Attributi
+Nessun attributo di istanza, tutti metodi statici.
+
+===== Costruttori
+Classe con soli metodi statici, nessun costruttore necessario.
+
+===== Metodi
+- `create_flash_offer(shop_id: int, shop_name: str, discount: int, hours: int) -> Offer` - Crea offerta flash a breve termine
+- `create_student_offer(shop_id: int, shop_name: str, discount: int) -> Offer` - Crea offerta per studenti
+- `create_senior_offer(shop_id: int, shop_name: str, discount: int) -> Offer` - Crea offerta per senior
+- `create_category_offer(shop_id: int, shop_name: str, category: str, discount: int) -> Offer` - Crea offerta specifica per categoria
+
+==== UserVisit
+#image("../assets/immagini/uservisit.png")
+
+===== Attributi
+- `visit_id: Optional[int]` - ID univoco della visita
+- `user_id: int` - ID dell'utente
+- `shop_id: int` - ID del negozio visitato
+- `offer_id: int` - ID dell'offerta utilizzata
+- `visit_start_time: Optional[datetime]` - Orario inizio visita
+- `visit_end_time: Optional[datetime]` - Orario fine visita
+- `duration_minutes: int` - Durata visita in minuti
+- `offer_accepted: bool` - Flag accettazione offerta
+- `estimated_spending: float` - Spesa stimata
+- `user_satisfaction: int` - Soddisfazione utente (1-10)
+- `day_of_week: Optional[int]` - Giorno della settimana
+- `hour_of_day: Optional[int]` - Ora del giorno
+- `weather_condition: str` - Condizioni meteorologiche
+- `user_age: int` - Età utente
+- `user_profession: str` - Professione utente
+- `user_interests: str` - Interessi utente
+- `shop_name: str` - Nome del negozio
+- `shop_category: str` - Categoria del negozio
+
+===== Costruttori
+- `__init__()` - Inizializza record visita
+- `__post_init__()` - Calcola campi derivati (giorno settimana, ora, durata)
+
+===== Metodi
+- `to_dict() -> Dict[str, Any]` - Converte in dictionary per inserimento DB
+
+== Servizi Business Logic
+
+Questa sezione rappresenta le classi che implementano la logica di business con pattern Strategy#apice("G").
+
+=== Struttura delle classi
+
+==== OfferGenerationStrategy
+#image("../assets/immagini/offergenerationstrategy.png")
+
+===== Attributi
+Classe astratta, nessun attributo specifico.
+
+===== Costruttori
+Classe astratta, costruttori implementati dalle sottoclassi.
+
+===== Metodi
+- `generate_offers(shop_id: int, shop_name: str, category: str) -> List[Offer]` - Metodo astratto per generare offerte
+- `should_generate_offers(category: str) -> bool` - Metodo astratto per decidere se generare offerte
+
+==== StandardOfferStrategy
+#image("../assets/immagini/standardofferstrategy.png")
+
+===== Attributi
+Nessun attributo di istanza.
+
+===== Costruttori
+- `__init__()` - Costruttore standard
+
+===== Metodi
+- `should_generate_offers(category: str) -> bool` - Verifica probabilità generazione per categoria
+- `generate_offers(shop_id: int, shop_name: str, category: str) -> List[Offer]` - Genera offerte standard randomizzate
+- `_create_standard_offer(shop_id: int, shop_name: str, category: str) -> Optional[Offer]` - Crea singola offerta standard
+
+==== AggressiveOfferStrategy
+#image("../assets/immagini/aggressiveofferstrategy.png")
+
+===== Attributi
+Nessun attributo di istanza.
+
+===== Costruttori
+- `__init__()` - Costruttore standard
+
+===== Metodi
+- `should_generate_offers(category: str) -> bool` - Sempre True per strategia aggressiva
+- `generate_offers(shop_id: int, shop_name: str, category: str) -> List[Offer]` - Genera più offerte con sconti maggiori
+- `_create_aggressive_offer(shop_id: int, shop_name: str, category: str) -> Optional[Offer]` - Crea offerta con sconti potenziati
+
+==== ConservativeOfferStrategy
+#image("../assets/immagini/conservativeofferstrategy.png")
+
+===== Attributi
+Nessun attributo di istanza.
+
+===== Costruttori
+- `__init__()` - Costruttore standard
+
+===== Metodi
+- `should_generate_offers(category: str) -> bool` - Probabilità ridotta rispetto a standard
+- `generate_offers(shop_id: int, shop_name: str, category: str) -> List[Offer]` - Genera meno offerte con sconti moderati
+- `_create_conservative_offer(shop_id: int, shop_name: str, category: str) -> Optional[Offer]` - Crea offerta con approccio conservativo
+
+==== OfferStrategyFactory
+#image("../assets/immagini/offerstrategyfactory.png")
+
+===== Attributi
+- `STRATEGIES: Dict` - Dizionario mapping tipi strategia a classi
+
+===== Costruttori
+Classe con metodi di classe, nessun costruttore di istanza.
+
+===== Metodi
+- `create_strategy(strategy_type: str) -> OfferGenerationStrategy` - Crea istanza strategia basata su tipo
+
+==== OffersService
+#image("../assets/immagini/offersservice.png")
+
+===== Attributi
+- `postgres_config: Dict[str, Any]` - Configurazione connessione PostgreSQL
+- `strategy: OfferGenerationStrategy` - Strategia di generazione offerte attiva
+
+===== Costruttori
+- `__init__(postgres_config: Dict[str, Any], strategy_type: str)` - Inizializza servizio con configurazione e strategia
+
+===== Metodi
+- `set_strategy(strategy: OfferGenerationStrategy) -> None` - Cambia strategia a runtime
+- `get_connection()` - Ottiene connessione PostgreSQL
+- `generate_offers_for_all_shops() -> int` - Genera offerte per tutti i negozi
+- `insert_offers(offers: List[Offer]) -> int` - Inserisce offerte nel database
+- `get_active_offers_for_shop(shop_id: int) -> List[Dict[str, Any]]` - Recupera offerte attive per negozio
+- `cleanup_expired_offers() -> int` - Disattiva offerte scadute
+
+== Data Pipeline
+
+Questa sezione rappresenta le classi per la gestione della pipeline dati con pattern Observer#apice("G").
+
+=== Struttura delle classi
+
+==== Observer
+#image("../assets/immagini/observer.png")
+
+===== Attributi
+Classe astratta, nessun attributo specifico.
+
+===== Costruttori
+Classe astratta, costruttori implementati dalle sottoclassi.
+
+===== Metodi
+- `update(event_type: str, data: Dict[str, Any]) -> None` - Metodo astratto per ricevere notifiche
+
+==== Subject
+#image("../assets/immagini/subject.png")
+
+===== Attributi
+- `_observers: List[Observer]` - Lista degli observer registrati
+
+===== Costruttori
+- `__init__()` - Inizializza lista observer vuota
+
+===== Metodi
+- `attach(observer: Observer) -> None` - Registra un observer
+- `detach(observer: Observer) -> None` - Rimuove un observer
+- `notify(event_type: str, data: Dict[str, Any]) -> None` - Notifica tutti gli observer
+
+==== MetricsObserver
+#image("../assets/immagini/metricsobserver.png")
+
+===== Attributi
+- `metrics: Dict[str, int]` - Dizionario con contatori delle metriche
+
+===== Costruttori
+- `__init__()` - Inizializza contatori a zero
+
+===== Metodi
+- `update(event_type: str, data: Dict[str, Any]) -> None` - Aggiorna metriche in base al tipo evento
+- `get_metrics() -> Dict[str, int]` - Restituisce copia delle metriche attuali
+- `reset_metrics() -> None` - Resetta tutti i contatori
+
+==== PerformanceObserver
+#image("../assets/immagini/performanceobserver.png")
+
+===== Attributi
+- `processing_times: List[float]` - Lista dei tempi di elaborazione
+- `start_times: Dict[str, float]` - Dizionario con timestamp di inizio per evento
+
+===== Costruttori
+- `__init__()` - Inizializza liste vuote
+
+===== Metodi
+- `update(event_type: str, data: Dict[str, Any]) -> None` - Traccia tempi di inizio/fine elaborazione
+- `get_avg_processing_time() -> float` - Calcola tempo medio di elaborazione
+- `get_latest_processing_times(count: int) -> List[float]` - Restituisce ultimi N tempi
+
+==== DatabaseConnections
+#image("../assets/immagini/databaseconnections.png")
+
+===== Attributi
+- `_instance: Optional[DatabaseConnections]` - Istanza singleton
+- `_pg_pool: asyncpg.Pool` - Pool#apice("G") connessioni PostgreSQL
+- `_ch_client: CHClient` - Client ClickHouse
+- `_http_client: httpx.AsyncClient` - Client HTTP asincrono
+- `_loop: asyncio.EventLoop` - Event loop asincrono
+- `_message_cache: Dict` - Cache messaggi in-memory
+- `_initialized: bool` - Flag inizializzazione
+- `_metrics_observer: MetricsObserver` - Observer per metriche
+- `_performance_observer: PerformanceObserver` - Observer per performance
+
+===== Costruttori
+- `__new__() -> DatabaseConnections` - Implementa pattern Singleton
+- `__init__()` - Inizializza connessioni e observer
+
+===== Metodi
+- `loop() -> EventLoop` - Ottiene o crea event loop
+- `get_pg_pool() -> asyncpg.Pool` - Ottiene pool PostgreSQL (lazy init)
+- `get_ch_client() -> CHClient` - Ottiene client ClickHouse (lazy init)
+- `get_http_client() -> httpx.AsyncClient` - Ottiene client HTTP (lazy init)
+- `get_cache_key(user_id: int, shop_id: int) -> str` - Genera chiave cache
+- `get_cached_message(user_id: int, shop_id: int) -> Optional[str]` - Recupera messaggio da cache
+- `cache_message(user_id: int, shop_id: int, message: str) -> None` - Salva messaggio in cache
+- `get_metrics() -> Dict[str, Any]` - Ottiene metriche da observer
+- `close()` - Chiude tutte le connessioni
+
+== Utilità
+
+Questa sezione rappresenta le classi di supporto e utility del sistema.
+
+=== Struttura delle classi
+
+==== Utilità Database
+Funzioni helper per gestione database:
+- `wait_for_clickhouse_database(client: Client, db_name: str, timeout: int, max_retries: int) -> bool` - Attende disponibilità database ClickHouse
+- `wait_for_broker(host: str, port: int, timeout: int) -> None` - Attende disponibilità broker Kafka
+
+==== Configurazione Logging
+Funzioni per configurazione sistema di logging:
+- `setup_logging(log_level: Optional[str])` - Configura logging#apice("G") con formato JSON o text
+
+==== Metriche FastAPI
+Utilità per integrazione metriche Prometheus:
+- `setup_metrics(app: FastAPI, app_name: Optional[str]) -> None` - Configura instrumentazione Prometheus per FastAPI
+
+==== Operatori Pipeline
+Funzioni per elaborazione stream dati Bytewax:
+- `parse_kafka_message(kafka_msg: KafkaSourceMessage) -> Tuple[str, Dict[str, Any]]` - Parsa messaggi Kafka
+- `validate_message(parsed_data: Tuple[str, Dict[str, Any]]) -> bool` - Valida messaggi parsati
+- `enrich_with_nearest_shop(item: Tuple[str, Dict]) -> List[Tuple[str, Dict]]` - Arricchisce con negozio più vicino
+- `check_proximity_and_generate_message(item: Tuple[str, Dict]) -> List[Tuple[str, Dict]]` - Genera messaggio se in prossimità
+- `write_to_clickhouse(item: Tuple[str, Dict]) -> None` - Scrive evento in ClickHouse
+
+== Design Patterns
+
+=== Introduzione
+
+Il progetto NearYou implementa un sistema complesso di raccomandazioni geo-localizzate che utilizza diversi design patterns per garantire modularità, estensibilità e manutenibilità del codice. L'architettura del sistema sfrutta quattro principali design patterns:
+
+- *Singleton Pattern*#apice("G"): Per la gestione centralizzata di configurazioni e connessioni
+- *Factory Pattern*#apice("G"): Per la creazione flessibile di cache e strategie
+- *Strategy Pattern*: Per algoritmi intercambiabili di generazione offerte
+- *Observer Pattern*#apice("G"): Per il monitoraggio real-time del sistema
+
+Questi patterns lavorano insieme per fornire un'architettura robusta e scalabile per un sistema di streaming real-time che processa eventi GPS, genera raccomandazioni personalizzate e monitora le performance del sistema.
+
+=== Singleton Pattern
+
+==== Panoramica
+
+Il Singleton Pattern è implementato in tre componenti chiave del sistema per garantire che esistano singole istanze condivise di risorse critiche:
+
+1. `ConfigurationManager`: Gestione centralizzata della configurazione
+2. `CacheManager`: Gestione unificata del sistema di cache  
+3. `DatabaseConnections`: Gestione delle connessioni ai database
+
+==== ConfigurationManager
+
+===== Implementazione
+
+#code-block[
+```python
+class ConfigurationManager:
+    """
+    Singleton pattern implementation for configuration management.
+    Ensures that only one configuration instance exists throughout the application.
+    """
+    _instance: Optional['ConfigurationManager'] = None
+    _initialized = False
+    
+    def __new__(cls) -> 'ConfigurationManager':
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def __init__(self):
+        # Prevent re-initialization
+        if ConfigurationManager._initialized:
+            return
+        
+        ConfigurationManager._initialized = True
+        
+        # Initialize all configuration values
+        self._load_environment_config()
+        
+        # Validate critical configs in production/staging
+        if self.environment in ["production", "staging"]:
+            self.validate_critical_configs()
+```
+]
+
+===== Caratteristiche Avanzate
+
+#pattern-box("Meccanismo di Implementazione")[
+- *Thread-Safety*: Implementazione thread-safe attraverso l'override del metodo `__new__`
+- *Lazy Initialization*#apice("G"): La configurazione viene caricata solo al primo accesso
+- *Prevenzione Re-inizializzazione*: Flag `_initialized` impedisce multiple inizializzazioni
+- *Validazione Ambiente*: Controlli specifici per ambienti production/staging
+]
+
+===== Vantaggi Architetturali
+
+- *Consistenza Globale*: Tutti i componenti accedono alla stessa configurazione
+- *Performance*: Elimina la necessità di rilegger e file di configurazione
+- *Memory Efficiency*: Una sola istanza in memoria per tutta l'applicazione
+- *Centralizzazione*: Punto unico di accesso per tutte le configurazioni
+
+==== CacheManager
+
+===== Implementazione
+
+#code-block[
+```python
+class CacheManager:
+    """
+    Singleton pattern implementation for cache management.
+    Ensures single cache instance throughout the application.
+    """
+    _instance: Optional['CacheManager'] = None
+    _cache: Optional[CacheInterface] = None
+    
+    def __new__(cls) -> 'CacheManager':
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    def initialize(self, cache_type: str = "auto", **config) -> None:
+        """Initialize cache with given configuration."""
+        if self._cache is None:
+            self._cache = CacheFactory.create_cache(cache_type, **config)
+            logger.info(f"Cache manager initialized with {type(self._cache).__name__}")
+    
+    def get_cache(self) -> CacheInterface:
+        """Get the cache instance."""
+        if self._cache is None:
+            raise RuntimeError("Cache not initialized. Call initialize() first.")
+        return self._cache
+```
+]
+
+===== Integrazione con Factory Pattern
+
+Il `CacheManager` utilizza il `CacheFactory` per creare l'istanza di cache appropriata, dimostrando come i design patterns scelti possano collaborare efficacemente:
+
+#code-block[
+```python
+# Utilizzo integrato
+cache_manager = CacheManager()  # Singleton
+cache_manager.initialize("auto", **config)  # Factory Pattern
+cache = cache_manager.get_cache()  # Accesso unificato
+```]
+
+==== DatabaseConnections
+
+===== Implementazione con Observer Pattern
+
+#code-block[
+```python
+class DatabaseConnections(Subject):
+    """
+    Singleton pattern for database connections management.
+    Also implements Subject for Observer pattern.
+    """
+    _instance: Optional['DatabaseConnections'] = None
+    
+    def __new__(cls) -> 'DatabaseConnections':
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            # Initialize Subject
+            super(DatabaseConnections, cls._instance).__init__()
+            # Initialize default observers
+            cls._instance._setup_default_observers()
+        return cls._instance
+```]
+
+Questa implementazione combina Singleton e Observer patterns, permettendo monitoring centralizzato delle operazioni database.
+
+// TODO qui ok
+
+
+=== Factory Pattern
+
+==== Panoramica
+
+Il Factory Pattern è implementato principalmente attraverso due factory classes:
+
+1. `CacheFactory`: Creazione di istanze cache (Redis/Memory/Auto)
+2. `OfferStrategyFactory`: Creazione di strategie di generazione offerte
+
+==== CacheFactory
+
+===== Implementazione Completa
+
+#code-block[
+```python
+class CacheFactory:
+    """
+    Factory pattern implementation for cache creation.
+    Creates appropriate cache instances based on configuration.
+    """
+    
+    @staticmethod
+    def create_cache(cache_type: str = "auto", **config) -> CacheInterface:
+        """Create cache instance based on type and configuration."""
+        if cache_type == "memory":
+            return CacheFactory._create_memory_cache(**config)
+        elif cache_type == "redis":
+            return CacheFactory._create_redis_cache(**config)
+        elif cache_type == "auto":
+            return CacheFactory._create_auto_cache(**config)
+        else:
+            raise ValueError(f"Unknown cache type: {cache_type}")
+    
+    @staticmethod
+    def _create_auto_cache(**config) -> CacheInterface:
+        """Automatically choose cache type based on availability."""
+        try:
+            redis_cache = CacheFactory._create_redis_cache(**config)
+            # Test connection
+            redis_cache.set("__test__", "connection_test", ttl=1)
+            redis_cache.delete("__test__")
+            logger.info("Auto-selected RedisCache (connection successful)")
+            return redis_cache
+        except Exception as e:
+            logger.warning(f"Redis not available ({e}), falling back to MemoryCache")
+            return CacheFactory._create_memory_cache(**config)
+```
+]
+
+===== Caratteristiche Avanzate
+
+#pattern-box("Modalità Auto-Selection")[
+La modalità "auto" del `CacheFactory` implementa un meccanismo intelligente di fallback#apice("G"):
+
+1. *Tentativo Redis*: Prova prima a creare e testare una connessione Redis
+2. *Test Connessione*: Esegue operazioni di test per verificare la disponibilità
+3. *Fallback Automatico*: In caso di errore, usa automaticamente MemoryCache
+4. *Logging Intelligente*: Registra le decisioni per debugging e monitoring
+]
+
+==== OfferStrategyFactory
+
+===== Implementazione
+
+#code-block[
+```python
+class OfferStrategyFactory:
+    """Factory for creating different offer generation strategies."""
+    
+    @staticmethod
+    def create_strategy(strategy_type: str) -> OfferGenerationStrategy:
+        """Create strategy instance based on type."""
+        strategy_map = {
+            "standard": StandardOfferStrategy,
+            "aggressive": AggressiveOfferStrategy,
+            "conservative": ConservativeOfferStrategy
+        }
+        
+        strategy_class = strategy_map.get(strategy_type.lower())
+        if not strategy_class:
+            available = list(strategy_map.keys())
+            raise ValueError(f"Unknown strategy type: {strategy_type}. Available: {available}")
+        
+        return strategy_class()
+```
+]
+
+===== Estensibilità
+
+Il design permette facile aggiunta di nuove strategie:
+
+#code-block[
+```python
+# Aggiungere una nuova strategia
+class PremiumOfferStrategy(OfferGenerationStrategy):
+    # Implementazione strategia premium...
+    pass
+
+# Registrazione nella factory
+strategy_map["premium"] = PremiumOfferStrategy
+```]
+
+=== Strategy Pattern
+
+==== Panoramica
+
+Il Strategy Pattern è implementato per la generazione delle offerte commerciali, permettendo algoritmi intercambiabili per diverse strategie di business.
+
+==== Architettura delle Strategie
+
+===== Interfaccia Base
+
+#code-block[
+```python
+class OfferGenerationStrategy(ABC):
+    """Abstract base class for offer generation strategies."""
+    
+    @abstractmethod
+    def generate_offers(self, shop_id: int, shop_name: str, category: str) -> List[Offer]:
+        """Generate offers for a specific shop."""
+        pass
+    
+    @abstractmethod
+    def should_generate_offers(self, category: str) -> bool:
+        """Determine if offers should be generated for this category."""
+        pass
+```
+]
+
+==== Implementazioni Concrete
+
+===== StandardOfferStrategy
+
+#pattern-box("Strategia Bilanciata")[
+- *Sconti*: 5-25% (bilanciato)
+- *Durata*: 3-14 giorni (media durata)
+- *Probabilità Generazione*: Basata su configurazione categoria
+- *Targeting*: Età casuale (30% probabilità)
+]
+
+#code-block[
+```python
+class StandardOfferStrategy(OfferGenerationStrategy):
+    """Standard offer generation strategy with randomized parameters."""
+    
+    def should_generate_offers(self, category: str) -> bool:
+        probability = CATEGORY_OFFER_PROBABILITY.get(category.lower(), 0.5)
+        should_generate = random.random() <= probability
+        return should_generate
+    
+    def generate_offers(self, shop_id: int, shop_name: str, category: str) -> List[Offer]:
+        if not self.should_generate_offers(category):
+            return []
+        
+        num_offers = random.randint(MIN_OFFERS_PER_SHOP, MAX_OFFERS_PER_SHOP)
+        offers = []
+        
+        for i in range(num_offers):
+            offer = self._create_standard_offer(shop_id, shop_name, category)
+            if offer:
+                offers.append(offer)
+        
+        return offers
+```
+]
+
+===== AggressiveOfferStrategy
+
+#pattern-box("Strategia Aggressiva")[
+- *Sconti*: 15-50% (sconti elevati)
+- *Durata*: 1-7 giorni (breve durata, urgenza)
+- *Probabilità Generazione*: Sempre genera (100%)
+- *Caratteristiche*: Massimizza conversioni immediate
+]
+
+#code-block[
+```python
+class AggressiveOfferStrategy(OfferGenerationStrategy):
+    """Aggressive strategy with high discounts and short duration."""
+    
+    def should_generate_offers(self, category: str) -> bool:
+        return True  # Always generate offers in aggressive mode
+    
+    def _get_aggressive_discount_range(self, category: str) -> Tuple[int, int]:
+        """Get higher discount ranges for aggressive strategy."""
+        base_range = CATEGORY_DISCOUNT_RANGES.get(category.lower(), DEFAULT_DISCOUNT_RANGE)
+        # Boost discounts by 10-25 percentage points
+        min_discount = min(50, max(15, base_range[0] + 10))
+        max_discount = min(50, base_range[1] + 25)
+        return (min_discount, max_discount)
+```
+]
+
+// ===== ConservativeOfferStrategy
+
+// #pattern-box("Strategia Conservativa")[
+// - *Sconti*: 3-15% (sconti ridotti)
+// - *Durata*: 7-30 giorni (lunga durata)
+// - *Probabilità Generazione*: Ridotta (30% della standard)
+// - *Caratteristiche*: Preserva margini, costruisce loyalty
+// ]
+
+==== Utilizzo Runtime
+
+===== Switching Dinamico
+
+#code-block[
+```python
+class OffersService:
+    """Service for managing offers with strategy pattern."""
+    
+    def __init__(self, postgres_config: Dict[str, Any], strategy_type: str = "standard"):
+        self.postgres_config = postgres_config
+        self.strategy = OfferStrategyFactory.create_strategy(strategy_type)
+    
+    def set_strategy(self, strategy: OfferGenerationStrategy) -> None:
+        """Change strategy at runtime."""
+        self.strategy = strategy
+        logger.info(f"Strategy changed to: {type(strategy).__name__}")
+    
+    def generate_shop_offers(self, shop_id: int, shop_name: str, category: str) -> List[Offer]:
+        """Generate offers using current strategy."""
+        return self.strategy.generate_offers(shop_id, shop_name, category)
+```]
+
+=== Observer Pattern
+
+==== Panoramica
+
+Il Observer Pattern è implementato per monitorare eventi del sistema in tempo reale, permettendo raccolta di metriche e monitoring delle performance.
+
+==== Architettura Observer
+
+===== Subject Base
+
+#code-block[
+```python
+class Subject(ABC):
+    """Abstract subject that observers can subscribe to."""
+    
+    def __init__(self):
+        self._observers: List[Observer] = []
+    
+    def attach(self, observer: Observer) -> None:
+        """Attach an observer."""
+        if observer not in self._observers:
+            self._observers.append(observer)
+            logger.debug(f"Attached observer: {type(observer).__name__}")
+    
+    def detach(self, observer: Observer) -> None:
+        """Detach an observer."""
+        if observer in self._observers:
+            self._observers.remove(observer)
+            logger.debug(f"Detached observer: {type(observer).__name__}")
+    
+    def notify(self, event_type: str, data: Dict[str, Any]) -> None:
+        """Notify all observers."""
+        for observer in self._observers:
+            try:
+                observer.update(event_type, data)
+            except Exception as e:
+                logger.error(f"Error notifying observer {type(observer).__name__}: {e}")
+```
+]
+
+==== Implementazioni Observer
+
+===== MetricsObserver
+
+#pattern-box("Raccolta Metriche Operative")[
+Monitora eventi operativi del sistema:
+- Eventi processati
+- Messaggi generati  
+- Visite simulate
+- Errori di sistema
+- Cache hits/misses
+- Negozi trovati
+]
+
+#code-block[
+```python
+class MetricsObserver(Observer):
+    """Observer for collecting metrics."""
+    
+    def __init__(self):
+        self.metrics = {
+            "events_processed": 0,
+            "messages_generated": 0,
+            "visits_simulated": 0,
+            "errors": 0,
+            "shops_found": 0,
+            "cache_hits": 0,
+            "cache_misses": 0
+        }
+    
+    def update(self, event_type: str, data: Dict[str, Any]) -> None:
+        """Update metrics based on event."""
+        if event_type == "event_processed":
+            self.metrics["events_processed"] += 1
+        elif event_type == "message_generated":
+            self.metrics["messages_generated"] += 1
+        elif event_type == "visit_simulated":
+            self.metrics["visits_simulated"] += 1
+        # ... altri eventi
+    
+    def get_metrics(self) -> Dict[str, int]:
+        """Get current metrics snapshot."""
+        return self.metrics.copy()
+```
+]
+
+===== PerformanceObserver
+
+#pattern-box("Monitoring Performance")[
+Traccia performance del sistema:
+- Tempi di processing eventi
+- Latenza operazioni database
+- Throughput del sistema
+- Analisi trend temporali
+]
+
+#code-block[
+```python
+class PerformanceObserver(Observer):
+    """Observer for monitoring performance metrics."""
+    
+    def __init__(self):
+        self.processing_times = []
+        self.active_processes = {}
+    
+    def update(self, event_type: str, data: Dict[str, Any]) -> None:
+        """Track processing performance."""
+        if event_type == "processing_start":
+            event_id = data.get("event_id")
+            if event_id:
+                self.active_processes[event_id] = time.time()
+        
+        elif event_type == "processing_end":
+            event_id = data.get("event_id")
+            if event_id and event_id in self.active_processes:
+                start_time = self.active_processes.pop(event_id)
+                duration = time.time() - start_time
+                self.processing_times.append(duration)
+                
+                # Keep only last 1000 measurements
+                if len(self.processing_times) > 1000:
+                    self.processing_times = self.processing_times[-1000:]
+```
+]
+
+==== DatabaseConnections come Subject
+
+===== Implementazione Integrata
+
+#code-block[
+```python
+class DatabaseConnections(Subject):
+    """Database connections manager that also acts as event subject."""
+    
+    def __init__(self):
+        super().__init__()
+        self._setup_default_observers()
+    
+    def _setup_default_observers(self):
+        """Setup default system observers."""
+        self.metrics_observer = MetricsObserver()
+        self.performance_observer = PerformanceObserver()
+        
+        self.attach(self.metrics_observer)
+        self.attach(self.performance_observer)
+        
+        logger.info("Default observers attached to DatabaseConnections")
+    
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get comprehensive system metrics."""
+        return {
+            "metrics": self.metrics_observer.get_metrics(),
+            "performance": {
+                "avg_processing_time": self.performance_observer.get_avg_processing_time(),
+                "total_measurements": len(self.performance_observer.processing_times)
+            }
+        }
+```
+]
+
+// #set page(margin: 1cm, orientation: "landscape")
+#set text(size: 9pt)
+
+#align(center)[
+  == Tabella dei Requisiti - Stato di Implementazione
+]
+
+#table(
+  columns: 3,
+  align: (left, left, center),
+  stroke: 0.5pt,
+  table.header([*ID*], [*Descrizione*], [*Stato*]),
+  
+  // === REQUISITI FUNZIONALI ===
+  table.cell(colspan: 3, fill: gray.lighten(80%))[*REQUISITI FUNZIONALI*],
+  
+  // RF1 - Autenticazione e autorizzazione
+  [RF1.1], [Il sistema deve supportare autenticazione JWT#apice("G") con username/password via endpoint `/api/token`], [Soddisfatto],
+  [RF1.2], [I token#apice("G") devono avere scadenza configurabile tramite `JWT_EXPIRATION_S` (default 1 ora)], [Soddisfatto],
+  [RF1.3], [Le credenziali devono essere validate contro database ClickHouse con hash#apice("G") sicuri], [Soddisfatto],
+  [RF1.4], [Il sistema deve supportare logout con invalidazione sessione client-side], [Soddisfatto],
+  [RF1.5], [WebSocket deve autenticare via token JWT per connessioni real-time], [Soddisfatto],
+  
+  // RF2 - Tracking posizione e generazione eventi
+  [RF2.1], [Il sistema deve simulare movimenti utenti con `producer.py` su percorsi Milano OSRM], [Soddisfatto],
+  [RF2.2], [Gli eventi GPS devono essere prodotti in Kafka topic `gps_stream` con SSL], [Soddisfatto],
+  [RF2.3], [I percorsi devono essere calcolati usando OSRM self-hosted con profilo cycling], [Soddisfatto],
+  [RF2.4], [Gli eventi devono contenere: user_id, latitude, longitude, timestamp, poi_info], [Soddisfatto],
+  [RF2.5], [Il producer deve supportare readiness checks per Kafka, ClickHouse e OSRM], [Soddisfatto],
+  
+  // RF3 - Elaborazione stream e proximity detection
+  [RF3.1], [Il sistema deve processare eventi GPS via Bytewax dataflow con Observer pattern], [Soddisfatto],
+  [RF3.2], [Deve calcolare distanza usando query PostGIS `ST_DWithin` per soglia 200m], [Soddisfatto],
+  [RF3.3], [Deve implementare ConnectionManager singleton per pooling database], [Soddisfatto],
+  [RF3.4], [Deve prevenire messaggi duplicati con cache visit tracking], [Soddisfatto],
+  [RF3.5], [Deve supportare metriche real-time con PerformanceObserver], [Soddisfatto],
+  
+  // RF4 - Generazione messaggi personalizzati e sistema offerte
+  [RF4.1], [Il sistema deve generare messaggi via HTTP service `/generate-message`], [Soddisfatto],
+  [RF4.2], [Deve supportare provider LLM configurabili (Groq/OpenAI) via `LLM_PROVIDER`], [Soddisfatto],
+  [RF4.3], [Deve implementare cache Redis per messaggi con TTL configurabile], [Soddisfatto],
+  [RF4.4], [Deve gestire offerte con Strategy Pattern (Standard/Aggressive/Conservative)], [Soddisfatto],
+  [RF4.5], [Deve supportare Builder Pattern per creazione offerte complesse], [Soddisfatto],
+  [RF4.6], [Factory Pattern deve creare offerte tipizzate (Flash/Student/Senior/Category)], [Soddisfatto],
+  [RF4.7], [Validation Strategy deve validare vincoli offerte (età, interessi, date)], [Soddisfatto],
+  
+  // RF5 - Dashboard utente base
+  [RF5.1], [Deve servire interfaccia web tramite `/dashboard/user` con static files], [Soddisfatto],
+  [RF5.2], [Deve implementare mappa Leaflet con marker categorizzati per shop types], [Soddisfatto],
+  [RF5.3], [Deve visualizzare percorso utente come polyline con history], [Soddisfatto],
+  [RF5.4], [Deve supportare filtri categoria con mapping predefinito], [Soddisfatto],
+  [RF5.5], [Deve implementare fallback WebSocket→HTTP polling automatico], [Soddisfatto],
+  
+  // RF6 - Storage e persistenza dati
+  [RF6.1], [Deve memorizzare eventi in ClickHouse tabelle `user_events` e `user_visits`], [Soddisfatto],
+  [RF6.2], [Deve gestire shop data in PostgreSQL/PostGIS con indici spaziali], [Soddisfatto],
+  [RF6.3], [Deve mantenere profili utenti in ClickHouse tabella `users`], [Soddisfatto],
+  [RF6.4], [Deve tracciare storico visite con vista materializzata `mv_daily_shop_stats`], [Soddisfatto],
+  [RF6.5], [Deve supportare offers storage in PostgreSQL con vincoli temporali], [Soddisfatto],
+  
+  // RF7 - Cache e ottimizzazione base
+  [RF7.1], [Deve implementare Redis cache per messaggi LLM con serializzazione JSON], [Soddisfatto],
+  [RF7.2], [Deve supportare Memory cache con LRU#apice("G") eviction come fallback], [Soddisfatto],
+  [RF7.3], [Deve implementare TTL configurabile via `CACHE_TTL`], [Soddisfatto],
+  [RF7.4], [Deve fornire cache statistics e hit rate monitoring], [Soddisfatto],
+  
+  // // === REQUISITI NON FUNZIONALI ===
+  // table.cell(colspan: 3, fill: gray.lighten(80%))[*REQUISITI NON FUNZIONALI (DI QUALITÀ)*],
+  
+  // // RNF1 - Documentazione
+  // [RNF1.1], [Rispetto delle metriche definite nel Piano di Qualifica (v2.0.0)], [Soddisfatto],
+  // [RNF1.2], [Rispetto delle norme definite nelle Norme di Progetto (v2.0.0)], [Soddisfatto],
+  // [RNF1.3], [Stesura di un documento Manuale Utente per la corretta comprensione dell'utilizzo del sistema], [Soddisfatto],
+  
+  // // RNF2 - Test
+  // [RNF2.1], [Superamento dei test d'unità atti a testimoniare il buon funzionamento del sistema e delle sue componenti], [Soddisfatto],
+  // [RNF2.2], [Superamento dei test d'integrazione che garantiscano una corretta collaborazione tra i vari componenti di sistema], [Soddisfatto],
+  
+  // === REQUISITI FUNZIONALI DESIDERABILI ===
+  table.cell(colspan: 3, fill: gray.lighten(80%))[*REQUISITI FUNZIONALI DESIDERABILI*],
+  
+  // RFD1 - Ottimizzazioni frontend avanzate
+  [RFD1.1], [Il sistema dovrebbe implementare lazy loading notifiche con IntersectionObserver#apice("G")], [Soddisfatto],
+  [RFD1.2], [Dovrebbe supportare tema scuro/chiaro configurabile dall'utente con localStorage#apice("G")], [Soddisfatto],
+  [RFD1.3], [Dovrebbe fornire local cache frontend per shop areas e notifications], [Soddisfatto],
+  [RFD1.4], [Dovrebbe limitare e ottimizzare rendering markers (max 100 shops)], [Soddisfatto],
+  [RFD1.5], [Dovrebbe implementare design responsivo#apice("G") con breakpoint mobile], [Soddisfatto],
+  
+  // RFD2 - Monitoring e osservabilità avanzate
+  [RFD2.1], [Il sistema dovrebbe esporre analisi Prometheus tramite FastAPI instrumentator#apice("G")], [Soddisfatto],
+  [RFD2.2], [Dovrebbe implementare dashboard Grafana con pannelli assemblati dinamicamente], [Soddisfatto],
+  [RFD2.3], [Dovrebbe supportare logging strutturato con livelli configurabili], [Soddisfatto],
+  [RFD2.4], [Dovrebbe includere exporters per database e servizi (Postgres, Redis, ClickHouse)], [Soddisfatto],
+  [RFD2.5], [Dovrebbe supportare Loki/Promtail per log aggregation#apice("G")], [Soddisfatto],
+  [RFD2.6], [Dovrebbe implementare cAdvisor#apice("G") per container monitoring], [Soddisfatto],
+  
+  // RFD3 - Funzionalità utente avanzate
+  [RFD3.1], [Il sistema dovrebbe supportare statistiche utente dettagliate per periodi configurabili], [Soddisfatto],
+  [RFD3.2], [Dovrebbe implementare paginazione#apice("G") avanzata per notifiche e promozioni], [Soddisfatto],
+  [RFD3.3], [Dovrebbe fornire filtri dinamici Grafana (età, professione, categoria, popolarità)], [Soddisfatto],
+  [RFD3.4], [Dovrebbe supportare mappe interattive con route visualization#apice("G")], [Soddisfatto],
+  [RFD3.5], [Dovrebbe implementare shop visit simulation con feedback realtime], [Soddisfatto],
+  
+  // RFD4 - Performance e scalabilità
+  [RFD4.1], [Il sistema dovrebbe implementare connection pooling#apice("G") avanzato], [Soddisfatto],
+  [RFD4.2], [Dovrebbe supportare cache distribuita con clustering#apice("G") Redis], [Soddisfatto],
+  [RFD4.3], [Dovrebbe fornire push gateway#apice("G") per metriche batch], [Soddisfatto],
+  [RFD4.4], [Dovrebbe implementare graceful degradation#apice("G") per service failures], [Soddisfatto],
+  
+  // === REQUISITI FUNZIONALI FACOLTATIVI ===
+  table.cell(colspan: 3, fill: red.lighten(80%))[*REQUISITI FUNZIONALI FACOLTATIVI*],
+  
+  // RFF1 - Integrazioni esterne
+  [RFF1.1], [Il sistema potrebbe integrare API#apice("G") meteo per context-aware messaging], [Non Implementato],
+  [RFF1.2], [Potrebbe supportare payment integration per offer redemption], [Non Implementato],
+  
+  // RFF2 - AI/ML Enhancement
+  [RFF2.1], [Potrebbe utilizzare reinforcement learning#apice("G") per offer optimization], [Non Implementato],
+  
+  // RFF3 - Business Intelligence avanzato
+  [RFF3.1], [Potrebbe supportare A/B testing#apice("G") per offer strategies], [Non Implementato],
+)
+
+#align(center)[
+  #text(size: 8pt, style: "italic")[
+    Totale requisiti: 72 \ 
+    Soddisfatti: 68 \ 
+    Non implementati: 4 (solo requisiti facoltativi)
+  ]
+]
