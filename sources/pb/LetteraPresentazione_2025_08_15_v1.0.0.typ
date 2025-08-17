@@ -54,7 +54,7 @@ all'interno della quale è possibile trovare:
   - 2025-08-08
  
 - Verbali esterni degli incontri con _Sync Lab_ del:
-  -2025-07-29
+  - 2025-07-29
 
 - Glossario (v2.0.0)
 - Norme Di Progetto (v2.0.0)
